@@ -1,0 +1,152 @@
+/* src/pages/InteractiveLesson.css */
+/* Main container for the entire lesson view */
+.interactive-lesson-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Fullscreen Welcome Panel (Initial State) */
+.fullscreen-welcome-panel {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: white;
+}
+
+/* Left Panel (Tutor) */
+.left-panel {
+    width: 30%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-right: 3px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Right Panel (Content) */
+.right-panel {
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    /* Allow content and controls */
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.content-panel {
+    width: 100%;
+    flex-grow: 1;
+    /* Take up available space */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tutor Speech Bubble */
+.tutor-speech-bubble {
+    margin-top: 30px;
+    text-align: center;
+    max-width: 90%;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 20px;
+}
+
+.left-panel .tutor-speech-bubble {
+    background: none;
+    padding: 0;
+}
+
+.tutor-speech-bubble p {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.fullscreen-welcome-panel .tutor-speech-bubble p {
+    color: white;
+    font-size: 1.4rem;
+}
+
+/* Controls Panel (for buttons) */
+.controls-panel {
+    margin-top: 20px;
+}
+
+.lesson-button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: #4ecdc4;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+    transition: all 0.3s ease;
+}
+
+.lesson-button.lets-go-button {
+    margin-top: 40px;
+    padding: 20px 40px;
+    font-size: 1.5rem;
+    border-radius: 25px;
+}
+
+.lesson-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.lesson-button:not(:disabled):hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(78, 205, 196, 0.5);
+}
+
+/* TTS Toggle Button */
+.tts-toggle-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #4ecdc4;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tts-toggle-button:hover {
+    opacity: 0.9;
+}
+
+.left-panel .tts-toggle-button {
+    background-color: #ff6b6b;
+}
+
+.left-panel .tts-toggle-button:before {
+    content: '🔇 TTS Off';
+}
+
+.left-panel .tts-toggle-button.tts-on:before {
+    content: '🔊 TTS On';
+}
