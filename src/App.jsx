@@ -9,7 +9,7 @@ import Navigation from './components/Navigation'
 
 function App() {
     return (
-        <Router>
+        <Router basename="/math-tutor-mvp/">
             <div className="App">
                 <Navigation />
                 <Routes>

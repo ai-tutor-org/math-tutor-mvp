@@ -1,0 +1,84 @@
+.conflicting-measurements-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    gap: 40px;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.measurement-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 40px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.measurement-box:hover {
+    transform: scale(1.05);
+}
+
+.measurement-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffd700;
+    /* Gold color for emphasis */
+}
+
+.measurement-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.question-mark-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.question-mark-icon {
+    font-size: 5rem;
+    color: #ff4136;
+    /* A vibrant red */
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

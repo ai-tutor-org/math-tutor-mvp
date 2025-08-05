@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import TutorAvatar from '../components/TutorAvatar';
 import TTSManager from '../components/TTSManager';
 import RoomIllustration from '../components/RoomIllustration';
+import ConflictingMeasurements from '../components/ConflictingMeasurements';
 import './InteractiveLesson.css'; // Import the new CSS file
 
 const InteractiveLesson = () => {
@@ -68,8 +69,18 @@ const InteractiveLesson = () => {
             ),
             transitionType: 'manual',
             showNextButton: true,
-            nextButtonText: 'Done Playing',
+            nextButtonText: 'Next',
             nextButtonDisabled: true,
+        },
+        {
+            id: 5,
+            type: 'conflicting-measurements',
+            tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. But the room didn't change! Who is right? This is confusing, isn't it?",
+            content: <ConflictingMeasurements />,
+            transitionType: 'manual',
+            showNextButton: true,
+            nextButtonText: 'I don\'t know!',
+            nextButtonDisabled: false,
         },
     ], [userName]);
 
@@ -171,15 +182,18 @@ const InteractiveLesson = () => {
         console.log("Animation complete for interaction:", currentInteractionData?.type);
         setAnimationTrigger(false); // Reset trigger
 
+        // This logic correctly handles both auto and manual transitions.
+        // For 'manual', it enables the button. For 'auto', it proceeds.
         if (currentInteractionData?.transitionType === 'auto') {
             const nextInteraction = currentInteraction + 1;
             if (nextInteraction < interactions.length) {
                 setCurrentInteraction(nextInteraction);
             }
-        } else {
+        } else if (currentInteractionData?.transitionType === 'manual') {
+            // Only enable the button, don't transition
             setInteractionState(prev => ({ ...prev, nextButtonDisabled: false }));
         }
-    }, [currentInteraction, interactions, currentInteractionData]);
+    }, [currentInteraction, interactions.length, currentInteractionData]);
 
 
     const TutorPanelContent = () => (
@@ -206,18 +220,6 @@ const InteractiveLesson = () => {
             </div>
         </>
     );
-
-    const renderButton = () => {
-        if (showWelcomeButton && currentInteractionData?.type === 'welcome') {
-            return <button onClick={handleButtonClick} className="lesson-button lets-go-button">Let's Go!</button>;
-        }
-
-        if (currentInteractionData?.showNextButton) {
-            return <button onClick={handleButtonClick} disabled={interactionState.nextButtonDisabled} className="lesson-button">{currentInteractionData.nextButtonText}</button>;
-        }
-        return null;
-    };
-
 
     return (
         <div className={`interactive-lesson-container ${!showDualPanel ? 'fullscreen-view' : ''}`}>
