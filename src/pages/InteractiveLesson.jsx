@@ -7,6 +7,7 @@ import RoomIllustration from '../components/RoomIllustration';
 import ConflictingMeasurements from '../components/ConflictingMeasurements';
 import StandardUnits from '../components/StandardUnits';
 import RulerMeasurement from '../components/RulerMeasurement';
+import MeterStick from '../components/MeterStick';
 import './InteractiveLesson.css'; // Import the new CSS file
 
 const InteractiveLesson = () => {
@@ -99,7 +100,17 @@ const InteractiveLesson = () => {
             content: <RulerMeasurement />,
             transitionType: 'manual',
             showNextButton: true,
-            nextButtonText: 'Next Unit',
+            nextButtonText: 'Learn the Next Unit',
+            nextButtonDisabled: true,
+        },
+        {
+            id: 8,
+            type: 'meter-measurement',
+            tutorText: "Next is the meter (m). A meter is much bigger! It's made of 100 centimeters all lined up. We use meters to measure larger objects, like the height of a door or the length of a room.",
+            content: <MeterStick />,
+            transitionType: 'manual',
+            showNextButton: true,
+            nextButtonText: 'Continue',
             nextButtonDisabled: true,
         },
     ], [userName]);
@@ -146,7 +157,8 @@ const InteractiveLesson = () => {
         setIsWaving(false);
 
         const currentData = interactions[currentInteraction];
-        const isAnimationInteraction = currentData?.type === 'footsteps-animation' || currentData?.type === 'footsteps-animation-friend' || currentData?.type === 'ruler-measurement';
+        // Fixed: Include both ruler-measurement and meter-measurement for animations
+        const isAnimationInteraction = currentData?.type === 'footsteps-animation' || currentData?.type === 'footsteps-animation-friend' || currentData?.type === 'ruler-measurement' || currentData?.type === 'meter-measurement';
 
         if (isAnimationInteraction) {
             setAnimationTrigger(true);

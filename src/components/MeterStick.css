@@ -1,0 +1,75 @@
+.meter-stick-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.meter-stick-visuals {
+    position: relative;
+    height: 400px;
+    /* Main canvas for the animation */
+    width: 100px;
+    display: flex;
+    justify-content: center;
+}
+
+.meter-stick {
+    position: absolute;
+    bottom: 0;
+    width: 40px;
+    background: #B0BEC5;
+    border: 2px solid #546E7A;
+    border-radius: 5px;
+}
+
+.meter-mark-container {
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+
+.meter-mark-line {
+    position: absolute;
+    left: -10px;
+    height: 2px;
+    width: 10px;
+    background-color: #37474F;
+}
+
+.meter-mark-number {
+    position: absolute;
+    left: -45px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.door-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 60px;
+}
+
+.door-icon {
+    height: 502px;
+    /* Match the final stick height */
+    width: auto;
+    color: #A1887F;
+}
+
+.measurement-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 8px 15px;
+    border-radius: 8px;
+}
