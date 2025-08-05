@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import TutorAvatar from '../components/TutorAvatar';
 import TTSManager from '../components/TTSManager';
 import RoomIllustration from '../components/RoomIllustration';
 import ConflictingMeasurements from '../components/ConflictingMeasurements';
+import StandardUnits from '../components/StandardUnits';
 import './InteractiveLesson.css'; // Import the new CSS file
 
 const InteractiveLesson = () => {
@@ -77,10 +79,17 @@ const InteractiveLesson = () => {
             type: 'conflicting-measurements',
             tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. But the room didn't change! Who is right? This is confusing, isn't it?",
             content: <ConflictingMeasurements />,
-            transitionType: 'manual',
+            transitionType: 'auto',
+        },
+        {
+            id: 6,
+            type: 'standard-units-explanation',
+            tutorText: "To solve this problem, people all over the world agreed to use standard units. This means everyone's 'footstep' is the exact same size, so we always get the same answer!",
+            content: <StandardUnits />,
+            transitionType: 'manual', // Will pause here for the next step
             showNextButton: true,
-            nextButtonText: 'I don\'t know!',
-            nextButtonDisabled: false,
+            nextButtonText: 'Continue',
+            nextButtonDisabled: true,
         },
     ], [userName]);
 
@@ -232,11 +241,13 @@ const InteractiveLesson = () => {
                     </div>
                     <div className="right-panel">
                         <div className="content-panel">
-                            {currentInteractionData.content && React.cloneElement(currentInteractionData.content, {
-                                key: currentInteraction, // Ensures component re-mounts on interaction change
-                                startAnimation: animationTrigger,
-                                onAnimationComplete: handleAnimationComplete
-                            })}
+                            <AnimatePresence mode="wait">
+                                {currentInteractionData.content && React.cloneElement(currentInteractionData.content, {
+                                    key: currentInteraction, // Ensures component re-mounts on interaction change
+                                    startAnimation: animationTrigger,
+                                    onAnimationComplete: handleAnimationComplete
+                                })}
+                            </AnimatePresence>
                         </div>
                     </div>
                 </>

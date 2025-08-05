@@ -1,0 +1,22 @@
+.standard-units-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-family: 'Poppins', 'Verdana', sans-serif;
+}
+
+.standard-units-text {
+    font-size: 5rem;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    text-shadow:
+        0 0 10px #fff,
+        0 0 20px #fff,
+        0 0 30px #00aaff,
+        0 0 40px #00aaff,
+        0 0 50px #00aaff;
+    letter-spacing: 2px;
+}
