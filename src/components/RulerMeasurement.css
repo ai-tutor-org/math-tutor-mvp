@@ -1,0 +1,84 @@
+.ruler-measurement-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+}
+
+.ruler-zoom-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.ruler {
+    position: relative;
+    width: 502px;
+    /* 50px per cm * 10 + 2px border */
+    /* 50px per cm * 10 + 50px buffer */
+    height: 60px;
+    background: linear-gradient(to right, #f7d8aF, #e7c59a);
+    border: 2px solid #6b4f3a;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.ruler-mark-element {
+    position: absolute;
+    top: 0;
+    height: 100%;
+}
+
+.ruler-mark-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 2px;
+    background-color: #6b4f3a;
+    border-radius: 1px;
+}
+
+.ruler-number {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #6b4f3a;
+}
+
+.paperclip-container {
+    position: absolute;
+    top: -60px;
+    left: 3px;
+    width: 150px;
+    /* 3cm * 50px/cm */
+    height: 40px;
+    /* Increased height for better visual */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paperclip-icon {
+    font-size: 134px;
+    object-fit: contain;
+    color: #8D99AE;
+    transform: rotate(225deg);
+}
+
+.measurement-text {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}

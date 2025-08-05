@@ -6,6 +6,7 @@ import TTSManager from '../components/TTSManager';
 import RoomIllustration from '../components/RoomIllustration';
 import ConflictingMeasurements from '../components/ConflictingMeasurements';
 import StandardUnits from '../components/StandardUnits';
+import RulerMeasurement from '../components/RulerMeasurement';
 import './InteractiveLesson.css'; // Import the new CSS file
 
 const InteractiveLesson = () => {
@@ -91,6 +92,16 @@ const InteractiveLesson = () => {
             nextButtonText: 'Continue',
             nextButtonDisabled: true,
         },
+        {
+            id: 7,
+            type: 'ruler-measurement',
+            tutorText: "Let's learn two of the most common standard units from the Metric System. First up is the centimeter (cm). It's very small, perfect for measuring little things, like this paper clip.",
+            content: <RulerMeasurement />,
+            transitionType: 'manual',
+            showNextButton: true,
+            nextButtonText: 'Next Unit',
+            nextButtonDisabled: true,
+        },
     ], [userName]);
 
     const safeCurrentInteraction = Math.min(currentInteraction, interactions.length - 1);
@@ -135,7 +146,7 @@ const InteractiveLesson = () => {
         setIsWaving(false);
 
         const currentData = interactions[currentInteraction];
-        const isAnimationInteraction = currentData?.type === 'footsteps-animation' || currentData?.type === 'footsteps-animation-friend';
+        const isAnimationInteraction = currentData?.type === 'footsteps-animation' || currentData?.type === 'footsteps-animation-friend' || currentData?.type === 'ruler-measurement';
 
         if (isAnimationInteraction) {
             setAnimationTrigger(true);
@@ -150,8 +161,11 @@ const InteractiveLesson = () => {
                 }
             }, 500);
         } else if (currentData?.type === 'welcome') {
-            // For the welcome message, show the button after speech
+            // Specifically for the welcome message, show the button after speech
             setTimeout(() => setShowWelcomeButton(true), 500);
+        } else if (currentData?.transitionType === 'manual' && !isAnimationInteraction) {
+            // For other manual transitions that are NOT animations, enable their button
+            setInteractionState(prev => ({ ...prev, nextButtonDisabled: false }));
         }
     }, [currentInteraction, interactions]);
 
