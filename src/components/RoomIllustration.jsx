@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import './RoomIllustration.css';
 import { FaShoePrints } from 'react-icons/fa';
 
@@ -12,35 +12,39 @@ const RoomIllustration = ({
     previousResultText = null,
 }) => {
     const [stepCounter, setStepCounter] = useState(0);
-    const [animationComplete, setAnimationComplete] = useState(false);
+    const [isInteractive, setIsInteractive] = useState(false);
     const [showPreviousResult, setShowPreviousResult] = useState(false);
-    const controls = useAnimation();
 
     useEffect(() => {
         if (startAnimation) {
             setStepCounter(0);
-            setAnimationComplete(false);
-            controls.start("visible");
-
-            // This is a visual trick, the counter updates based on the expected
-            // animation delay of each footstep.
-            for (let i = 1; i <= totalSteps; i++) {
-                setTimeout(() => setStepCounter(i), i * 300);
-            }
-
-        } else {
-            controls.set("hidden");
+            setIsInteractive(true);
         }
-    }, [startAnimation, controls, totalSteps]);
+    }, [startAnimation]);
 
     useEffect(() => {
         if (previousResultText) {
             setShowPreviousResult(true);
-            setAnimationComplete(true);
         }
     }, [previousResultText]);
 
-    const currentResultText = stepCounter > 0 ? `${stepCounter} step${stepCounter > 1 ? 's' : ''}` : 'Counting...';
+    useEffect(() => {
+        // When all steps are completed, automatically move to next interaction
+        if (stepCounter === totalSteps && stepCounter > 0) {
+            setTimeout(() => {
+                setIsInteractive(false);
+                if (onAnimationComplete) {
+                    onAnimationComplete();
+                }
+            }, 1000); // Brief pause to show completion
+        }
+    }, [stepCounter, totalSteps, onAnimationComplete]);
+
+    const handleTakeStep = () => {
+        if (stepCounter < totalSteps) {
+            setStepCounter(prev => prev + 1);
+        }
+    };
 
     const xPos = (index) => {
         const roomWidth = 500;
@@ -54,40 +58,16 @@ const RoomIllustration = ({
         return wallThickness + index * (footIconSize + gap);
     };
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.3,
-            },
-        },
-    };
-
-    const footVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
-    };
+    const currentResultText = stepCounter > 0 ? `${stepCounter} step${stepCounter > 1 ? 's' : ''}` : 'Ready to start!';
 
     return (
         <div className="room-illustration-container">
             <div className="counters-container">
-                {stepCounter > 0 && !animationComplete && (
-                    <motion.div
-                        key={stepCounter}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="step-counter"
-                    >
-                        {stepCounter}
-                    </motion.div>
-                )}
-                {animationComplete && (
-                    <div className="step-counter final">
-                        {currentResultText}
-                    </div>
-                )}
+                <div className="step-counter">
+                    {currentResultText}
+                </div>
             </div>
+
             <div className="room-rectangle">
                 {!startAnimation && !previousResultText && (
                     <>
@@ -95,35 +75,27 @@ const RoomIllustration = ({
                         <div className="question-mark">?</div>
                     </>
                 )}
-                <motion.div
-                    className="feet-container"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate={controls}
-                    onAnimationComplete={() => {
-                        if (startAnimation) {
-                            setAnimationComplete(true);
-                            if (onAnimationComplete) {
-                                setTimeout(onAnimationComplete, 500);
-                            }
-                        }
-                    }}
-                >
-                    {Array.from({ length: totalSteps }).map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="foot"
-                            variants={footVariants}
-                            style={{
-                                left: `${xPos(i)}px`,
-                                fontSize: `${footIconSize}px`,
-                                color: footIconColor,
-                            }}
-                        >
-                            <FaShoePrints />
-                        </motion.div>
-                    ))}
-                </motion.div>
+
+                <div className="feet-container">
+                    <AnimatePresence>
+                        {Array.from({ length: stepCounter }).map((_, i) => (
+                            <motion.div
+                                key={i}
+                                className="foot"
+                                initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{ duration: 0.3 }}
+                                style={{
+                                    left: `${xPos(i)}px`,
+                                    fontSize: `${footIconSize}px`,
+                                    color: footIconColor,
+                                }}
+                            >
+                                <FaShoePrints />
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </div>
 
                 {previousResultText && (
                     <div className="previous-step-counter">
@@ -132,8 +104,31 @@ const RoomIllustration = ({
                 )}
             </div>
 
+            {isInteractive && stepCounter < totalSteps && (
+                <div className="interactive-controls">
+                    <button
+                        className="step-button"
+                        onClick={handleTakeStep}
+                    >
+                        Take a Step
+                    </button>
+                </div>
+            )}
+
+            {stepCounter === totalSteps && stepCounter > 0 && (
+                <div className="completion-message">
+                    <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="completion-text"
+                    >
+                        Great! You walked {totalSteps} steps across the room!
+                    </motion.p>
+                </div>
+            )}
+
             <p className="room-label">
-                {startAnimation ? `Walking across the room...` : 'A top-down view of a room'}
+                {isInteractive ? `Click the button to take each step!` : 'A top-down view of a room'}
             </p>
         </div>
     );
