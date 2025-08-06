@@ -56,8 +56,9 @@ const InteractiveLesson = () => {
             id: 3,
             type: 'footsteps-animation',
             tutorText: "A common way is to use footsteps! Let's try it. Help me walk from one side to the other by clicking the button for each step.",
-            content: <RoomIllustration />,
-            transitionType: 'auto',
+            content: <RoomIllustration totalSteps={10} />,
+            transitionType: 'manual',
+            showNextButton: false, // The button is inside the component
         },
         {
             id: 4,
@@ -71,7 +72,8 @@ const InteractiveLesson = () => {
                     previousResultText="You: 10 steps"
                 />
             ),
-            transitionType: 'auto',
+            transitionType: 'manual',
+            showNextButton: false, // The button is inside the component
         },
         {
             id: 5,
@@ -154,7 +156,6 @@ const InteractiveLesson = () => {
         setIsWaving(false);
 
         const currentData = interactions[currentInteraction];
-        // Fixed: Include both ruler-measurement and meter-measurement for animations
         const isAnimationInteraction = currentData?.type === 'footsteps-animation' || currentData?.type === 'footsteps-animation-friend' || currentData?.type === 'ruler-measurement' || currentData?.type === 'meter-measurement';
 
         if (isAnimationInteraction) {
@@ -222,8 +223,16 @@ const InteractiveLesson = () => {
                 setCurrentInteraction(nextInteraction);
             }
         } else if (currentInteractionData?.transitionType === 'manual') {
-            // Only enable the button, don't transition
-            setInteractionState(prev => ({ ...prev, nextButtonDisabled: false }));
+            const isFootsteps = currentInteractionData.type.includes('footsteps');
+            if (isFootsteps) {
+                const nextInteraction = currentInteraction + 1;
+                if (nextInteraction < interactions.length) {
+                    setCurrentInteraction(nextInteraction);
+                }
+            } else {
+                // For other manual animations, enable the next button
+                setInteractionState(prev => ({ ...prev, nextButtonDisabled: false }));
+            }
         }
     }, [currentInteraction, interactions.length, currentInteractionData]);
 

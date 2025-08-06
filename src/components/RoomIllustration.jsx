@@ -1,135 +1,129 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FaShoePrints, FaQuestion } from 'react-icons/fa';
 import './RoomIllustration.css';
-import { FaShoePrints } from 'react-icons/fa';
 
 const RoomIllustration = ({
+    totalSteps = 0,
+    footIconColor = '#000',
+    previousResultText = '',
+    buttonText = 'Take a Step',
     startAnimation = false,
     onAnimationComplete,
-    totalSteps = 10,
-    footIconSize = 24,
-    footIconColor = '#333',
-    previousResultText = null,
 }) => {
     const [stepCounter, setStepCounter] = useState(0);
-    const [isInteractive, setIsInteractive] = useState(false);
-    const [showPreviousResult, setShowPreviousResult] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    // --- Final Corrected Sizing and Positioning Logic ---
+
+    const { dynamicFootSize, stepPositions } = useMemo(() => {
+        const roomWidth = 500;
+        const wallThickness = 10;
+        const availableWidth = roomWidth - (wallThickness * 2); // 480px
+
+        if (totalSteps <= 0) {
+            return { dynamicFootSize: 0, stepPositions: [] };
+        }
+
+        // 1. Calculate the width of each step's "slot".
+        const slotWidth = availableWidth / totalSteps;
+
+        // 2. The foot icon size is 90% of the slot to create small, consistent gaps.
+        const footSize = slotWidth * 0.9;
+
+        // 3. Position each foot in the center of its slot.
+        const positions = [];
+        for (let i = 0; i < totalSteps; i++) {
+            const slotStart = i * slotWidth;
+            const footOffsetInSlot = (slotWidth - footSize) / 2;
+            positions.push(wallThickness + slotStart + footOffsetInSlot);
+        }
+
+        return { dynamicFootSize: footSize, stepPositions: positions };
+
+    }, [totalSteps]);
+
+    const xPos = (index) => {
+        return stepPositions[index] || 0;
+    };
+
+    // --- End of Corrected Logic ---
+
 
     useEffect(() => {
         if (startAnimation) {
-            setStepCounter(0);
-            setIsInteractive(true);
+            setStepCounter(0); // Reset for new animation
+            setIsAnimating(true);
         }
     }, [startAnimation]);
 
     useEffect(() => {
-        if (previousResultText) {
-            setShowPreviousResult(true);
-        }
-    }, [previousResultText]);
-
-    useEffect(() => {
-        // When all steps are completed, automatically move to next interaction
-        if (stepCounter === totalSteps && stepCounter > 0) {
+        // When all steps are completed, automatically move to the next interaction
+        if (isAnimating && stepCounter === totalSteps && totalSteps > 0) {
+            setIsAnimating(false);
             setTimeout(() => {
-                setIsInteractive(false);
                 if (onAnimationComplete) {
                     onAnimationComplete();
                 }
             }, 1000); // Brief pause to show completion
         }
-    }, [stepCounter, totalSteps, onAnimationComplete]);
+    }, [stepCounter, totalSteps, onAnimationComplete, isAnimating]);
 
-    const handleTakeStep = () => {
+
+    const handleStepClick = () => {
         if (stepCounter < totalSteps) {
             setStepCounter(prev => prev + 1);
         }
     };
 
-    const xPos = (index) => {
-        const roomWidth = 500;
-        const wallThickness = 10;
-        if (totalSteps <= 1) {
-            return wallThickness + (roomWidth / 2) - (footIconSize / 2);
-        }
-        const totalIconWidth = totalSteps * footIconSize;
-        const remainingSpace = roomWidth - totalIconWidth;
-        const gap = remainingSpace / (totalSteps - 1);
-        return wallThickness + index * (footIconSize + gap);
-    };
-
-    const currentResultText = stepCounter > 0 ? `${stepCounter} step${stepCounter > 1 ? 's' : ''}` : 'Ready to start!';
 
     return (
         <div className="room-illustration-container">
-            <div className="counters-container">
-                <div className="step-counter">
-                    {currentResultText}
-                </div>
-            </div>
-
             <div className="room-rectangle">
-                {!startAnimation && !previousResultText && (
-                    <>
-                        <div className="dimension-line"></div>
-                        <div className="question-mark">?</div>
-                    </>
-                )}
+                {previousResultText && <div className="previous-result-text">{previousResultText}</div>}
 
-                <div className="feet-container">
-                    <AnimatePresence>
-                        {Array.from({ length: stepCounter }).map((_, i) => (
-                            <motion.div
-                                key={i}
-                                className="foot"
-                                initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                transition={{ duration: 0.3 }}
-                                style={{
-                                    left: `${xPos(i)}px`,
-                                    fontSize: `${footIconSize}px`,
-                                    color: footIconColor,
-                                }}
-                            >
-                                <FaShoePrints />
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
-                </div>
-
-                {previousResultText && (
-                    <div className="previous-step-counter">
-                        {previousResultText}
-                    </div>
-                )}
-            </div>
-
-            {isInteractive && stepCounter < totalSteps && (
-                <div className="interactive-controls">
-                    <button
-                        className="step-button"
-                        onClick={handleTakeStep}
+                {totalSteps === 0 && !isAnimating && (
+                    <motion.div className="flashing-question-mark"
+                        animate={{ opacity: [0.2, 1, 0.2] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
                     >
-                        Take a Step
+                        <FaQuestion />
+                    </motion.div>
+                )}
+
+                <AnimatePresence>
+                    {Array.from({ length: stepCounter }).map((_, i) => (
+                        <motion.div
+                            key={i}
+                            className="foot" // Corrected class name
+                            initial={{ opacity: 0, x: xPos(i) }}
+                            animate={{ opacity: 1, x: xPos(i) }}
+                            exit={{ opacity: 0 }}
+                            style={{
+                                fontSize: `${dynamicFootSize}px`,
+                                color: footIconColor,
+                                width: `${dynamicFootSize}px`,
+                                height: `${dynamicFootSize}px`
+                            }}
+                        >
+                            <FaShoePrints style={{ width: '100%', height: '100%' }} />
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            </div>
+            <div className="footstep-counter">{stepCounter > 0 && `${stepCounter} step${stepCounter > 1 ? 's' : ''} taken`}</div>
+
+            {isAnimating && (
+                <div className="interaction-controls">
+                    <button
+                        onClick={handleStepClick}
+                        className="lesson-button"
+                        disabled={stepCounter >= totalSteps}
+                    >
+                        {buttonText}
                     </button>
                 </div>
             )}
-
-            {stepCounter === totalSteps && stepCounter > 0 && (
-                <div className="completion-message">
-                    <motion.p
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="completion-text"
-                    >
-                        Great! You walked {totalSteps} steps across the room!
-                    </motion.p>
-                </div>
-            )}
-
-            <p className="room-label">
-                {isInteractive ? `Click the button to take each step!` : 'A top-down view of a room'}
-            </p>
         </div>
     );
 };

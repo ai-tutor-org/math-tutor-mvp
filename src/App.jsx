@@ -17,7 +17,7 @@ function App() {
                     <Route path="/chapter" element={<Chapter />} />
                     <Route path="/lesson-start" element={<LessonStart />} />
                     <Route path="/lesson" element={<Lesson />} />
-                    <Route path="/interactive-lesson" element={<InteractiveLesson />} />
+                    <Route path="/lesson/:lessonId" element={<InteractiveLesson />} />
                 </Routes>
             </div>
         </Router>

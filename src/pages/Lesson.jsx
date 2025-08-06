@@ -14,7 +14,7 @@ function Lesson() {
     }, [])
 
     const startInteractiveLesson = () => {
-        navigate('/interactive-lesson')
+        navigate('/lesson/perimeter')
     }
 
     return (

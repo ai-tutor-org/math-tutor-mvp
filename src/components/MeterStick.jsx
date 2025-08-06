@@ -11,7 +11,11 @@ const MeterStick = ({ startAnimation, onAnimationComplete }) => {
             const timers = [
                 setTimeout(() => setStep(1), 500),      // Door appears first
                 setTimeout(() => setStep(2), 1500),     // Meter stick animates after
-                setTimeout(() => onAnimationComplete(), 4000) // End of animation
+                setTimeout(() => {
+                    if (onAnimationComplete) {
+                        onAnimationComplete();
+                    }
+                }, 4000) // End of animation
             ];
             return () => timers.forEach(clearTimeout);
         }
@@ -72,4 +76,4 @@ const MeterStick = ({ startAnimation, onAnimationComplete }) => {
     );
 };
 
-export default MeterStick; 
+export default MeterStick;

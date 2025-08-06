@@ -13,7 +13,11 @@ const RulerMeasurement = ({ startAnimation, onAnimationComplete }) => {
                 setTimeout(() => setStep(2), 2000),     // Zoom in
                 setTimeout(() => setStep(3), 4000),     // Paperclip appears
                 setTimeout(() => setStep(4), 5000),     // Text appears
-                setTimeout(() => onAnimationComplete(), 6500) // End of animation
+                setTimeout(() => {
+                    if (onAnimationComplete) {
+                        onAnimationComplete();
+                    }
+                }, 6500) // End of animation
             ];
             return () => timers.forEach(clearTimeout);
         }

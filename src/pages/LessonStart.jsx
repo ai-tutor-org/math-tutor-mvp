@@ -8,7 +8,7 @@ function LessonStart() {
     const handleStartLesson = (name) => {
         // Save name to localStorage and navigate to the interactive lesson
         localStorage.setItem('userName', name)
-        navigate('/interactive-lesson', { state: { userName: name } })
+        navigate('/lesson/perimeter', { state: { userName: name } })
     }
 
     return (
