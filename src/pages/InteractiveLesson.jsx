@@ -55,14 +55,14 @@ const InteractiveLesson = () => {
         {
             id: 3,
             type: 'footsteps-animation',
-            tutorText: "A common way is to use footsteps! Let's try it. I'll walk from one side to the other and count my steps.",
+            tutorText: "A common way is to use footsteps! Let's try it. Help me walk from one side to the other by clicking the button for each step.",
             content: <RoomIllustration />,
             transitionType: 'auto',
         },
         {
             id: 4,
             type: 'footsteps-animation-friend',
-            tutorText: "Okay, so the room is 10 steps long. Simple enough! But wait... here comes my friend, who has much bigger feet. Let's see what happens when he measures the room.",
+            tutorText: "Okay, so the room is 10 steps long. Simple enough! But wait... here comes my friend, who has much bigger feet. Help him measure the room too - click the button for each of his steps.",
             content: (
                 <RoomIllustration
                     totalSteps={8}
@@ -71,10 +71,7 @@ const InteractiveLesson = () => {
                     previousResultText="You: 10 steps"
                 />
             ),
-            transitionType: 'manual',
-            showNextButton: true,
-            nextButtonText: 'Next',
-            nextButtonDisabled: true,
+            transitionType: 'auto',
         },
         {
             id: 5,
@@ -90,7 +87,7 @@ const InteractiveLesson = () => {
             content: <StandardUnits />,
             transitionType: 'manual', // Will pause here for the next step
             showNextButton: true,
-            nextButtonText: 'Continue',
+            nextButtonText: 'Show Me Standard Units!',
             nextButtonDisabled: true,
         },
         {
