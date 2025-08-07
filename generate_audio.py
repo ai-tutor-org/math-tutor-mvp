@@ -89,6 +89,11 @@ def generate_audio(text, filename, voice_id=VOICE_ID):
             voice_id=voice_id,
             model_id="eleven_flash_v2_5",
             output_format="mp3_44100_128",
+            voice_settings={
+                "speed": 0.9,
+                "stability": 0.5,
+                "similarity_boost": 0.75
+            }
         )
         
         # Save the audio to file
