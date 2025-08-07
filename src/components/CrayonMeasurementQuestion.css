@@ -1,0 +1,63 @@
+.crayon-measurement-question {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.crayon-icon {
+    font-size: 100px;
+    /* Make the icon large */
+    margin: 20px 0;
+    color: #FFD700;
+    /* A gold/yellow color for the crayon */
+}
+
+.choices {
+    display: flex;
+    gap: 20px;
+}
+
+.choices button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    border: 2px solid #4A90E2;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.choices button:hover {
+    background-color: #4A90E2;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.choices button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.choices button.correct {
+    background-color: #27ae60;
+    color: white;
+    border-color: #27ae60;
+}
+
+.choices button.incorrect {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+}
+
+.feedback-icon {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 1.1em;
+}

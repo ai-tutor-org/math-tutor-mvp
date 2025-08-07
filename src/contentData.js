@@ -3,7 +3,8 @@ import {
     ConflictingMeasurements,
     StandardUnits,
     RulerMeasurement,
-    MeterStick
+    MeterStick,
+    CrayonMeasurementQuestion
 } from './components';
 
 export const lessons = {
@@ -41,6 +42,14 @@ export const lessons = {
             {
                 presentationId: 'meter-stick-example',
                 transition: { type: 'manual', buttonText: "Continue" }
+            },
+            {
+                presentationId: 'crayon-measurement-question',
+                transition: { type: 'auto' }
+            },
+            {
+                presentationId: 'perimeter-activity-intro',
+                transition: { type: 'auto' }
             },
         ]
     }
@@ -89,7 +98,7 @@ export const presentations = {
                     footIconColor: '#4A90E2',
                     buttonText: "Take a Step"
                 },
-                transitionType: 'auto',
+                transitionType: 'manual',
             }
         ]
     },
@@ -106,7 +115,7 @@ export const presentations = {
                     previousResultText: "You: 10 Steps",
                     buttonText: "Friend's Turn"
                 },
-                transitionType: 'auto',
+                transitionType: 'manual',
             }
         ]
     },
@@ -143,10 +152,6 @@ export const presentations = {
                 ContentComponent: RulerMeasurement,
                 contentProps: { length: 3, unit: 'cm' },
                 transitionType: 'manual',
-                triggerWords: ['paperclip'],
-                onWordBoundary: {
-                    action: 'startAnimation'
-                },
                 showNextButton: true,
                 nextButtonText: 'Next Unit',
             }
@@ -162,8 +167,40 @@ export const presentations = {
                 contentProps: {},
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: 'Finish Lesson',
+                nextButtonText: 'Continue',
             },
+        ]
+    },
+    'crayon-measurement-question': {
+        interactions: [
+            {
+                id: 9,
+                type: 'interactive-question',
+                tutorText: "Time for a quick check! If you wanted to measure a crayon, which unit would you use? Click on the best choice.",
+                ContentComponent: CrayonMeasurementQuestion,
+                contentProps: {
+                    question: "If you wanted to measure a crayon, which unit would you use?",
+                    useIcon: true,
+                    choices: [
+                        { text: 'cm', isCorrect: true },
+                        { text: 'm', isCorrect: false }
+                    ]
+                },
+                transitionType: 'manual',
+            }
+        ]
+    },
+    'perimeter-activity-intro': {
+        interactions: [
+            {
+                id: 10,
+                type: 'tutor-monologue',
+                tutorText: "Great job! Now for a real challenge. You'll see a shape with colored sides. Your mission is to figure out the length of each colored side using a special on-screen ruler that you can drag around. Once you measure a side, enter its length in the input box. Let's see what you've got!",
+                ContentComponent: () => null, // Empty content panel
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Let's Go!",
+            }
         ]
     }
 }; 

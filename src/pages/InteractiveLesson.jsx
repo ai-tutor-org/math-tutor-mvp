@@ -1,291 +1,212 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+
+import { lessons, presentations } from '../contentData'; // Import centralized data
+
 import TutorAvatar from '../components/TutorAvatar';
 import TTSManager from '../components/TTSManager';
+
+// Import all possible content components
 import RoomIllustration from '../components/RoomIllustration';
 import ConflictingMeasurements from '../components/ConflictingMeasurements';
 import StandardUnits from '../components/StandardUnits';
 import RulerMeasurement from '../components/RulerMeasurement';
 import MeterStick from '../components/MeterStick';
-import './InteractiveLesson.css'; // Import the new CSS file
+import CrayonMeasurementQuestion from '../components/CrayonMeasurementQuestion';
+
+import './InteractiveLesson.css';
+
+const componentMap = {
+    'room-question': RoomIllustration,
+    'footsteps-animation': RoomIllustration,
+    'footsteps-animation-friend': RoomIllustration,
+    'conflicting-measurements': ConflictingMeasurements,
+    'standard-units-explanation': StandardUnits,
+    'ruler-measurement': RulerMeasurement,
+    'meter-measurement': MeterStick,
+    'interactive-question': CrayonMeasurementQuestion
+};
 
 const InteractiveLesson = () => {
-    const location = useLocation();
     const navigate = useNavigate();
-    const { userName } = location.state || { userName: 'Explorer' };
+    const location = useLocation();
+    const { userName = 'Explorer', lessonId = 'perimeter' } = location.state || {};
 
-    const [currentInteraction, setCurrentInteraction] = useState(0);
-    const [currentTTSText, setCurrentTTSText] = useState('');
+    // Lesson State
+    const [currentPresIndex, setCurrentPresIndex] = useState(0);
+    const [currentInteractionIndex, setCurrentInteractionIndex] = useState(0);
+
+    // UI State
+    const [layout, setLayout] = useState('full-screen'); // 'full-screen' or 'dual-panel'
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isWaving, setIsWaving] = useState(false);
-    const [showDualPanel, setShowDualPanel] = useState(false);
-    const [showWelcomeButton, setShowWelcomeButton] = useState(false);
     const [animationTrigger, setAnimationTrigger] = useState(false);
-    const [ttsEnabled, setTtsEnabled] = useState(true);
-    const interactionRef = useRef(currentInteraction);
+    const [showNextButton, setShowNextButton] = useState(false);
+    const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
 
-    const [interactionState, setInteractionState] = useState({
-        nextButtonDisabled: true,
-    });
+    // Data from contentData.js
+    const lesson = useMemo(() => lessons[lessonId], [lessonId]);
+    const presentationId = useMemo(() => lesson.sequence[currentPresIndex]?.presentationId, [lesson, currentPresIndex]);
+    const presentation = useMemo(() => presentations[presentationId], [presentationId]);
+    const interaction = useMemo(() => presentation?.interactions[currentInteractionIndex], [presentation, currentInteractionIndex]);
 
-    const interactions = useMemo(() => [
-        {
-            id: 0,
-            type: 'welcome',
-            tutorText: `Hey there, ${userName}! I'm Vyas, your personal tutor. 😊 I'm so excited to explore the world of shapes and sizes with you. Ready to start our first adventure?`,
-            content: null,
-            transitionType: 'manual',
-        },
-        {
-            id: 1,
-            type: 'tutor-monologue',
-            tutorText: "Awesome! Now I'm going to move over here to the left side so we can see our learning space better!",
-            content: null,
-            transitionType: 'auto',
-            layoutChange: 'dual-panel',
-        },
-        {
-            id: 2,
-            type: 'room-question',
-            tutorText: "Perfect! Let's start with a simple question. Imagine this is your room. How would you figure out how long it is from one wall to the other?",
-            content: <RoomIllustration />,
-            transitionType: 'auto',
-        },
-        {
-            id: 3,
-            type: 'footsteps-animation',
-            tutorText: "A common way is to use footsteps! Let's try it. Help me walk from one side to the other by clicking the button for each step.",
-            content: <RoomIllustration totalSteps={10} />,
-            transitionType: 'manual',
-            showNextButton: false, // The button is inside the component
-        },
-        {
-            id: 4,
-            type: 'footsteps-animation-friend',
-            tutorText: "Okay, so the room is 10 steps long. Simple enough! But wait... here comes my friend, who has much bigger feet. Help him measure the room too - click the button for each of his steps.",
-            content: (
-                <RoomIllustration
-                    totalSteps={8}
-                    footIconSize={40}
-                    footIconColor="#A1887F"
-                    previousResultText="You: 10 steps"
-                />
-            ),
-            transitionType: 'manual',
-            showNextButton: false, // The button is inside the component
-        },
-        {
-            id: 5,
-            type: 'conflicting-measurements',
-            tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. But the room didn't change! Who is right? This is confusing, isn't it?",
-            content: <ConflictingMeasurements />,
-            transitionType: 'auto',
-        },
-        {
-            id: 6,
-            type: 'standard-units-explanation',
-            tutorText: "To solve this problem, people all over the world agreed to use standard units. This means everyone's 'footstep' is the exact same size, so we always get the same answer!",
-            content: <StandardUnits />,
-            transitionType: 'manual', // Will pause here for the next step
-            showNextButton: true,
-            nextButtonText: 'Show Me Standard Units!',
-            nextButtonDisabled: true,
-        },
-        {
-            id: 7,
-            type: 'ruler-measurement',
-            tutorText: "Let's learn two of the most common standard units from the Metric System. First up is the centimeter (cm). It's very small, perfect for measuring little things, like this paper clip.",
-            content: <RulerMeasurement />,
-            transitionType: 'manual',
-            showNextButton: true,
-            nextButtonText: 'Learn the Next Unit',
-            nextButtonDisabled: true,
-        },
-        {
-            id: 8,
-            type: 'meter-measurement',
-            tutorText: "Next is the meter (m). A meter is much bigger! It's made of 100 centimeters all lined up. We use meters to measure larger objects, like the height of a door or the length of a room.",
-            content: <MeterStick />,
-            transitionType: 'manual',
-            showNextButton: true,
-            nextButtonText: 'Continue',
-            nextButtonDisabled: true,
-        },
-    ], [userName]);
+    const advanceToNext = useCallback(() => {
+        setAnimationTrigger(false); // Reset trigger for the next interaction
 
-    const safeCurrentInteraction = Math.min(currentInteraction, interactions.length - 1);
-    const currentInteractionData = interactions[safeCurrentInteraction];
+        if (!presentation || !lesson) return;
 
+        const nextInteractionIndex = currentInteractionIndex + 1;
+        if (nextInteractionIndex < presentation.interactions.length) {
+            setCurrentInteractionIndex(nextInteractionIndex);
+        } else {
+            const nextPresIndex = currentPresIndex + 1;
+            if (nextPresIndex < lesson.sequence.length) {
+                setCurrentPresIndex(nextPresIndex);
+                setCurrentInteractionIndex(0);
+            } else {
+                console.log("End of lesson.");
+                navigate('/'); // Navigate home
+            }
+        }
+    }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
+
+    const handleAnimationComplete = useCallback(() => {
+        if (interaction?.transitionType === 'manual' && interaction.showNextButton) {
+            setShowNextButton(true);
+        } else {
+            advanceToNext();
+        }
+    }, [interaction, advanceToNext]);
+
+    const handleAnswer = (answerData) => {
+        console.log('Answer selected:', answerData);
+
+        // If this is a crayon measurement question with tutor response
+        if (answerData.tutorResponse) {
+            // Update the tutor text to the feedback response
+            setDynamicTutorText(answerData.tutorResponse);
+            // Show the next button to proceed to the next interaction
+            setShowNextButton(true);
+        } else {
+            // For other question types, advance as before
+            advanceToNext();
+        }
+    };
+
+    // Render Content Component
+    const renderContent = () => {
+        if (!interaction) return null;
+
+        const Component = componentMap[interaction.type];
+        if (!Component) return null;
+
+        let props = {
+            key: `${currentPresIndex}-${currentInteractionIndex}`,
+            ...interaction.contentProps,
+            onAnimationComplete: handleAnimationComplete,
+            startAnimation: animationTrigger,
+        };
+
+        if (interaction.type === 'interactive-question') {
+            props.content = interaction.contentProps;
+            props.onAnswer = handleAnswer;
+        }
+
+        return <Component {...props} />;
+    };
+
+
+    // Effect to handle layout changes and initial setup
     useEffect(() => {
-        // This effect runs only once on mount and cleans up on unmount.
-        // It's a failsafe to ensure speech is cancelled when navigating away.
+        if (interaction?.layoutChange === 'dual-panel') {
+            setLayout('dual-panel');
+        }
+        // For welcome, button starts hidden and shows after TTS
+        // For others, respect the showNextButton property
+        if (interaction?.type === 'welcome') {
+            setShowNextButton(false);
+        } else {
+            setShowNextButton(interaction?.showNextButton ?? false);
+        }
+
+        // Reset dynamic tutor text when interaction changes
+        setDynamicTutorText(null);
+    }, [interaction]);
+
+    // TTS Callbacks
+    const handleTTSEnd = useCallback(() => {
+        setIsSpeaking(false);
+        setIsWaving(false);
+
+        // This should ONLY trigger for animations that start immediately after speech.
+        const shouldAutoAnimate = interaction?.type.startsWith('footsteps-') ||
+            interaction?.type === 'meter-measurement' ||
+            interaction?.type === 'ruler-measurement';
+
+        if (interaction?.transitionType === 'auto') {
+            setTimeout(advanceToNext, 500);
+        } else if (interaction?.type === 'welcome') {
+            setTimeout(() => setShowNextButton(true), 500);
+        } else if (shouldAutoAnimate) {
+            // Specifically trigger footsteps, meter stick, or ruler animation after speech
+            setAnimationTrigger(true);
+        } else if (interaction?.showNextButton) {
+            // For all other manual transitions, just show the button.
+            setShowNextButton(true);
+        }
+    }, [interaction, advanceToNext]);
+
+    const handleTTSStart = useCallback(() => {
+        setIsSpeaking(true);
+        if (interaction?.type === 'welcome') {
+            setIsWaving(true);
+        }
+    }, [interaction]);
+
+    const tutorText = dynamicTutorText || (interaction?.tutorText.replace('{userName}', userName) ?? '');
+
+    // Effect to cancel speech on unmount
+    useEffect(() => {
         return () => {
             if (window.speechSynthesis) {
                 window.speechSynthesis.cancel();
             }
         };
-    }, []); // Empty dependency array is crucial here.
-
-    useEffect(() => {
-        const interactionData = interactions[currentInteraction];
-        if (!interactionData) return;
-
-        setInteractionState({
-            nextButtonDisabled: interactionData.nextButtonDisabled !== false,
-        });
-
-        if (interactionData.layoutChange === 'dual-panel' && !showDualPanel) {
-            setShowDualPanel(true);
-        }
-
-        if (interactionData.tutorText) {
-            setCurrentTTSText(interactionData.tutorText);
-        } else {
-            setCurrentTTSText('');
-        }
-    }, [currentInteraction, interactions]);
-
-    const handleTTSEnd = useCallback(() => {
-        if (interactionRef.current !== currentInteraction) {
-            console.log("TTSManager end event for a stale interaction. Ignoring.", { current: interactionRef.current, active: currentInteraction });
-            return;
-        }
-
-        setIsSpeaking(false);
-        setIsWaving(false);
-
-        const currentData = interactions[currentInteraction];
-        const isAnimationInteraction = currentData?.type === 'footsteps-animation' || currentData?.type === 'footsteps-animation-friend' || currentData?.type === 'ruler-measurement' || currentData?.type === 'meter-measurement';
-
-        if (isAnimationInteraction) {
-            setAnimationTrigger(true);
-        }
-
-        // Handle auto-transitions after a brief pause, but NOT for animations (they have their own trigger)
-        if (currentData?.transitionType === 'auto' && !isAnimationInteraction) {
-            setTimeout(() => {
-                const nextInteraction = currentInteraction + 1;
-                if (nextInteraction < interactions.length) {
-                    setCurrentInteraction(nextInteraction);
-                }
-            }, 500);
-        } else if (currentData?.type === 'welcome') {
-            // Specifically for the welcome message, show the button after speech
-            setTimeout(() => setShowWelcomeButton(true), 500);
-        } else if (currentData?.transitionType === 'manual' && !isAnimationInteraction) {
-            // For other manual transitions that are NOT animations, enable their button
-            setInteractionState(prev => ({ ...prev, nextButtonDisabled: false }));
-        }
-    }, [currentInteraction, interactions]);
-
-    const handleTTSStart = useCallback(() => {
-        interactionRef.current = currentInteraction;
-        setIsSpeaking(true);
-        if (interactions[currentInteraction]?.type === 'welcome') {
-            setIsWaving(true);
-        }
-    }, [currentInteraction, interactions]);
-
-    const handleTTSError = useCallback((error) => {
-        console.error("TTS Error:", error);
-        if (error.toString().toLowerCase() !== 'interrupted') {
-            setTtsEnabled(false);
-        }
-        handleTTSEnd();
-    }, [handleTTSEnd]);
-
-    const handleButtonClick = useCallback(() => {
-        if (currentInteractionData?.type === 'welcome') {
-            setShowWelcomeButton(false);
-            setCurrentInteraction(1);
-        } else {
-            const nextInteraction = currentInteraction + 1;
-            if (nextInteraction < interactions.length) {
-                setCurrentInteraction(nextInteraction);
-                setAnimationTrigger(false);
-            } else {
-                console.log("End of lesson.");
-                navigate('/');
-            }
-        }
-    }, [currentInteraction, interactions.length, navigate, currentInteractionData]);
-
-    const handleAnimationComplete = useCallback(() => {
-        console.log("Animation complete for interaction:", currentInteractionData?.type);
-        setAnimationTrigger(false); // Reset trigger
-
-        // This logic correctly handles both auto and manual transitions.
-        // For 'manual', it enables the button. For 'auto', it proceeds.
-        if (currentInteractionData?.transitionType === 'auto') {
-            const nextInteraction = currentInteraction + 1;
-            if (nextInteraction < interactions.length) {
-                setCurrentInteraction(nextInteraction);
-            }
-        } else if (currentInteractionData?.transitionType === 'manual') {
-            const isFootsteps = currentInteractionData.type.includes('footsteps');
-            if (isFootsteps) {
-                const nextInteraction = currentInteraction + 1;
-                if (nextInteraction < interactions.length) {
-                    setCurrentInteraction(nextInteraction);
-                }
-            } else {
-                // For other manual animations, enable the next button
-                setInteractionState(prev => ({ ...prev, nextButtonDisabled: false }));
-            }
-        }
-    }, [currentInteraction, interactions.length, currentInteractionData]);
-
-
-    const TutorPanelContent = () => (
-        <>
-            <TutorAvatar isWaving={isWaving} isSpeaking={isSpeaking} />
-            <div className="tutor-speech-bubble">
-                <p>{currentTTSText}</p>
-            </div>
-            <div className="controls-panel">
-                {currentInteractionData?.type === 'welcome' && showWelcomeButton && (
-                    <button onClick={handleButtonClick} className="lesson-button welcome-button">
-                        Let's Go!
-                    </button>
-                )}
-                {currentInteractionData?.showNextButton && (
-                    <button
-                        onClick={handleButtonClick}
-                        className="lesson-button"
-                        disabled={interactionState.nextButtonDisabled}
-                    >
-                        {currentInteractionData.nextButtonText}
-                    </button>
-                )}
-            </div>
-        </>
-    );
+    }, []); // Empty dependency array ensures this runs only on mount and unmount
 
     return (
-        <div className={`interactive-lesson-container ${!showDualPanel ? 'fullscreen-view' : ''}`}>
-            <TTSManager text={ttsEnabled ? currentTTSText : ''} onStart={handleTTSStart} onEnd={handleTTSEnd} onError={handleTTSError} />
+        <div className={`interactive-lesson-container ${layout === 'full-screen' ? 'fullscreen-view' : ''}`}>
+            <TTSManager
+                text={tutorText}
+                onStart={handleTTSStart}
+                onEnd={handleTTSEnd}
+            />
 
-            {showDualPanel ? (
-                <>
-                    <div className="left-panel">
-                        <TutorPanelContent />
+            <div className={layout === 'dual-panel' ? 'left-panel' : 'fullscreen-welcome-panel'}>
+                <TutorAvatar isWaving={isWaving} isSpeaking={isSpeaking} />
+                <div className="tutor-speech-bubble">
+                    <p>{tutorText}</p>
+                </div>
+                <div className="controls-panel">
+                    {showNextButton && (
+                        <button
+                            onClick={advanceToNext}
+                            className={`lesson-button ${interaction?.type === 'welcome' ? 'welcome-button' : ''}`}
+                        >
+                            {interaction?.type === 'welcome' ? "Let's Go!" : (interaction.nextButtonText || "Continue")}
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {layout === 'dual-panel' && (
+                <div className="right-panel">
+                    <div className="content-panel">
+                        <AnimatePresence mode="wait">
+                            {renderContent()}
+                        </AnimatePresence>
                     </div>
-                    <div className="right-panel">
-                        <div className="content-panel">
-                            <AnimatePresence mode="wait">
-                                {currentInteractionData.content && React.cloneElement(currentInteractionData.content, {
-                                    key: currentInteraction, // Ensures component re-mounts on interaction change
-                                    startAnimation: animationTrigger,
-                                    onAnimationComplete: handleAnimationComplete
-                                })}
-                            </AnimatePresence>
-                        </div>
-                    </div>
-                </>
-            ) : (
-                <div className="fullscreen-welcome-panel">
-                    <TutorPanelContent />
                 </div>
             )}
         </div>
