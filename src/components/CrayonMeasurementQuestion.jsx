@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { FaPaintBrush, FaCheck, FaTimes } from 'react-icons/fa'; // Added checkmark and X icons
 import './CrayonMeasurementQuestion.css';
 
-const CrayonMeasurementQuestion = ({ content, onAnswer }) => {
-    const { question, useIcon, choices } = content;
+const CrayonMeasurementQuestion = ({ onAnswer, question, useIcon, choices }) => {
     const [selectedChoice, setSelectedChoice] = useState(null);
     const [showFeedback, setShowFeedback] = useState(false);
 

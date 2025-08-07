@@ -71,19 +71,17 @@ const InteractiveLesson = () => {
         }
     }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
 
-    const handleAnimationComplete = useCallback(() => {
-        if (interaction?.transitionType === 'manual' && interaction.showNextButton) {
-            setShowNextButton(true);
-        } else {
-            advanceToNext();
-        }
-    }, [interaction, advanceToNext]);
-
     const handleAnswer = (answerData) => {
         console.log('Answer selected:', answerData);
 
-        // If this is a crayon measurement question with tutor response
-        if (answerData.tutorResponse) {
+        if (answerData.interactionId === 'measure-blue-side') {
+            if (answerData.isCorrect) {
+                setDynamicTutorText("Correct! Great job measuring.");
+                setShowNextButton(true);
+            } else {
+                setDynamicTutorText("Not quite. Try adjusting the ruler and measuring again.");
+            }
+        } else if (answerData.tutorResponse) {
             // Update the tutor text to the feedback response
             setDynamicTutorText(answerData.tutorResponse);
             // Show the next button to proceed to the next interaction
@@ -94,11 +92,21 @@ const InteractiveLesson = () => {
         }
     };
 
+    const handleAnimationComplete = useCallback(() => {
+        if (interaction?.transitionType === 'manual' && interaction.showNextButton) {
+            setShowNextButton(true);
+        } else {
+            advanceToNext();
+        }
+    }, [interaction, advanceToNext]);
+
     // Render Content Component
     const renderContent = () => {
         if (!interaction) return null;
 
-        const Component = componentMap[interaction.type];
+        // Prioritize the ContentComponent defined directly in the interaction data
+        const Component = interaction.ContentComponent || componentMap[interaction.type];
+
         if (!Component) return null;
 
         let props = {
@@ -106,12 +114,15 @@ const InteractiveLesson = () => {
             ...interaction.contentProps,
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
+            // Pass the onAnswer handler to any component that might need it
+            onAnswer: handleAnswer,
         };
 
-        if (interaction.type === 'interactive-question') {
-            props.content = interaction.contentProps;
-            props.onAnswer = handleAnswer;
-        }
+        // This specific override is no longer necessary if we pass onAnswer universally
+        // if (interaction.type === 'interactive-question') {
+        //     props.content = interaction.contentProps;
+        //     props.onAnswer = handleAnswer;
+        // }
 
         return <Component {...props} />;
     };

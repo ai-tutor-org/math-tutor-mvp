@@ -1,10 +1,18 @@
 import {
+    FaShoePrints,
+    FaRuler,
+    FaPaperclip,
+    FaDoorOpen,
+    FaPaintBrush
+} from 'react-icons/fa';
+import {
     RoomIllustration,
-    ConflictingMeasurements,
-    StandardUnits,
     RulerMeasurement,
     MeterStick,
-    CrayonMeasurementQuestion
+    CrayonMeasurementQuestion,
+    ConflictingMeasurements,
+    StandardUnits,
+    ShapeMeasurement
 } from './components';
 
 export const lessons = {
@@ -49,6 +57,10 @@ export const lessons = {
             },
             {
                 presentationId: 'perimeter-activity-intro',
+                transition: { type: 'auto' }
+            },
+            {
+                presentationId: 'shape-measurement-1',
                 transition: { type: 'auto' }
             },
         ]
@@ -196,10 +208,30 @@ export const presentations = {
                 id: 10,
                 type: 'tutor-monologue',
                 tutorText: "Great job! Now for a real challenge. You'll see a shape with colored sides. Your mission is to figure out the length of each colored side using a special on-screen ruler that you can drag around. Once you measure a side, enter its length in the input box. Let's see what you've got!",
-                ContentComponent: () => null, // Empty content panel
+                ContentComponent: () => null,
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Let's Go!",
+            }
+        ]
+    },
+    'shape-measurement-1': {
+        interactions: [
+            {
+                id: 'shape-measurement-1',
+                type: 'tutor-monologue',
+                tutorText: "Here's our first shape, a rectangle. Use the ruler to measure the length of the highlighted blue side. Then, type your answer in the box and click 'Check'.",
+                ContentComponent: ShapeMeasurement,
+                contentProps: {
+                    interactionId: 'measure-blue-side',
+                    shape: {
+                        type: 'rectangle',
+                        width: 240, // 8cm * 30px/cm
+                        height: 120,
+                    },
+                    correctAnswer: 8
+                },
+                transitionType: 'manual'
             }
         ]
     }

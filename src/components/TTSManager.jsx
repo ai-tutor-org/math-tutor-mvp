@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function TTSManager({ text, onStart, onEnd, onError }) {
     const [voices, setVoices] = useState([]);
     const utteranceRef = useRef(null);
+    const intervalRef = useRef(null);
 
     // Effect to load voices
     useEffect(() => {
@@ -80,6 +81,15 @@ function TTSManager({ text, onStart, onEnd, onError }) {
             synth.speak(utterance);
         }, 100);
 
+        // Workaround for browser bug that cuts off long speeches
+        intervalRef.current = setInterval(() => {
+            if (synth.speaking) {
+                synth.resume();
+            } else {
+                clearInterval(intervalRef.current);
+            }
+        }, 5000); // Ping every 5 seconds
+
         // Cleanup: cancel speech and timer
         return () => {
             clearTimeout(timer);
@@ -87,6 +97,7 @@ function TTSManager({ text, onStart, onEnd, onError }) {
             if (synth.speaking && utteranceRef.current === utterance) {
                 synth.cancel();
             }
+            clearInterval(intervalRef.current);
         };
     }, [text, voices, onStart, onEnd, onError]);
 

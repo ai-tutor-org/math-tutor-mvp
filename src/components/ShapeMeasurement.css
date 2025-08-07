@@ -1,0 +1,153 @@
+.shape-measurement-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+}
+
+.shape-area {
+    width: 90%;
+    height: 70%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rectangle {
+    position: relative;
+    border: 2px solid #333;
+}
+
+.highlighted-side {
+    position: absolute;
+    top: -2px;
+    /* Align with the top border of the rectangle */
+    left: 0;
+    background-color: #3498db;
+    /* Blue color for highlighting */
+}
+
+.controls-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.controls-area label {
+    font-weight: bold;
+}
+
+.controls-area input {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.controls-area button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #2ecc71;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.controls-area button:hover {
+    background-color: #27ae60;
+}
+
+/* Ruler Styles */
+.ruler {
+    position: absolute;
+    width: 300px;
+    /* Represents 10cm, so 30px per cm */
+    height: 50px;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.ruler:active {
+    cursor: grabbing;
+}
+
+.ruler-body {
+    width: 100%;
+    height: 30px;
+    background-color: #f0e6d2;
+    border: 1px solid #333;
+    border-radius: 3px;
+    position: relative;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.ruler-mark-container {
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ruler-mark {
+    width: 2px;
+    height: 15px;
+    /* Taller marks for full cm */
+    background-color: #333;
+}
+
+.ruler-number {
+    font-size: 10px;
+    position: absolute;
+    top: -15px;
+    transform: translateX(-50%);
+    left: 50%;
+}
+
+/* Ruler Handle Styles */
+.rotate-handle,
+.resize-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #3498db;
+    border: 2px solid white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    z-index: 11;
+}
+
+.rotate-handle {
+    left: -10px;
+    cursor: grabbing;
+    /* Better cursor for rotation */
+}
+
+.resize-handle {
+    right: -10px;
+    cursor: col-resize;
+}
+
+.ruler-mark-container::before {
+    content: '';
+    position: absolute;
+    width: 1px;
+    height: 8px;
+    /* Shorter marks for half cm */
+    background-color: #333;
+    left: -50%;
+    bottom: 0;
+}
