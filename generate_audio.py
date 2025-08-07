@@ -122,24 +122,47 @@ def create_audio_mapping(tutor_texts):
     
     print(f"✓ Created audio mapping: {mapping_path}")
 
-def cleanup_old_audio_files():
+def smart_cleanup_audio_files(current_tutor_texts):
     """
-    Remove all existing audio files to ensure fresh generation.
+    Remove only audio files that don't match current content, keep existing ones.
     """
-    print("🧹 Cleaning up old audio files...")
+    print("🧹 Smart cleanup: checking for outdated audio files...")
     
-    # Remove all .mp3 files in the audio directory
-    for audio_file in AUDIO_DIR.glob("*.mp3"):
-        audio_file.unlink()
-        print(f"   Removed: {audio_file.name}")
-    
-    # Remove old mapping file if it exists
+    # Load existing mapping if it exists
     mapping_file = AUDIO_DIR / "audio_mapping.json"
+    existing_mapping = {}
     if mapping_file.exists():
-        mapping_file.unlink()
-        print("   Removed: audio_mapping.json")
+        try:
+            with open(mapping_file, 'r', encoding='utf-8') as f:
+                existing_mapping = json.load(f)
+        except:
+            print("   Warning: Could not load existing mapping, will regenerate all")
     
-    print("✅ Cleanup complete")
+    # Find files that should be removed (not in current content)
+    current_filenames = set(current_tutor_texts.values())
+    existing_files = set(f.name for f in AUDIO_DIR.glob("*.mp3"))
+    
+    files_to_remove = []
+    for audio_file in AUDIO_DIR.glob("*.mp3"):
+        filename = audio_file.name
+        # Check if this file corresponds to current content
+        file_is_current = filename in [f"{fname}.mp3" for fname in current_filenames]
+        if not file_is_current:
+            files_to_remove.append(audio_file)
+    
+    # Remove outdated files
+    removed_count = 0
+    for audio_file in files_to_remove:
+        audio_file.unlink()
+        print(f"   Removed outdated: {audio_file.name}")
+        removed_count += 1
+    
+    if removed_count == 0:
+        print("   No outdated files found")
+    else:
+        print(f"✅ Removed {removed_count} outdated audio files")
+    
+    return existing_mapping
 
 def main():
     """
@@ -155,10 +178,7 @@ def main():
         print("Or create a .env file with: ELEVENLABS_API_KEY=your_key_here")
         return
     
-    # Clean up old audio files first
-    cleanup_old_audio_files()
-    
-    # Extract tutor texts
+    # Extract tutor texts first
     content_data_path = "src/contentData.js"
     if not os.path.exists(content_data_path):
         print(f"❌ Error: {content_data_path} not found")
@@ -170,12 +190,23 @@ def main():
         print("❌ No tutor texts found")
         return
     
-    # Generate audio files
-    print(f"\n🎤 Generating {len(tutor_texts)} audio files...")
+    # Smart cleanup - only remove outdated files
+    existing_mapping = smart_cleanup_audio_files(tutor_texts)
+    
+    # Generate audio files (skip existing ones)
+    print(f"\n🎤 Processing {len(tutor_texts)} audio files...")
     successful = 0
     failed = 0
+    skipped = 0
     
     for text, filename in tutor_texts.items():
+        # Check if we already have this exact audio file
+        audio_path = AUDIO_DIR / f"{filename}.mp3"
+        if audio_path.exists() and text in existing_mapping:
+            print(f"⏭️  Skipping existing: {filename}.mp3")
+            skipped += 1
+            continue
+        
         if generate_audio(text, filename):
             successful += 1
         else:
@@ -186,8 +217,10 @@ def main():
     
     # Summary
     print(f"\n📊 Summary:")
-    print(f"✓ Successful: {successful}")
+    print(f"✓ Generated: {successful}")
+    print(f"⏭️  Skipped (existing): {skipped}")
     print(f"✗ Failed: {failed}")
+    print(f"📁 Total audio files: {successful + skipped}")
     print(f"📁 Audio files saved to: {AUDIO_DIR}")
     
     if failed > 0:

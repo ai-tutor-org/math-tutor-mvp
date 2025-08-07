@@ -33,11 +33,12 @@ This guide explains how to set up and use ElevenLabs TTS for the math tutor appl
    ```
 
 The script will:
-- Clean up any existing audio files for fresh generation
 - Extract all tutor text from `src/contentData.js` using improved regex
-- Generate unique MP3 files for each text segment
+- Smart cleanup: only remove audio files that don't match current content
+- Skip generation for existing audio files (saves time and API calls)
+- Generate unique MP3 files only for new/changed text segments
 - Save files to `public/audio/`
-- Create `audio_mapping.json` for the frontend
+- Create updated `audio_mapping.json` for the frontend
 
 ## How It Works
 
@@ -45,8 +46,9 @@ The script will:
 - Uses ElevenLabs "Hope" voice (ID: `tnSpp4vdxKPjI9w0GnoV`)
 - Uses ElevenLabs SDK with `eleven_flash_v2_5` model for fast, high-quality generation
 - Generates unique filenames based on content hash
-- Always regenerates all files for consistency (cleans up old files first)
-- Creates a fresh mapping file that exactly matches current content
+- Smart caching: only generates new audio for changed/new content
+- Removes only outdated audio files, preserves existing ones
+- Creates updated mapping file that matches current content
 
 ### Frontend Integration
 The updated `TTSManager` component:
@@ -76,14 +78,16 @@ You can modify the voice settings in `generate_audio.py`:
 
 ElevenLabs pricing is per character:
 - Your lesson has approximately 3,000-4,000 characters of tutor text
-- This should cost less than $1 to generate all audio files
-- Files are cached, so you only generate once
+- Initial generation should cost less than $1
+- Smart caching means you only pay for new/changed content on subsequent runs
+- Significant cost savings when iterating on content
 
 ## Troubleshooting
 
 - **"API key not set"**: Make sure to export your API key or create `.env` file
 - **Audio not playing**: Check browser console for loading errors
-- **Missing audio files**: Re-run the generation script (it will clean up and regenerate all files)
+- **Missing audio files**: Re-run the generation script (it will generate only missing files)
 - **Fallback to Web Speech**: Normal behavior for missing audio files
 - **Truncated text in mapping**: Fixed with improved regex that handles apostrophes and quotes
-- **Old audio files persist**: Script now automatically cleans up old files before generating new ones
+- **Outdated audio files**: Script automatically removes files that don't match current content
+- **Want to force regeneration**: Delete the `public/audio/` folder and re-run the script
