@@ -73,7 +73,7 @@ export const presentations = {
             {
                 id: 0,
                 type: 'welcome',
-                tutorText: "Hey there, {userName}! I'm Vyas, your personal AI tutor. I'm so excited to explore the world of shapes and sizes with you. Ready to start our first adventure?",
+                tutorText: "Hey there, learner! I'm Vyas, your personal AI tutor. I'm so excited to explore the world of shapes and sizes with you. Ready to start our first adventure?",
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showWelcomeButton: true,

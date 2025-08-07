@@ -1,105 +1,139 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 function TTSManager({ text, onStart, onEnd, onError }) {
-    const [voices, setVoices] = useState([]);
-    const utteranceRef = useRef(null);
-    const intervalRef = useRef(null);
+    const [audioMapping, setAudioMapping] = useState(null);
+    const audioRef = useRef(null);
 
-    // Effect to load voices
+    // Load audio mapping on component mount
     useEffect(() => {
-        const synth = window.speechSynthesis;
-        if (!synth) {
-            console.warn('TTSManager: Speech synthesis not supported');
-            return;
-        }
-
-        const loadVoices = () => {
-            const availableVoices = synth.getVoices();
-            if (availableVoices.length > 0) {
-                setVoices(availableVoices);
+        const loadAudioMapping = async () => {
+            try {
+                const response = await fetch('/audio/audio_mapping.json');
+                if (response.ok) {
+                    const mapping = await response.json();
+                    setAudioMapping(mapping);
+                    console.log('Audio mapping loaded successfully');
+                } else {
+                    console.warn('Audio mapping not found, falling back to Web Speech API');
+                    setAudioMapping({});
+                }
+            } catch (error) {
+                console.warn('Failed to load audio mapping, falling back to Web Speech API:', error);
+                setAudioMapping({});
             }
         };
 
-        // Voices are loaded asynchronously. The 'voiceschanged' event is the only reliable way.
-        loadVoices();
-        synth.onvoiceschanged = loadVoices;
-
-        return () => {
-            synth.onvoiceschanged = null;
-        };
+        loadAudioMapping();
     }, []);
 
-    // Effect to handle speaking when text or voices change
+    // Effect to handle audio playback when text changes
     useEffect(() => {
-        const synth = window.speechSynthesis;
-        if (!text || !text.trim() || voices.length === 0) {
+        if (!text || !text.trim() || audioMapping === null) {
             return;
         }
 
-        // Always cancel ongoing speech before starting new speech.
-        // This is crucial for preventing overlaps and race conditions.
+        // Stop any currently playing audio
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+
+        // Check if we have a pre-generated audio file for this text
+        const audioFile = audioMapping[text.trim()];
+        
+        if (audioFile) {
+            // Use pre-generated audio
+            playPreGeneratedAudio(audioFile);
+        } else {
+            // Fall back to Web Speech API
+            playWithWebSpeechAPI(text.trim());
+        }
+    }, [text, audioMapping, onStart, onEnd, onError]);
+
+    const playPreGeneratedAudio = (audioFile) => {
+        const audio = new Audio(`/audio/${audioFile}`);
+        audioRef.current = audio;
+
+        audio.onloadstart = () => {
+            if (onStart) onStart();
+        };
+
+        audio.onended = () => {
+            audioRef.current = null;
+            if (onEnd) onEnd();
+        };
+
+        audio.onerror = (event) => {
+            console.error('Audio playback error:', event);
+            audioRef.current = null;
+            if (onError) onError(event.error || 'Audio playback failed');
+            if (onEnd) onEnd(); // Ensure state machines don't get stuck
+        };
+
+        // Small delay to ensure proper loading
+        setTimeout(() => {
+            audio.play().catch(error => {
+                console.error('Failed to play audio:', error);
+                if (onError) onError(error);
+                if (onEnd) onEnd();
+            });
+        }, 100);
+    };
+
+    const playWithWebSpeechAPI = (textToSpeak) => {
+        const synth = window.speechSynthesis;
+        if (!synth) {
+            console.warn('TTSManager: Speech synthesis not supported');
+            if (onError) onError('Speech synthesis not supported');
+            if (onEnd) onEnd();
+            return;
+        }
+
+        // Cancel any ongoing speech
         synth.cancel();
 
-        const utterance = new SpeechSynthesisUtterance(text.trim());
-        utteranceRef.current = utterance;
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
 
-        // --- Voice Selection ---
-        let selectedVoice = voices.find(voice => voice.name === 'Google UK English Female');
-        if (!selectedVoice) {
-            selectedVoice = voices.find(voice => voice.lang.startsWith('en') && voice.name.includes('Female'));
+        // Voice selection (simplified since this is fallback)
+        const voices = synth.getVoices();
+        const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
+        if (englishVoice) {
+            utterance.voice = englishVoice;
         }
-        if (!selectedVoice) {
-            selectedVoice = voices.find(voice => voice.lang.startsWith('en') && voice.default);
-        }
-        if (!selectedVoice) {
-            selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
-        }
-        utterance.voice = selectedVoice || null;
 
-        // --- Configuration ---
+        // Configuration
         utterance.rate = 0.9;
         utterance.pitch = 1.1;
         utterance.volume = 0.8;
 
-        // --- Event Handlers ---
+        // Event handlers
         utterance.onstart = onStart;
-
         utterance.onend = () => {
-            utteranceRef.current = null;
+            if (onEnd) onEnd();
+        };
+        utterance.onerror = (event) => {
+            console.error('Web Speech API Error:', event.error);
+            if (onError) onError(event.error);
             if (onEnd) onEnd();
         };
 
-        utterance.onerror = (event) => {
-            console.error('TTSManager Error:', event.error);
-            utteranceRef.current = null;
-            if (onError) onError(event.error);
-            if (onEnd) onEnd(); // Ensure state machines don't get stuck
-        };
-
-        // A small delay can help, especially on mobile browsers
-        const timer = setTimeout(() => {
+        setTimeout(() => {
             synth.speak(utterance);
         }, 100);
+    };
 
-        // Workaround for browser bug that cuts off long speeches
-        intervalRef.current = setInterval(() => {
-            if (synth.speaking) {
-                synth.resume();
-            } else {
-                clearInterval(intervalRef.current);
-            }
-        }, 5000); // Ping every 5 seconds
-
-        // Cleanup: cancel speech and timer
+    // Cleanup on unmount
+    useEffect(() => {
         return () => {
-            clearTimeout(timer);
-            // Check if this utterance is still the one being spoken before cancelling
-            if (synth.speaking && utteranceRef.current === utterance) {
-                synth.cancel();
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
             }
-            clearInterval(intervalRef.current);
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
         };
-    }, [text, voices, onStart, onEnd, onError]);
+    }, []);
 
     return null;
 }
