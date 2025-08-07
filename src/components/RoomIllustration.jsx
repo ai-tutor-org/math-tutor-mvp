@@ -36,7 +36,7 @@ const RoomIllustration = ({
         for (let i = 0; i < totalSteps; i++) {
             const slotStart = i * slotWidth;
             const footOffsetInSlot = (slotWidth - footSize) / 2;
-            positions.push(wallThickness + slotStart + footOffsetInSlot);
+            positions.push(slotStart + footOffsetInSlot);
         }
 
         return { dynamicFootSize: footSize, stepPositions: positions };
