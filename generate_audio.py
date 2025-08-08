@@ -87,10 +87,10 @@ def generate_audio(text, filename, voice_id=VOICE_ID):
         audio = elevenlabs.text_to_speech.convert(
             text=text,
             voice_id=voice_id,
-            model_id="eleven_flash_v2_5",
+            model_id="eleven_multilingual_v2",
             output_format="mp3_44100_128",
             voice_settings={
-                "speed": 0.9,
+                "speed": 0.85,
                 "stability": 0.5,
                 "similarity_boost": 0.75
             }
