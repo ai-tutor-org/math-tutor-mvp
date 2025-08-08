@@ -8,7 +8,9 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError }, ref) => {
     useEffect(() => {
         const loadAudioMapping = async () => {
             try {
-                const response = await fetch('./audio/audio_mapping.json');
+                const basePath = import.meta.env.BASE_URL || '/';
+                const audioMappingPath = `${basePath}audio/audio_mapping.json`.replace('//', '/');
+                const response = await fetch(audioMappingPath);
                 if (response.ok) {
                     const mapping = await response.json();
                     setAudioMapping(mapping);
@@ -27,7 +29,9 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError }, ref) => {
     }, []);
 
     const playPreGeneratedAudio = useCallback((audioFile) => {
-        const audio = new Audio(`./audio/${audioFile}`);
+        const basePath = import.meta.env.BASE_URL || '/';
+        const audioPath = `${basePath}audio/${audioFile}`.replace('//', '/');
+        const audio = new Audio(audioPath);
         audioRef.current = audio;
 
         audio.onloadstart = () => {
