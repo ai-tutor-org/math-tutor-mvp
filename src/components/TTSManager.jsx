@@ -155,4 +155,4 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError }, ref) => {
 
 TTSManager.displayName = 'TTSManager';
 
-export default TTSManager; 
+export default TTSManager;

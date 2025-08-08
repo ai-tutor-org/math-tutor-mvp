@@ -1,15 +1,23 @@
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 import './ShapeMeasurement.css';
 
 const PX_PER_CM = 30; // keep spacing constant
+const PX_PER_MM = PX_PER_CM / 10;
 const MIN_CM = 5;
 const MAX_CM = 30;
+const SNAP_ANGLE_DEG = 7; // snap to 0, 90, 180, 270 within this threshold
+const SNAP_DISTANCE_PX = 12; // snap to edges/corners within this threshold
 
-const InteractiveRuler = () => {
+const InteractiveRuler = ({ objectRef }) => {
     const [lengthPx, setLengthPx] = useState(10 * PX_PER_CM);
     const [angleDeg, setAngleDeg] = useState(0);
     const rulerRef = useRef(null);
+    const rotateHandleRef = useRef(null);
+
+    // Controlled drag position
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
 
     // Rotation offset so clicking the handle does not snap to opposite side
     const rotateOffsetRef = useRef(0);
@@ -37,6 +45,17 @@ const InteractiveRuler = () => {
         return (radians * 180) / Math.PI;
     };
 
+    const snapAngle = (rawAngleDeg) => {
+        const normalized = ((rawAngleDeg % 360) + 360) % 360;
+        const candidates = [0, 90, 180, 270, 360];
+        for (const c of candidates) {
+            if (Math.abs(normalized - c) <= SNAP_ANGLE_DEG) {
+                return c % 360;
+            }
+        }
+        return rawAngleDeg;
+    };
+
     const handleRotateStart = (event, info) => {
         const pointerAngle = computePointerAngle(info.point);
         rotateOffsetRef.current = angleDeg - pointerAngle;
@@ -44,17 +63,70 @@ const InteractiveRuler = () => {
 
     const handleRotateDrag = (event, info) => {
         const pointerAngle = computePointerAngle(info.point);
-        setAngleDeg(pointerAngle + rotateOffsetRef.current);
+        const raw = pointerAngle + rotateOffsetRef.current;
+        setAngleDeg(snapAngle(raw));
+    };
+
+    // Snap position of the ruler based on rotate handle proximity to object edges/corners
+    const snapDragPosition = () => {
+        if (!objectRef?.current || !rotateHandleRef.current) return;
+        const objRect = objectRef.current.getBoundingClientRect();
+        const handleRect = rotateHandleRef.current.getBoundingClientRect();
+        const handleCenter = {
+            x: handleRect.left + handleRect.width / 2,
+            y: handleRect.top + handleRect.height / 2,
+        };
+
+        const targets = [];
+        // Corners
+        const corners = [
+            { x: objRect.left, y: objRect.top },
+            { x: objRect.right, y: objRect.top },
+            { x: objRect.left, y: objRect.bottom },
+            { x: objRect.right, y: objRect.bottom },
+        ];
+        for (const c of corners) {
+            const dx = c.x - handleCenter.x;
+            const dy = c.y - handleCenter.y;
+            const dist = Math.hypot(dx, dy);
+            targets.push({ dx, dy, dist });
+        }
+        // Edges: top/bottom align Y, left/right align X
+        const yTargets = [objRect.top, objRect.bottom];
+        for (const ty of yTargets) {
+            const dy = ty - handleCenter.y;
+            targets.push({ dx: 0, dy, dist: Math.abs(dy) });
+        }
+        const xTargets = [objRect.left, objRect.right];
+        for (const tx of xTargets) {
+            const dx = tx - handleCenter.x;
+            targets.push({ dx, dy: 0, dist: Math.abs(dx) });
+        }
+
+        // Find the closest within threshold
+        let best = null;
+        for (const t of targets) {
+            if (t.dist <= SNAP_DISTANCE_PX && (!best || t.dist < best.dist)) {
+                best = t;
+            }
+        }
+        if (!best) return;
+
+        // Apply snap by adjusting motion values
+        x.set(x.get() + best.dx);
+        y.set(y.get() + best.dy);
     };
 
     const numWholeCm = Math.floor(lengthPx / PX_PER_CM);
+    const numMm = Math.floor(lengthPx / PX_PER_MM);
 
     return (
         <motion.div
             ref={rulerRef}
             className="interactive-ruler"
-            style={{ width: lengthPx }}
+            style={{ width: lengthPx, x, y }}
             drag
+            onDrag={snapDragPosition}
             dragConstraints={{ top: -250, left: -450, right: 450, bottom: 250 }}
             dragMomentum={false}
         >
@@ -69,19 +141,24 @@ const InteractiveRuler = () => {
                         </div>
                     ))}
 
-                    {/* Half-cm minor ticks */}
-                    {[...Array(numWholeCm)].map((_, i) => (
-                        <div
-                            key={`half-${i}`}
-                            className="interactive-ruler-tick minor"
-                            style={{ left: `${i * PX_PER_CM + PX_PER_CM / 2}px` }}
-                        >
-                            <div className="interactive-ruler-tick-line" />
-                        </div>
-                    ))}
+                    {/* Millimeter ticks (skip where cm ticks exist) */}
+                    {[...Array(numMm + 1)].map((_, i) => {
+                        if (i % 10 === 0) return null; // cm already drawn
+                        const isHalf = i % 10 === 5;
+                        return (
+                            <div
+                                key={`mm-${i}`}
+                                className={`interactive-ruler-tick-mm${isHalf ? ' half' : ''}`}
+                                style={{ left: `${i * PX_PER_MM}px` }}
+                            >
+                                <div className="interactive-ruler-tick-line" />
+                            </div>
+                        );
+                    })}
 
                     {/* Handles inside the body so they rotate and stay attached */}
                     <motion.div
+                        ref={rotateHandleRef}
                         className="interactive-rotate-handle"
                         drag
                         onDragStart={handleRotateStart}
@@ -103,8 +180,37 @@ const InteractiveRuler = () => {
     );
 };
 
+const HighlightedSide = ({ orientation = 'top' }) => {
+    const className = `highlighted-side ${orientation}`;
+    return <div className={className}></div>;
+};
+
+const ShapeVisual = React.forwardRef(({ shape }, ref) => {
+    const { type = 'rectangle', width, height, imageSrc, highlight = 'top' } = shape || {};
+    const baseClass = 'shape-obj';
+    const className = `${baseClass} shape-${type}`;
+
+    const style = { width: `${width}px`, height: `${height}px` };
+
+    if (imageSrc) {
+        return (
+            <div ref={ref} className={className} style={style}>
+                <img src={imageSrc} alt={type} className="rect-object-img" />
+                <HighlightedSide orientation={highlight} />
+            </div>
+        );
+    }
+
+    return (
+        <div ref={ref} className={className} style={style}>
+            <HighlightedSide orientation={highlight} />
+        </div>
+    );
+});
+
 const ShapeMeasurement = ({ onAnswer, interactionId, shape, correctAnswer }) => {
     const [answer, setAnswer] = useState('');
+    const objectRef = useRef(null);
 
     const handleCheck = () => {
         onAnswer({
@@ -117,16 +223,10 @@ const ShapeMeasurement = ({ onAnswer, interactionId, shape, correctAnswer }) => 
     return (
         <div className="shape-measurement-container">
             <div className="shape-area">
-                <div
-                    className="rect-object"
-                    style={{ width: `${shape.width}px`, height: `${shape.height}px` }}
-                >
-                    <img src="/assets/notebook.svg" alt="Notebook" className="rect-object-img" />
-                    <div className="highlighted-side" style={{ width: '100%', height: '10px' }}></div>
-                </div>
+                <ShapeVisual ref={objectRef} shape={shape?.type ? shape : { ...shape, type: 'rectangle', imageSrc: '/assets/notebook.svg', highlight: shape?.highlight || 'top' }} />
 
                 {/* Interactive Ruler */}
-                <InteractiveRuler />
+                <InteractiveRuler objectRef={objectRef} />
             </div>
 
             <div className="controls-area">

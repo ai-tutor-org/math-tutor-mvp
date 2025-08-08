@@ -64,6 +64,22 @@ export const lessons = {
                 transition: { type: 'auto' }
             },
             {
+                presentationId: 'shape-measurement-2',
+                transition: { type: 'auto' }
+            },
+            {
+                presentationId: 'shape-measurement-3',
+                transition: { type: 'auto' }
+            },
+            {
+                presentationId: 'shape-measurement-4',
+                transition: { type: 'auto' }
+            },
+            {
+                presentationId: 'measurement-activity-conclusion',
+                transition: { type: 'auto' }
+            },
+            {
                 presentationId: 'shape-correct-feedback',
                 transition: { type: 'auto' }
             },
@@ -251,15 +267,93 @@ export const presentations = {
                 tutorText: "Here's our first object: a notebook. Use the ruler to measure the length of the highlighted blue edge. Then, type your answer in the box and click 'Check'.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
-                    interactionId: 'measure-blue-side',
+                    interactionId: 'measure-notebook',
                     shape: {
                         type: 'rectangle',
                         width: 240, // 8cm * 30px/cm
                         height: 120,
+                        imageSrc: '/assets/notebook.svg',
+                        highlight: 'top',
                     },
                     correctAnswer: 8
                 },
                 transitionType: 'manual'
+            }
+        ]
+    },
+    'shape-measurement-2': {
+        interactions: [
+            {
+                id: 'shape-measurement-2',
+                type: 'tutor-monologue',
+                tutorText: "Next, measure this sticky note. It's a perfect square. Measure the highlighted side.",
+                ContentComponent: ShapeMeasurement,
+                contentProps: {
+                    interactionId: 'measure-sticky-note',
+                    shape: {
+                        type: 'square',
+                        width: 150, // 5cm
+                        height: 150,
+                        highlight: 'right',
+                    },
+                    correctAnswer: 5
+                },
+                transitionType: 'manual'
+            }
+        ]
+    },
+    'shape-measurement-3': {
+        interactions: [
+            {
+                id: 'shape-measurement-3',
+                type: 'tutor-monologue',
+                tutorText: "Try this coaster, also square but a bit larger. Measure the highlighted bottom edge.",
+                ContentComponent: ShapeMeasurement,
+                contentProps: {
+                    interactionId: 'measure-coaster',
+                    shape: {
+                        type: 'square',
+                        width: 180, // 6cm
+                        height: 180,
+                        highlight: 'bottom',
+                    },
+                    correctAnswer: 6
+                },
+                transitionType: 'manual'
+            }
+        ]
+    },
+    'shape-measurement-4': {
+        interactions: [
+            {
+                id: 'shape-measurement-4',
+                type: 'tutor-monologue',
+                tutorText: "Finally, measure the base of this little house sign (a pentagon).",
+                ContentComponent: ShapeMeasurement,
+                contentProps: {
+                    interactionId: 'measure-house-sign',
+                    shape: {
+                        type: 'pentagon',
+                        width: 210, // 7cm base width
+                        height: 180,
+                        highlight: 'bottom',
+                    },
+                    correctAnswer: 7
+                },
+                transitionType: 'manual'
+            }
+        ]
+    },
+    'measurement-activity-conclusion': {
+        interactions: [
+            {
+                id: 'measurement-conclusion',
+                type: 'tutor-monologue',
+                tutorText: "And that's a wrap! You did a fantastic job measuring those shapes. Using tools like rulers is a very important skill in math and science. You should be proud!",
+                ContentComponent: () => null,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Done"
             }
         ]
     },
@@ -271,7 +365,7 @@ export const presentations = {
                 tutorText: "Correct! Great job measuring.",
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: "Done"
+                nextButtonText: "Continue"
             }
         ]
     },

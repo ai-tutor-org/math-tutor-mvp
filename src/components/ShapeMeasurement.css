@@ -30,6 +30,30 @@
     display: inline-block;
 }
 
+/* Generic shape container */
+.shape-obj {
+    position: relative;
+    display: inline-block;
+    background: #f4f4f4;
+    border: 2px solid #333;
+    border-radius: 8px;
+}
+
+.shape-rectangle {
+    background: linear-gradient(180deg, #e2f0ff 0%, #cfe6ff 100%);
+}
+
+.shape-square {
+    background: linear-gradient(180deg, #fff7b3 0%, #ffe97a 100%);
+    /* sticky note look */
+}
+
+.shape-pentagon {
+    background: linear-gradient(180deg, #ffd9c2 0%, #ffb48a 100%);
+    /* House-like pentagon with full-width base */
+    clip-path: polygon(0% 60%, 50% 0%, 100% 60%, 100% 100%, 0% 100%);
+}
+
 .rect-object-img {
     width: 100%;
     height: 100%;
@@ -37,15 +61,46 @@
     border-radius: 8px;
 }
 
+/* Highlighted side orientations */
 .highlighted-side {
     position: absolute;
+    background-color: rgba(52, 152, 219, 0.9);
+}
+
+.highlighted-side.top {
     top: 0;
     left: 0;
-    right: 0;
+    width: 100%;
     height: 10px;
-    background-color: rgba(52, 152, 219, 0.9);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+}
+
+.highlighted-side.bottom {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.highlighted-side.left {
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 100%;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.highlighted-side.right {
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 100%;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 .controls-area {
@@ -125,6 +180,13 @@
     align-items: center;
 }
 
+/* Ensure mm tick container is positioned so `left` takes effect */
+.interactive-ruler-tick-mm {
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+}
+
 .interactive-ruler-tick-line {
     position: absolute;
     bottom: 0;
@@ -136,7 +198,15 @@
     /* darker for contrast */
 }
 
-.interactive-ruler-tick.minor .interactive-ruler-tick-line {
+/* mm ticks */
+.interactive-ruler-tick-mm .interactive-ruler-tick-line {
+    width: 1px;
+    height: 6px;
+    background-color: #5a4a3b;
+}
+
+/* 0.5 cm (5 mm) longer minor tick */
+.interactive-ruler-tick-mm.half .interactive-ruler-tick-line {
     height: 10px;
     background-color: #4a3a2c;
 }

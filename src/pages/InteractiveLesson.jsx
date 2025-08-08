@@ -107,20 +107,28 @@ const InteractiveLesson = () => {
     const handleAnswer = (answerData) => {
         console.log('Answer selected:', answerData);
 
-        if (answerData.interactionId === 'measure-blue-side') {
+        const shapeIds = new Set(['measure-notebook', 'measure-sticky-note', 'measure-coaster', 'measure-house-sign']);
+        if (shapeIds.has(answerData.interactionId)) {
             if (answerData.isCorrect) {
-                // Navigate to completion interaction for correct answers
-                const feedbackInteractionId = 'shape-correct';
-                navigateToInteraction(feedbackInteractionId);
+                // For the last measurement, go to conclusion; for others, show Continue feedback
+                if (answerData.interactionId === 'measure-house-sign') {
+                    navigateToInteraction('measurement-conclusion');
+                } else {
+                    const feedbackText = getFeedbackText('shape-correct');
+                    if (feedbackText) {
+                        setDynamicTutorText(feedbackText);
+                        ttsRef.current?.triggerTTS(feedbackText);
+                    }
+                    setShowNextButton(true);
+                }
             } else {
-                // Use direct TTS control for incorrect answers, keep activity visible
                 const incorrectFeedback = getFeedbackText('shape-incorrect');
                 if (incorrectFeedback) {
                     setDynamicTutorText(incorrectFeedback);
-                    // Trigger TTS directly to speak the feedback again
                     ttsRef.current?.triggerTTS(incorrectFeedback);
                 }
             }
+            return;
         } else if (answerData.feedbackInteractionId) {
             // For crayon activity: determine correct feedback based on answer result
             const feedbackId = answerData.isCorrect ? 'crayon-correct' : 'crayon-incorrect';
