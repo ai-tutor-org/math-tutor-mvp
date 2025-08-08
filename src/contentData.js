@@ -220,7 +220,7 @@ export const presentations = {
             {
                 id: 'shape-measurement-1',
                 type: 'tutor-monologue',
-                tutorText: "Here's our first shape, a rectangle. Use the ruler to measure the length of the highlighted blue side. Then, type your answer in the box and click 'Check'.",
+                tutorText: "Here’s our first object: a notebook. Use the ruler to measure the length of the highlighted blue edge. Then, type your answer in the box and click 'Check'.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-blue-side',

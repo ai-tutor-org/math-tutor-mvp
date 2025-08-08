@@ -14,7 +14,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
 }
 
 .ruler {
@@ -46,8 +46,8 @@
 
 .ruler-number {
     position: absolute;
-    bottom: 5px;
-    left: 5px;
+    bottom: 8px;
+    left: 4px;
     font-size: 14px;
     font-weight: bold;
     color: #6b4f3a;
@@ -55,7 +55,7 @@
 
 .paperclip-container {
     position: absolute;
-    top: -60px;
+    top: -70px;
     left: 3px;
     width: 150px;
     /* 3cm * 50px/cm */
