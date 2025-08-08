@@ -2,9 +2,26 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
+// Material-UI imports
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Box,
+    IconButton,
+    Button,
+    Paper
+} from '@mui/material';
+import {
+    Home as HomeIcon,
+    Settings as SettingsIcon,
+    ArrowBack as ArrowBackIcon,
+    VolumeOff as VolumeOffIcon,
+    Pause as PauseIcon
+} from '@mui/icons-material';
+
 import { lessons, presentations } from '../contentData'; // Import centralized data
 
-import TutorAvatar from '../components/TutorAvatar';
 import TTSManager from '../components/TTSManager';
 
 // Import all possible content components
@@ -38,7 +55,6 @@ const InteractiveLesson = () => {
     const [currentInteractionIndex, setCurrentInteractionIndex] = useState(0);
 
     // UI State
-    const [layout, setLayout] = useState('full-screen'); // 'full-screen' or 'dual-panel'
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isWaving, setIsWaving] = useState(false);
     const [animationTrigger, setAnimationTrigger] = useState(false);
@@ -163,9 +179,6 @@ const InteractiveLesson = () => {
 
     // Effect to handle layout changes and initial setup
     useEffect(() => {
-        if (interaction?.layoutChange === 'dual-panel') {
-            setLayout('dual-panel');
-        }
         // For welcome, button starts hidden and shows after TTS
         // For others, respect the showNextButton property
         if (interaction?.type === 'welcome') {
@@ -219,44 +232,6 @@ const InteractiveLesson = () => {
         };
     }, []); // Empty dependency array ensures this runs only on mount and unmount
 
-    return (
-        <div className={`interactive-lesson-container ${layout === 'full-screen' ? 'fullscreen-view' : ''}`}>
-            <TTSManager
-                ref={ttsRef}
-                text={tutorText}
-                onStart={handleTTSStart}
-                onEnd={handleTTSEnd}
-            />
-
-            <div className={layout === 'dual-panel' ? 'left-panel' : 'fullscreen-welcome-panel'}>
-                <TutorAvatar isWaving={isWaving} isSpeaking={isSpeaking} />
-                <div className="tutor-speech-bubble">
-                    <p>{tutorText}</p>
-                </div>
-                <div className="controls-panel">
-                    {showNextButton && (
-                        <button
-                            onClick={handleDoneButton}
-                            className={`lesson-button ${interaction?.type === 'welcome' ? 'welcome-button' : ''}`}
-                        >
-                            {interaction?.type === 'welcome' ? "Let's Go!" : (interaction.nextButtonText || "Continue")}
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            {layout === 'dual-panel' && (
-                <div className="right-panel">
-                    <div className="content-panel">
-                        <AnimatePresence mode="wait">
-                            {renderContent()}
-                        </AnimatePresence>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-
     // Render Content Component
     function renderContent() {
         if (!interaction) return null;
@@ -277,6 +252,196 @@ const InteractiveLesson = () => {
 
         return <Component {...props} />;
     }
+
+    return (
+        <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#000' }}>
+            <TTSManager
+                ref={ttsRef}
+                text={tutorText}
+                onStart={handleTTSStart}
+                onEnd={handleTTSEnd}
+            />
+
+            {/* Top Menu Bar */}
+            <AppBar position="static" sx={{
+                bgcolor: '#000',
+                boxShadow: 'none',
+                borderBottom: '1px solid #2B2B2B'
+            }}>
+                <Toolbar sx={{
+                    justifyContent: 'space-between',
+                    minHeight: '60px !important',
+                    px: '32px',
+                    py: '16px'
+                }}>
+                    {/* Left Side - Lesson Info */}
+                    <Box>
+                        <Typography variant="caption" sx={{ color: '#999', fontSize: '0.7rem', lineHeight: 1 }}>
+                            LESSON {lessonId === 'perimeter' ? '1' : '1'}
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#fff', fontSize: '1.1rem', lineHeight: 1.2, textTransform: 'capitalize' }}>
+                            {lesson?.title || 'Perimeter'}
+                        </Typography>
+                    </Box>
+
+                    {/* Right Side - Navigation */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <IconButton
+                            sx={{
+                                color: '#fff',
+                                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '8px',
+                                padding: '8px',
+                                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
+                            }}
+                            onClick={() => navigate('/')}
+                        >
+                            <HomeIcon />
+                        </IconButton>
+                        <IconButton
+                            sx={{
+                                color: '#999',
+                                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '8px',
+                                padding: '8px',
+                                cursor: 'not-allowed',
+                                '&:hover': {
+                                    bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                    color: '#999'
+                                }
+                            }}
+                            onClick={(e) => e.preventDefault()}
+                        >
+                            <SettingsIcon />
+                        </IconButton>
+                        <Button
+                            startIcon={<ArrowBackIcon />}
+                            sx={{
+                                color: '#fff',
+                                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '8px',
+                                padding: '8px 12px',
+                                textTransform: 'none',
+                                fontSize: '0.9rem',
+                                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
+                            }}
+                            onClick={() => navigate(-1)}
+                        >
+                            Go Back
+                        </Button>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+
+            {/* Main Content Area */}
+            <Box sx={{ flex: 1, display: 'flex', bgcolor: '#000' }}>
+                {/* Left Panel - Tutor (26%) */}
+                <Box sx={{
+                    width: '26%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    p: 3,
+                    alignItems: 'center',
+                    textAlign: 'center'
+                }}>
+                    {/* Audio Controls */}
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        width: '100%',
+                        gap: 1,
+                        mb: 2
+                    }}>
+                        <IconButton sx={{
+                            color: '#999',
+                            cursor: 'not-allowed',
+                            '&:hover': { color: '#999' }
+                        }} onClick={(e) => e.preventDefault()}>
+                            <VolumeOffIcon />
+                        </IconButton>
+                        <IconButton sx={{
+                            color: '#999',
+                            cursor: 'not-allowed',
+                            '&:hover': { color: '#999' }
+                        }} onClick={(e) => e.preventDefault()}>
+                            <PauseIcon />
+                        </IconButton>
+                    </Box>
+
+                    {/* Tutor Avatar */}
+                    <Box sx={{ mb: 3 }}>
+                        <img
+                            src="/images/tutor_avatar.png"
+                            alt="AI Tutor"
+                            style={{
+                                width: '100px',
+                                height: '100px'
+                            }}
+                        />
+                    </Box>
+
+                    {/* Tutor Speech */}
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="body2" sx={{ color: '#fff', lineHeight: 1.5, fontSize: '1rem' }}>
+                            {tutorText}
+                        </Typography>
+                    </Box>
+
+                    {/* Action Button */}
+                    {showNextButton && (
+                        <Button
+                            variant="contained"
+                            onClick={handleDoneButton}
+                            sx={{
+                                padding: '8px',
+                                borderRadius: '12px',
+                                background: '#2C2C2C',
+                                color: '#fff',
+                                textTransform: 'none',
+                                fontSize: '1rem',
+                                minWidth: '140px',
+                                textAlign: 'center',
+                                '&:hover': {
+                                    background: '#3C3C3C'
+                                }
+                            }}
+                        >
+                            {interaction?.type === 'welcome' ? "Let's Go!" : (interaction?.nextButtonText || "Continue")}
+                        </Button>
+                    )}
+                </Box>
+
+                {/* Right Panel - Container (74%) */}
+                <Box sx={{
+                    width: '74%',
+                    bgcolor: '#000',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    p: 3
+                }}>
+                    {/* Content Playground */}
+                    <Paper
+                        sx={{
+                            width: '100%',
+                            height: '100%',
+                            bgcolor: '#1B1B1B',
+                            borderRadius: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden'
+                        }}
+                        elevation={0}
+                    >
+                        <AnimatePresence mode="wait">
+                            {renderContent()}
+                        </AnimatePresence>
+                    </Paper>
+                </Box>
+            </Box>
+        </Box>
+    );
 };
 
 export default InteractiveLesson; 

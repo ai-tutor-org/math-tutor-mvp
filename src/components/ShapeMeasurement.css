@@ -7,17 +7,20 @@
     justify-content: center;
     gap: 20px;
     position: relative;
+    background: transparent;
+    color: white;
 }
 
 .shape-area {
     width: 90%;
     height: 70%;
-    border: 1px solid #ccc;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .rectangle {
@@ -111,19 +114,26 @@
 
 .controls-area label {
     font-weight: bold;
+    color: white;
 }
 
 .controls-area input {
     width: 80px;
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.controls-area input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .controls-area button {
     padding: 8px 16px;
     border: none;
-    background-color: #2ecc71;
+    background-color: #00bcd4;
     color: white;
     border-radius: 4px;
     cursor: pointer;
@@ -131,7 +141,7 @@
 }
 
 .controls-area button:hover {
-    background-color: #27ae60;
+    background-color: #00acc1;
 }
 
 /* Ruler Styles */

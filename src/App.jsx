@@ -5,13 +5,11 @@ import Chapter from './pages/Chapter'
 import LessonStart from './pages/LessonStart'
 import Lesson from './pages/Lesson'
 import InteractiveLesson from './pages/InteractiveLesson'
-import Navigation from './components/Navigation'
 
 function App() {
     return (
         <Router basename="/math-tutor-mvp/">
             <div className="App">
-                <Navigation />
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/chapter" element={<Chapter />} />

@@ -1,152 +1,162 @@
-/* src/pages/InteractiveLesson.css */
-/* Main container for the entire lesson view */
-.interactive-lesson-container {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-/* Fullscreen Welcome Panel (Initial State) */
-.fullscreen-welcome-panel {
+/* New Layout Styles */
+.interactive-lesson-playground {
     width: 100%;
     height: 100%;
+    background-color: #2a2a2a;
+    color: white;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    position: relative;
+    padding: 20px;
+}
+
+/* Ensure content components work well in dark playground */
+.shape-measurement-container,
+.room-illustration-container,
+.ruler-measurement-container,
+.meter-stick-container,
+.crayon-measurement-container,
+.conflicting-measurements-container,
+.standard-units-container {
+    background: transparent;
     color: white;
 }
 
-/* Left Panel (Tutor) */
-.left-panel {
-    width: 30%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-right: 3px solid rgba(255, 255, 255, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    position: relative;
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+/* Update input and button styles for dark theme */
+.shape-measurement-container input,
+.crayon-measurement-container input {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Right Panel (Content) */
-.right-panel {
-    width: 70%;
-    height: 100%;
+.shape-measurement-container input::placeholder,
+.crayon-measurement-container input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.shape-measurement-container button,
+.crayon-measurement-container button {
+    background: #00bcd4;
+    color: white;
+    border: none;
+}
+
+.shape-measurement-container button:hover,
+.crayon-measurement-container button:hover {
+    background: #00acc1;
+}
+
+/* Legacy styles - can be removed eventually */
+.interactive-lesson-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    position: relative;
+    background-color: #f5f7fa;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+}
+
+.fullscreen-view {
+    justify-content: center;
+    align-items: center;
+}
+
+.left-panel {
+    width: 30%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px;
     display: flex;
     flex-direction: column;
-    /* Allow content and controls */
+    justify-content: center;
+    color: white;
+    position: relative;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.fullscreen-welcome-panel {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+
+.right-panel {
+    width: 70%;
+    background-color: #ffffff;
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    position: relative;
 }
 
 .content-panel {
     width: 100%;
-    flex-grow: 1;
-    /* Take up available space */
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
 }
 
-/* Tutor Speech Bubble */
 .tutor-speech-bubble {
-    margin-top: 30px;
-    text-align: center;
-    max-width: 90%;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;
-}
-
-.left-panel .tutor-speech-bubble {
-    background: none;
-    padding: 0;
+    padding: 25px;
+    margin: 25px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .tutor-speech-bubble p {
-    font-size: 1.1rem;
-    color: #2c3e50;
-    line-height: 1.6;
     margin: 0;
-}
-
-.fullscreen-welcome-panel .tutor-speech-bubble p {
+    font-size: 1.1rem;
+    line-height: 1.6;
     color: white;
-    font-size: 1.4rem;
 }
 
-/* Controls Panel (for buttons) */
 .controls-panel {
     margin-top: 20px;
 }
 
 .lesson-button {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    border: none;
     padding: 15px 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    background-color: #4ecdc4;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
-    transition: all 0.3s ease;
-}
-
-.lesson-button.lets-go-button {
-    margin-top: 40px;
-    padding: 20px 40px;
-    font-size: 1.5rem;
     border-radius: 25px;
-}
-
-.lesson-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.lesson-button:not(:disabled):hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 35px rgba(78, 205, 196, 0.5);
-}
-
-/* TTS Toggle Button */
-.tts-toggle-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #4ecdc4;
-    color: white;
-    border: none;
-    border-radius: 15px;
-    padding: 10px 15px;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 100%;
 }
 
-.tts-toggle-button:hover {
-    opacity: 0.9;
+.lesson-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
 }
 
-.left-panel .tts-toggle-button {
-    background-color: #ff6b6b;
+.welcome-button {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+    font-size: 1.2rem;
+    padding: 20px 40px;
 }
 
-.left-panel .tts-toggle-button:before {
-    content: '🔇 TTS Off';
-}
-
-.left-panel .tts-toggle-button.tts-on:before {
-    content: '🔊 TTS On';
+.welcome-button:hover {
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
 }
