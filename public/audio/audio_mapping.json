@@ -9,6 +9,10 @@
   "Let's start with a small unit called a centimeter. We often use a ruler to measure it. See this paperclip? It's exactly 3 centimeters long.": "tutor_e1afa7fd548b.mp3",
   "Nice! For bigger things, we use a bigger unit called a meter. A meter is the same as 100 centimeters. See how this meter stick compares to the height of a door?": "tutor_f2153a806bc2.mp3",
   "Time for a quick check! If you wanted to measure a crayon, which unit would you use? Click on the best choice.": "tutor_1cf708f90ba7.mp3",
+  "Exactly! Centimeters are perfect for that.": "tutor_4bfe0c2848af.mp3",
+  "Good try, but a meter is way too big for a crayon! Centimeters are the better choice here.": "tutor_00f26cf26bbe.mp3",
   "Great job! Now for a real challenge. You'll see a shape with colored sides. Your mission is to figure out the length of each colored side using a special on-screen ruler that you can drag around. Once you measure a side, enter its length in the input box. Let's see what you've got!": "tutor_b5f5b601f773.mp3",
-  "Here's our first shape, a rectangle. Use the ruler to measure the length of the highlighted blue side. Then, type your answer in the box and click 'Check'.": "tutor_d2d8a6f5e9ba.mp3"
+  "Here's our first object: a notebook. Use the ruler to measure the length of the highlighted blue edge. Then, type your answer in the box and click 'Check'.": "tutor_e7f2ccf7df7c.mp3",
+  "Correct! Great job measuring.": "tutor_d6c50e0a217f.mp3",
+  "Not quite. Try adjusting the ruler and measuring again.": "tutor_1576466e0d97.mp3"
 }

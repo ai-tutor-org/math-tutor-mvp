@@ -63,6 +63,14 @@ export const lessons = {
                 presentationId: 'shape-measurement-1',
                 transition: { type: 'auto' }
             },
+            {
+                presentationId: 'shape-correct-feedback',
+                transition: { type: 'auto' }
+            },
+            {
+                presentationId: 'shape-incorrect-feedback',
+                transition: { type: 'auto' }
+            },
         ]
     }
 };
@@ -202,6 +210,26 @@ export const presentations = {
             }
         ]
     },
+    'crayon-correct-feedback': {
+        interactions: [
+            {
+                id: 'crayon-correct',
+                type: 'tutor-monologue',
+                tutorText: "Exactly! Centimeters are perfect for that.",
+                transitionType: 'auto'
+            }
+        ]
+    },
+    'crayon-incorrect-feedback': {
+        interactions: [
+            {
+                id: 'crayon-incorrect',
+                type: 'tutor-monologue',
+                tutorText: "Good try, but a meter is way too big for a crayon! Centimeters are the better choice here.",
+                transitionType: 'auto'
+            }
+        ]
+    },
     'perimeter-activity-intro': {
         interactions: [
             {
@@ -220,7 +248,7 @@ export const presentations = {
             {
                 id: 'shape-measurement-1',
                 type: 'tutor-monologue',
-                tutorText: "Here’s our first object: a notebook. Use the ruler to measure the length of the highlighted blue edge. Then, type your answer in the box and click 'Check'.",
+                tutorText: "Here's our first object: a notebook. Use the ruler to measure the length of the highlighted blue edge. Then, type your answer in the box and click 'Check'.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-blue-side',
@@ -232,6 +260,28 @@ export const presentations = {
                     correctAnswer: 8
                 },
                 transitionType: 'manual'
+            }
+        ]
+    },
+    'shape-correct-feedback': {
+        interactions: [
+            {
+                id: 'shape-correct',
+                type: 'tutor-monologue',
+                tutorText: "Correct! Great job measuring.",
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Done"
+            }
+        ]
+    },
+    'shape-incorrect-feedback': {
+        interactions: [
+            {
+                id: 'shape-incorrect',
+                type: 'tutor-monologue',
+                tutorText: "Not quite. Try adjusting the ruler and measuring again.",
+                transitionType: 'auto'
             }
         ]
     }

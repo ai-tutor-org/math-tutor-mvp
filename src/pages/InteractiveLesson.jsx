@@ -45,14 +45,29 @@ const InteractiveLesson = () => {
     const [showNextButton, setShowNextButton] = useState(false);
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
 
+    // TTS Ref for direct control
+    const ttsRef = React.useRef();
+
     // Data from contentData.js
     const lesson = useMemo(() => lessons[lessonId], [lessonId]);
     const presentationId = useMemo(() => lesson.sequence[currentPresIndex]?.presentationId, [lesson, currentPresIndex]);
     const presentation = useMemo(() => presentations[presentationId], [presentationId]);
     const interaction = useMemo(() => presentation?.interactions[currentInteractionIndex], [presentation, currentInteractionIndex]);
 
+    // Helper function to get feedback text from contentData
+    const getFeedbackText = useCallback((feedbackInteractionId) => {
+        for (const [presId, pres] of Object.entries(presentations)) {
+            const feedbackInteraction = pres.interactions.find(int => int.id === feedbackInteractionId);
+            if (feedbackInteraction) {
+                return feedbackInteraction.tutorText;
+            }
+        }
+        return null;
+    }, []);
+
     const advanceToNext = useCallback(() => {
         setAnimationTrigger(false); // Reset trigger for the next interaction
+        setDynamicTutorText(null); // Clear any lingering feedback text
 
         if (!presentation || !lesson) return;
 
@@ -71,21 +86,50 @@ const InteractiveLesson = () => {
         }
     }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
 
+    const navigateToInteraction = useCallback((interactionId) => {
+        // Find the presentation containing this interaction
+        for (const [presId, pres] of Object.entries(presentations)) {
+            const interactionIndex = pres.interactions.findIndex(int => int.id === interactionId);
+            if (interactionIndex !== -1) {
+                // Find the lesson sequence index for this presentation
+                const lessonSeqIndex = lesson.sequence.findIndex(seq => seq.presentationId === presId);
+                if (lessonSeqIndex !== -1) {
+                    setCurrentPresIndex(lessonSeqIndex);
+                    setCurrentInteractionIndex(interactionIndex);
+                    setDynamicTutorText(null); // Clear any dynamic text
+                    return;
+                }
+            }
+        }
+        console.warn(`Interaction ${interactionId} not found`);
+    }, [lesson, navigate]);
+
     const handleAnswer = (answerData) => {
         console.log('Answer selected:', answerData);
 
         if (answerData.interactionId === 'measure-blue-side') {
             if (answerData.isCorrect) {
-                setDynamicTutorText("Correct! Great job measuring.");
-                setShowNextButton(true);
+                // Navigate to completion interaction for correct answers
+                const feedbackInteractionId = 'shape-correct';
+                navigateToInteraction(feedbackInteractionId);
             } else {
-                setDynamicTutorText("Not quite. Try adjusting the ruler and measuring again.");
+                // Use direct TTS control for incorrect answers, keep activity visible
+                const incorrectFeedback = getFeedbackText('shape-incorrect');
+                if (incorrectFeedback) {
+                    setDynamicTutorText(incorrectFeedback);
+                    // Trigger TTS directly to speak the feedback again
+                    ttsRef.current?.triggerTTS(incorrectFeedback);
+                }
             }
-        } else if (answerData.tutorResponse) {
-            // Update the tutor text to the feedback response
-            setDynamicTutorText(answerData.tutorResponse);
-            // Show the next button to proceed to the next interaction
-            setShowNextButton(true);
+        } else if (answerData.feedbackInteractionId) {
+            // For crayon activity: determine correct feedback based on answer result
+            const feedbackId = answerData.isCorrect ? 'crayon-correct' : 'crayon-incorrect';
+            const feedbackText = getFeedbackText(feedbackId);
+            if (feedbackText) {
+                setDynamicTutorText(feedbackText);
+                setShowNextButton(true); // Show continue button after feedback
+                // Don't call triggerTTS - let the normal text change effect handle it
+            }
         } else {
             // For other question types, advance as before
             advanceToNext();
@@ -100,33 +144,14 @@ const InteractiveLesson = () => {
         }
     }, [interaction, advanceToNext]);
 
-    // Render Content Component
-    const renderContent = () => {
-        if (!interaction) return null;
-
-        // Prioritize the ContentComponent defined directly in the interaction data
-        const Component = interaction.ContentComponent || componentMap[interaction.type];
-
-        if (!Component) return null;
-
-        let props = {
-            key: `${currentPresIndex}-${currentInteractionIndex}`,
-            ...interaction.contentProps,
-            onAnimationComplete: handleAnimationComplete,
-            startAnimation: animationTrigger,
-            // Pass the onAnswer handler to any component that might need it
-            onAnswer: handleAnswer,
-        };
-
-        // This specific override is no longer necessary if we pass onAnswer universally
-        // if (interaction.type === 'interactive-question') {
-        //     props.content = interaction.contentProps;
-        //     props.onAnswer = handleAnswer;
-        // }
-
-        return <Component {...props} />;
+    // Handle Done button to go home
+    const handleDoneButton = () => {
+        if (interaction?.nextButtonText === "Done") {
+            navigate('/');
+        } else {
+            advanceToNext();
+        }
     };
-
 
     // Effect to handle layout changes and initial setup
     useEffect(() => {
@@ -189,6 +214,7 @@ const InteractiveLesson = () => {
     return (
         <div className={`interactive-lesson-container ${layout === 'full-screen' ? 'fullscreen-view' : ''}`}>
             <TTSManager
+                ref={ttsRef}
                 text={tutorText}
                 onStart={handleTTSStart}
                 onEnd={handleTTSEnd}
@@ -202,7 +228,7 @@ const InteractiveLesson = () => {
                 <div className="controls-panel">
                     {showNextButton && (
                         <button
-                            onClick={advanceToNext}
+                            onClick={handleDoneButton}
                             className={`lesson-button ${interaction?.type === 'welcome' ? 'welcome-button' : ''}`}
                         >
                             {interaction?.type === 'welcome' ? "Let's Go!" : (interaction.nextButtonText || "Continue")}
@@ -222,6 +248,27 @@ const InteractiveLesson = () => {
             )}
         </div>
     );
+
+    // Render Content Component
+    function renderContent() {
+        if (!interaction) return null;
+
+        // Prioritize the ContentComponent defined directly in the interaction data
+        const Component = interaction.ContentComponent || componentMap[interaction.type];
+
+        if (!Component) return null;
+
+        let props = {
+            key: `${currentPresIndex}-${currentInteractionIndex}`,
+            ...interaction.contentProps,
+            onAnimationComplete: handleAnimationComplete,
+            startAnimation: animationTrigger,
+            // Pass the onAnswer handler to any component that might need it
+            onAnswer: handleAnswer,
+        };
+
+        return <Component {...props} />;
+    }
 };
 
 export default InteractiveLesson; 

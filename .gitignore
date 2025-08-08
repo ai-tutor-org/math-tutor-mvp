@@ -31,3 +31,26 @@ dist-ssr
 # Vite
 .vite/
 coverage/ 
+
+# Python virtual environments and artifacts
+.venv/
+venv/
+ENV/
+env/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python packaging/build
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# IDE-specific Python files
+.pytest_cache/
+.mypy_cache/
+coverage.xml
+.htmlcov/ 

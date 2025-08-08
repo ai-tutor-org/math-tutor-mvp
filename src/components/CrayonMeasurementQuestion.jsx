@@ -14,16 +14,14 @@ const CrayonMeasurementQuestion = ({ onAnswer, question, useIcon, choices }) => 
         setSelectedChoice(choice);
         setShowFeedback(true);
 
-        // Trigger the tutor response based on the choice
-        const tutorResponse = choice.isCorrect
-            ? "Exactly! Centimeters are perfect for that."
-            : "Good try, but a meter is way too big for a crayon! Centimeters are the better choice here.";
+        // Return the interaction ID for the appropriate feedback
+        const feedbackInteractionId = choice.isCorrect ? 'crayon-correct' : 'crayon-incorrect';
 
-        // Call the answer handler with both the choice and tutor response
+        // Call the answer handler with the choice and feedback interaction ID
         onAnswer({
             choice,
-            tutorResponse,
-            isCorrect: choice.isCorrect
+            isCorrect: choice.isCorrect,
+            feedbackInteractionId
         });
     };
 

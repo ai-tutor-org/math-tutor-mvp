@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
 
-function TTSManager({ text, onStart, onEnd, onError }) {
+const TTSManager = forwardRef(({ text, onStart, onEnd, onError }, ref) => {
     const [audioMapping, setAudioMapping] = useState(null);
     const audioRef = useRef(null);
 
@@ -26,31 +26,7 @@ function TTSManager({ text, onStart, onEnd, onError }) {
         loadAudioMapping();
     }, []);
 
-    // Effect to handle audio playback when text changes
-    useEffect(() => {
-        if (!text || !text.trim() || audioMapping === null) {
-            return;
-        }
-
-        // Stop any currently playing audio
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
-        }
-
-        // Check if we have a pre-generated audio file for this text
-        const audioFile = audioMapping[text.trim()];
-        
-        if (audioFile) {
-            // Use pre-generated audio
-            playPreGeneratedAudio(audioFile);
-        } else {
-            // Fall back to Web Speech API
-            playWithWebSpeechAPI(text.trim());
-        }
-    }, [text, audioMapping, onStart, onEnd, onError]);
-
-    const playPreGeneratedAudio = (audioFile) => {
+    const playPreGeneratedAudio = useCallback((audioFile) => {
         const audio = new Audio(`/audio/${audioFile}`);
         audioRef.current = audio;
 
@@ -78,9 +54,9 @@ function TTSManager({ text, onStart, onEnd, onError }) {
                 if (onEnd) onEnd();
             });
         }, 100);
-    };
+    }, [onStart, onEnd, onError]);
 
-    const playWithWebSpeechAPI = (textToSpeak) => {
+    const playWithWebSpeechAPI = useCallback((textToSpeak) => {
         const synth = window.speechSynthesis;
         if (!synth) {
             console.warn('TTSManager: Speech synthesis not supported');
@@ -120,7 +96,42 @@ function TTSManager({ text, onStart, onEnd, onError }) {
         setTimeout(() => {
             synth.speak(utterance);
         }, 100);
-    };
+    }, [onStart, onEnd, onError]);
+
+    const speakText = useCallback((textToSpeak) => {
+        if (!textToSpeak || !textToSpeak.trim() || audioMapping === null) {
+            return;
+        }
+
+        // Stop any currently playing audio
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+
+        // Check if we have a pre-generated audio file for this text
+        const audioFile = audioMapping[textToSpeak.trim()];
+
+        if (audioFile) {
+            // Use pre-generated audio
+            playPreGeneratedAudio(audioFile);
+        } else {
+            // Fall back to Web Speech API
+            playWithWebSpeechAPI(textToSpeak.trim());
+        }
+    }, [audioMapping, playPreGeneratedAudio, playWithWebSpeechAPI]);
+
+    // Expose triggerTTS method to parent components
+    useImperativeHandle(ref, () => ({
+        triggerTTS: (textToSpeak) => {
+            speakText(textToSpeak);
+        }
+    }), [speakText]);
+
+    // Effect to handle audio playback when text changes
+    useEffect(() => {
+        speakText(text);
+    }, [text, speakText]);
 
     // Cleanup on unmount
     useEffect(() => {
@@ -136,6 +147,8 @@ function TTSManager({ text, onStart, onEnd, onError }) {
     }, []);
 
     return null;
-}
+});
+
+TTSManager.displayName = 'TTSManager';
 
 export default TTSManager; 
