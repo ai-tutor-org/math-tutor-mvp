@@ -53,6 +53,7 @@ const InteractiveLesson = () => {
     // Lesson State
     const [currentPresIndex, setCurrentPresIndex] = useState(0);
     const [currentInteractionIndex, setCurrentInteractionIndex] = useState(0);
+    const [currentConditionalPresentation, setCurrentConditionalPresentation] = useState(null); // For 5B, 5C
 
     // UI State
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -66,7 +67,10 @@ const InteractiveLesson = () => {
 
     // Data from contentData.js
     const lesson = useMemo(() => lessons[lessonId], [lessonId]);
-    const presentationId = useMemo(() => lesson.sequence[currentPresIndex]?.presentationId, [lesson, currentPresIndex]);
+    const presentationId = useMemo(() => {
+        // Use conditional presentation if set, otherwise use normal sequence
+        return currentConditionalPresentation || lesson.sequence[currentPresIndex]?.presentationId;
+    }, [lesson, currentPresIndex, currentConditionalPresentation]);
     const presentation = useMemo(() => presentations[presentationId], [presentationId]);
     const interaction = useMemo(() => presentation?.interactions[currentInteractionIndex], [presentation, currentInteractionIndex]);
 
@@ -103,25 +107,62 @@ const InteractiveLesson = () => {
     }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
 
     const navigateToInteraction = useCallback((interactionId) => {
+        console.log(`Looking for interaction: ${interactionId}`);
         // Find the presentation containing this interaction
         for (const [presId, pres] of Object.entries(presentations)) {
+            console.log(`Checking presentation: ${presId}`);
             const interactionIndex = pres.interactions.findIndex(int => int.id === interactionId);
+            console.log(`Found interaction at index: ${interactionIndex}`);
             if (interactionIndex !== -1) {
-                // Find the lesson sequence index for this presentation
+                // For conditional presentations (5B, 5C), set them using conditional presentation state
+                if (presId === 'measurement-reason-incorrect' || presId === 'measurement-reason-correct') {
+                    console.log(`Navigating to conditional presentation: ${presId}`);
+                    setCurrentConditionalPresentation(presId);
+                    setCurrentInteractionIndex(interactionIndex);
+                    setDynamicTutorText(null);
+                    return;
+                }
+                
+                // For normal presentations in the lesson sequence
                 const lessonSeqIndex = lesson.sequence.findIndex(seq => seq.presentationId === presId);
                 if (lessonSeqIndex !== -1) {
+                    console.log(`Found in lesson sequence at: ${lessonSeqIndex}`);
+                    setCurrentConditionalPresentation(null); // Clear conditional presentation
                     setCurrentPresIndex(lessonSeqIndex);
                     setCurrentInteractionIndex(interactionIndex);
-                    setDynamicTutorText(null); // Clear any dynamic text
+                    setDynamicTutorText(null);
                     return;
                 }
             }
         }
         console.warn(`Interaction ${interactionId} not found`);
-    }, [lesson, navigate]);
+    }, [lesson]);
 
     const handleAnswer = (answerData) => {
         console.log('Answer selected:', answerData);
+        console.log('Current interaction ID:', interaction?.id);
+        console.log('Answer is correct:', answerData.isCorrect);
+
+        // Handle measurement reason question (5A) - branch based on answer
+        if (interaction?.id === '5A') {
+            if (answerData.isCorrect) {
+                // Correct answer: go directly to 5C (correct feedback)
+                console.log('Navigating to 5C (correct)');
+                navigateToInteraction('5C');
+            } else {
+                // Incorrect answer: go to 5B (incorrect feedback and retry)
+                console.log('Navigating to 5B (incorrect)');
+                navigateToInteraction('5B');
+            }
+            return;
+        }
+
+        // Handle retry question (5B) - only one correct option now
+        if (interaction?.id === '5B') {
+            // Only correct answer available, go to 5C
+            navigateToInteraction('5C');
+            return;
+        }
 
         const shapeIds = new Set(['measure-notebook', 'measure-sticky-note', 'measure-coaster', 'measure-house-sign']);
         if (shapeIds.has(answerData.interactionId)) {
@@ -172,6 +213,18 @@ const InteractiveLesson = () => {
     const handleDoneButton = () => {
         if (interaction?.nextButtonText === "Done") {
             navigate('/');
+        } else if (interaction?.navigateToPresentation) {
+            // Handle special navigation (like from 5C to standard-units-intro)
+            const targetPresIndex = lesson.sequence.findIndex(seq => seq.presentationId === interaction.navigateToPresentation);
+            if (targetPresIndex !== -1) {
+                setCurrentConditionalPresentation(null); // Clear conditional presentation
+                setCurrentPresIndex(targetPresIndex);
+                setCurrentInteractionIndex(0);
+                setDynamicTutorText(null);
+            } else {
+                console.warn(`Presentation ${interaction.navigateToPresentation} not found in lesson sequence`);
+                advanceToNext();
+            }
         } else {
             advanceToNext();
         }

@@ -3,11 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaperclip } from 'react-icons/fa';
 import './RulerMeasurement.css';
 
-const RulerMeasurement = ({ startAnimation, onAnimationComplete }) => {
-    const [step, setStep] = useState(0);
+const RulerMeasurement = ({ 
+    length = 3, 
+    unit = 'cm', 
+    showAnimation = false, 
+    startAnimation = false, 
+    onAnimationComplete 
+}) => {
+    const [step, setStep] = useState(showAnimation ? 0 : 4);
 
     useEffect(() => {
-        if (startAnimation) {
+        if (showAnimation || startAnimation) {
+            setStep(0);
             const timers = [
                 setTimeout(() => setStep(1), 500),      // Ruler appears
                 setTimeout(() => setStep(2), 2000),     // Zoom in
@@ -21,7 +28,7 @@ const RulerMeasurement = ({ startAnimation, onAnimationComplete }) => {
             ];
             return () => timers.forEach(clearTimeout);
         }
-    }, [startAnimation, onAnimationComplete]);
+    }, [showAnimation, startAnimation, onAnimationComplete]);
 
     const rulerVariants = {
         hidden: { opacity: 0, y: 50 },
@@ -80,7 +87,7 @@ const RulerMeasurement = ({ startAnimation, onAnimationComplete }) => {
             <AnimatePresence>
                 {step >= 4 && (
                     <motion.p className="measurement-text" variants={itemVariants} initial="hidden" animate="visible">
-                        This paperclip is 3 cm long.
+                        This paperclip is {length} {unit} long.
                     </motion.p>
                 )}
             </AnimatePresence>

@@ -21,7 +21,7 @@
 
 .room-rectangle {
     width: 500px;
-    height: 150px;
+    height: 200px;
     border: 10px solid #8D6E63;
     background-color: #F5EFE6;
     position: relative;
@@ -181,4 +181,96 @@
         transform: scale(1);
         opacity: 1;
     }
+}
+
+.footstep-label {
+    position: absolute;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    border-radius: 8px;
+    z-index: 20;
+}
+
+.your-label {
+    top: 20px;
+    left: 10px;
+}
+
+.friend-label {
+    top: 90px;
+    left: 10px;
+}
+
+.question-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.question-text {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    margin: 0;
+}
+
+.choices-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.choice-button {
+    padding: 15px 25px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    border: 3px solid rgba(255, 255, 255, 0.6);
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.choice-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.choice-button.selected {
+    background-color: rgba(76, 175, 80, 0.8);
+    border-color: #4CAF50;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.footstep-counter {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.flashing-question-mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    color: #ff6b6b;
+    z-index: 15;
 }

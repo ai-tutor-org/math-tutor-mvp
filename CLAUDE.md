@@ -63,7 +63,7 @@ The app uses React's built-in state management with:
 ### Content Extension
 
 To add new lessons or interactions:
-1. Add lesson definition to `lessons` object in `contentData.js`
+1. Add lesson definition to `lessons` object in `contentData.js`. The TTS content need to be in this file so that it can be pre-generated.
 2. Add presentation definitions to `presentations` object
 3. Create any new interactive components in `src/components/`
 4. Update `componentMap` in `InteractiveLesson.jsx` if needed

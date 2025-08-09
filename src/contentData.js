@@ -40,12 +40,16 @@ export const lessons = {
                 transition: { type: 'auto' }
             },
             {
+                presentationId: 'measurement-reason-question',
+                transition: { type: 'conditional' } // Will be handled programmatically
+            },
+            {
                 presentationId: 'standard-units-intro',
-                transition: { type: 'manual', buttonText: "Show Me Standard Units!" }
+                transition: { type: 'manual', buttonText: "What is a standard unit?" }
             },
             {
                 presentationId: 'centimeter-ruler-example',
-                transition: { type: 'manual', buttonText: "Learn the Next Unit" }
+                transition: { type: 'manual', buttonText: "Next" }
             },
             {
                 presentationId: 'meter-stick-example',
@@ -87,6 +91,11 @@ export const lessons = {
                 presentationId: 'shape-incorrect-feedback',
                 transition: { type: 'auto' }
             },
+        ],
+        // These presentations are not in the main sequence - they are navigated to conditionally
+        conditionalPresentations: [
+            'measurement-reason-incorrect',
+            'measurement-reason-correct'
         ]
     }
 };
@@ -143,8 +152,8 @@ export const presentations = {
             {
                 id: 4,
                 type: 'footsteps-animation-friend',
-                tutorText: "Okay, so the room is 10 steps long. Simple enough! But wait... here comes my friend, who has much bigger feet. Help him measure the room too - click the button for each of his steps.",
                 ContentComponent: RoomIllustration,
+                tutorText: "Okay, so the room is 10 steps long. Simple enough! But wait... here comes your friend, who has bigger feet. He doesn't believe that the room is 10 steps long. He will use his own steps to measure the room. Help him measure the room too - click the button for each of his steps.",
                 contentProps: {
                     totalSteps: 8,
                     footIconColor: '#e24a4a',
@@ -162,7 +171,77 @@ export const presentations = {
                 type: 'conflicting-measurements',
                 tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. But the room didn't change! Who is right? This is confusing, isn't it?",
                 ContentComponent: ConflictingMeasurements,
-                transitionType: 'auto',
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Next',
+            }
+        ]
+    },
+    'measurement-reason-question': {
+        interactions: [
+            {
+                id: '5A',
+                type: 'multiple-choice-question',
+                tutorText: "What do you think is the reason?",
+                ContentComponent: RoomIllustration,
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a',
+                    showQuestion: true,
+                    question: "What do you think is the reason?",
+                    choices: [
+                        { text: 'The size of the room changed', isCorrect: false },
+                        { text: "The size of my feet and my friend's feet are different", isCorrect: true }
+                    ]
+                },
+                transitionType: 'manual',
+            }
+        ]
+    },
+    'measurement-reason-incorrect': {
+        interactions: [
+            {
+                id: '5B',
+                type: 'multiple-choice-question',
+                tutorText: "No, the size of the room is the same. Choose again.",
+                ContentComponent: RoomIllustration,
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a',
+                    showQuestion: true,
+                    question: "What do you think is the reason?",
+                    choices: [
+                        { text: "The size of my feet and my friend's feet are different", isCorrect: true }
+                    ]
+                },
+                transitionType: 'manual',
+            }
+        ]
+    },
+    'measurement-reason-correct': {
+        interactions: [
+            {
+                id: '5C',
+                type: 'tutor-monologue',
+                tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
+                ContentComponent: RoomIllustration,
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a'
+                },
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue',
+                navigateToPresentation: 'standard-units-intro' // Continue to next part after this
             }
         ]
     },
@@ -171,11 +250,9 @@ export const presentations = {
             {
                 id: 6,
                 type: 'standard-units-explanation',
-                tutorText: "This is why we need 'Standard Units'! They are fixed measurements that everyone agrees on, so we all get the same answer.",
+                tutorText: "What if we had a tool that was the same for everyone in this room? And the same for kids in the classroom next door? And the same for kids all over the world? To solve this problem, people all over the world agreed to use **standard units**.",
                 ContentComponent: StandardUnits,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue',
+                transitionType: 'auto',
             }
         ]
     },
@@ -184,12 +261,12 @@ export const presentations = {
             {
                 id: 7,
                 type: 'ruler-measurement',
-                tutorText: "Let's start with a small unit called a centimeter. We often use a ruler to measure it. See this paperclip? It's exactly 3 centimeters long.",
+                tutorText: "A standard unit is something which measures the same for everyone. One of the standard units is the **centimeter (cm)**. It's very small, perfect for measuring little things.",
                 ContentComponent: RulerMeasurement,
-                contentProps: { length: 3, unit: 'cm' },
+                contentProps: { length: 3, unit: 'cm', showAnimation: true },
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: 'Next Unit',
+                nextButtonText: 'Next',
             }
         ]
     },
