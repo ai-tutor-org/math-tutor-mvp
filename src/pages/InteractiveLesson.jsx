@@ -42,7 +42,8 @@ const componentMap = {
     'standard-units-explanation': StandardUnits,
     'ruler-measurement': RulerMeasurement,
     'meter-measurement': MeterStick,
-    'interactive-question': CrayonMeasurementQuestion
+    'interactive-question': CrayonMeasurementQuestion,
+    'multiple-choice-question': RoomIllustration
 };
 
 const InteractiveLesson = () => {
@@ -122,7 +123,7 @@ const InteractiveLesson = () => {
                     setDynamicTutorText(null);
                     return;
                 }
-                
+
                 // For normal presentations in the lesson sequence
                 const lessonSeqIndex = lesson.sequence.findIndex(seq => seq.presentationId === presId);
                 if (lessonSeqIndex !== -1) {
@@ -143,24 +144,27 @@ const InteractiveLesson = () => {
         console.log('Current interaction ID:', interaction?.id);
         console.log('Answer is correct:', answerData.isCorrect);
 
-        // Handle measurement reason question (5A) - branch based on answer
-        if (interaction?.id === '5A') {
+        // Handle measurement reason question - branch based on answer
+        if (interaction?.id === 'measurement-reason-question') {
             if (answerData.isCorrect) {
-                // Correct answer: go directly to 5C (correct feedback)
-                console.log('Navigating to 5C (correct)');
-                navigateToInteraction('5C');
+                // Correct answer: go directly to correct explanation
+                console.log('Navigating to measurement-reason-correct');
+                setCurrentConditionalPresentation('measurement-reason-correct');
+                setCurrentInteractionIndex(0);
             } else {
-                // Incorrect answer: go to 5B (incorrect feedback and retry)
-                console.log('Navigating to 5B (incorrect)');
-                navigateToInteraction('5B');
+                // Incorrect answer: go to incorrect feedback and retry
+                console.log('Navigating to measurement-reason-incorrect');
+                setCurrentConditionalPresentation('measurement-reason-incorrect');
+                setCurrentInteractionIndex(0);
             }
             return;
         }
 
-        // Handle retry question (5B) - only one correct option now
-        if (interaction?.id === '5B') {
-            // Only correct answer available, go to 5C
-            navigateToInteraction('5C');
+        // Handle retry question - only one correct option now
+        if (interaction?.id === 'measurement-reason-retry') {
+            // Only correct answer available, go to correct explanation
+            setCurrentConditionalPresentation('measurement-reason-correct');
+            setCurrentInteractionIndex(0);
             return;
         }
 
@@ -192,8 +196,8 @@ const InteractiveLesson = () => {
             const feedbackText = getFeedbackText(feedbackId);
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
+                ttsRef.current?.triggerTTS(feedbackText);
                 setShowNextButton(true); // Show continue button after feedback
-                // Don't call triggerTTS - let the normal text change effect handle it
             }
         } else {
             // For other question types, advance as before
@@ -213,6 +217,9 @@ const InteractiveLesson = () => {
     const handleDoneButton = () => {
         if (interaction?.nextButtonText === "Done") {
             navigate('/');
+        } else if (interaction?.navigateToInteraction) {
+            // Handle special navigation to specific interaction
+            navigateToInteraction(interaction.navigateToInteraction);
         } else if (interaction?.navigateToPresentation) {
             // Handle special navigation (like from 5C to standard-units-intro)
             const targetPresIndex = lesson.sequence.findIndex(seq => seq.presentationId === interaction.navigateToPresentation);

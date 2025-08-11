@@ -3,17 +3,33 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaperclip } from 'react-icons/fa';
 import './RulerMeasurement.css';
 
-const RulerMeasurement = ({ 
-    length = 3, 
-    unit = 'cm', 
-    showAnimation = false, 
-    startAnimation = false, 
-    onAnimationComplete 
+const RulerMeasurement = ({
+    length = 3,
+    unit = 'cm',
+    showAnimation = false,
+    startAnimation = false,
+    onAnimationComplete
 }) => {
-    const [step, setStep] = useState(showAnimation ? 0 : 4);
+    const [step, setStep] = useState(0);
 
     useEffect(() => {
-        if (showAnimation || startAnimation) {
+        if (showAnimation) {
+            // If showAnimation is true, start animation immediately
+            setStep(0);
+            const timers = [
+                setTimeout(() => setStep(1), 500),      // Ruler appears
+                setTimeout(() => setStep(2), 2000),     // Zoom in
+                setTimeout(() => setStep(3), 4000),     // Paperclip appears
+                setTimeout(() => setStep(4), 5000),     // Text appears
+                setTimeout(() => {
+                    if (onAnimationComplete) {
+                        onAnimationComplete();
+                    }
+                }, 6500) // End of animation
+            ];
+            return () => timers.forEach(clearTimeout);
+        } else if (startAnimation) {
+            // If startAnimation is triggered (after TTS), start animation
             setStep(0);
             const timers = [
                 setTimeout(() => setStep(1), 500),      // Ruler appears

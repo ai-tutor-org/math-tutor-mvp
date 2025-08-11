@@ -18,7 +18,7 @@ const RoomIllustration = ({
     showQuestion = false,
     question = '',
     choices = [],
-    onAnswer = () => {}
+    onAnswer = () => { }
 }) => {
     const [stepCounter, setStepCounter] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -96,7 +96,7 @@ const RoomIllustration = ({
     // Calculate footstep positions for both sets when showBothFootsteps is true
     const { yourFootSize, yourPositions, friendFootSize, friendPositions } = useMemo(() => {
         if (!showBothFootsteps) return { yourFootSize: 0, yourPositions: [], friendFootSize: 0, friendPositions: [] };
-        
+
         const roomWidth = 500;
         const wallThickness = 10;
         const availableWidth = roomWidth - (wallThickness * 2); // 480px
@@ -160,7 +160,7 @@ const RoomIllustration = ({
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: i * 0.1 }}
                                 style={{
-                                    left: `${10 + xPos}px`,
+                                    left: `${xPos}px`,
                                     top: '50px',
                                     fontSize: `${yourFootSize}px`,
                                     color: yourFootColor,
@@ -182,7 +182,7 @@ const RoomIllustration = ({
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: (yourSteps * 0.1) + (i * 0.1) }}
                                 style={{
-                                    left: `${10 + xPos}px`,
+                                    left: `${xPos}px`,
                                     top: '120px',
                                     fontSize: `${friendFootSize}px`,
                                     color: friendFootColor,
@@ -219,7 +219,7 @@ const RoomIllustration = ({
                     </AnimatePresence>
                 )}
             </div>
-            
+
             <div className="footstep-counter">{stepCounter > 0 && `${stepCounter} step${stepCounter > 1 ? 's' : ''} taken`}</div>
 
             {/* Question section */}
