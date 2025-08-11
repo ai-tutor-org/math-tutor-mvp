@@ -1,0 +1,173 @@
+/* Toast Provider CSS - Dark Theme Styling */
+
+/* Container for all toasts */
+.toast-container {
+    z-index: 9999;
+}
+
+/* Base toast styling - will be merged with inline styles */
+.toast-container>div {
+    max-width: 420px;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Success toast specific styling */
+.toast-container [data-type="success"] {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%);
+}
+
+/* Error toast specific styling */
+.toast-container [data-type="error"] {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+}
+
+/* Toast icons */
+.toast-container [role="img"] {
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+/* Toast close button (if enabled) */
+.toast-container button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.toast-container button:hover {
+    opacity: 1;
+}
+
+/* Animation improvements for dark theme */
+.toast-container>div {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Entry animation - HORIZONTAL slide from RIGHT EDGE of screen */
+@keyframes toast-enter-right {
+    from {
+        transform: translate3d(100%, 0, 0) scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Exit animation - HORIZONTAL slide back to RIGHT EDGE of screen */
+@keyframes toast-exit-right {
+    from {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: translate3d(100%, 0, 0) scale(0.95);
+        opacity: 0;
+    }
+}
+
+/* Entry animation for top-left position - diagonal slide from top-left corner */
+@keyframes toast-enter-left {
+    from {
+        transform: translate3d(-100%, -100%, 0) scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Entry animation for bottom-right position - diagonal slide from bottom-right corner */
+@keyframes toast-enter-bottom-right {
+    from {
+        transform: translate3d(100%, 100%, 0) scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Entry animation for bottom-left position - diagonal slide from bottom-left corner */
+@keyframes toast-enter-bottom-left {
+    from {
+        transform: translate3d(-100%, 100%, 0) scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Apply animations based on position */
+.toast-container[data-position="top-right"]>div {
+    animation: toast-enter-right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-container[data-position="top-left"]>div {
+    animation: toast-enter-left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-container[data-position="bottom-right"]>div {
+    animation: toast-enter-bottom-right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-container[data-position="bottom-left"]>div {
+    animation: toast-enter-bottom-left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hover effects for better UX */
+.toast-container>div:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .toast-container>div {
+        max-width: calc(100vw - 32px);
+        margin: 0 16px;
+        font-size: 13px;
+        padding: 10px 14px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .toast-container>div {
+        border-width: 2px;
+        font-weight: 600;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .toast-container>div {
+        transition: none;
+        animation: none;
+    }
+
+    .toast-container>div:hover {
+        transform: none;
+    }
+}
+
+/* Focus styles for accessibility */
+.toast-container>div:focus-visible {
+    outline: 2px solid #3182ce;
+    outline-offset: 2px;
+}

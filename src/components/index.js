@@ -10,4 +10,7 @@ export { default as RulerMeasurement } from './RulerMeasurement';
 export { default as StandardUnits } from './StandardUnits';
 export { default as ShapeMeasurement } from './ShapeMeasurement';
 export { default as TTSManager } from './TTSManager';
-export { default as TutorAvatar } from './TutorAvatar'; 
+export { default as TutorAvatar } from './TutorAvatar';
+
+// Toast Notification System - Global Infrastructure
+export { default as ToastProvider } from './ToastProvider'; 
