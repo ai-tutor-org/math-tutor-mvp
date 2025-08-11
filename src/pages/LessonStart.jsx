@@ -1,9 +1,11 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import NameInput from '../components/NameInput'
+import { useDevModeNavigate, useIsDevMode } from '../utils/devMode'
 
 function LessonStart() {
-    const navigate = useNavigate()
+    const navigate = useDevModeNavigate()
+    const isDevMode = useIsDevMode()
 
     const handleStartLesson = (name) => {
         // Save name to localStorage and navigate to the interactive lesson

@@ -1,8 +1,9 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useDevModeNavigate } from '../utils/devMode'
 
 function Navigation() {
-    const navigate = useNavigate()
+    const navigate = useDevModeNavigate()
     const location = useLocation()
 
     const goHome = () => {

@@ -23,6 +23,8 @@ import {
 import { lessons, presentations } from '../contentData'; // Import centralized data
 
 import TTSManager from '../components/TTSManager';
+import DeveloperMenu from '../components/DeveloperMenu';
+import { useIsDevMode, useDevModeNavigate } from '../utils/devMode';
 
 // Import all possible content components
 import RoomIllustration from '../components/RoomIllustration';
@@ -47,9 +49,12 @@ const componentMap = {
 };
 
 const InteractiveLesson = () => {
-    const navigate = useNavigate();
+    const navigate = useDevModeNavigate();
     const location = useLocation();
     const { userName = 'Explorer', lessonId = 'perimeter' } = location.state || {};
+    
+    // Developer mode detection
+    const isDevMode = useIsDevMode();
 
     // Lesson State
     const [currentPresIndex, setCurrentPresIndex] = useState(0);
@@ -138,6 +143,36 @@ const InteractiveLesson = () => {
         }
         console.warn(`Interaction ${interactionId} not found`);
     }, [lesson]);
+
+    // Developer mode handlers
+    const handleDevInteractionSelect = useCallback((interaction) => {
+        console.log('Dev navigation to:', interaction);
+        
+        if (interaction.isConditional) {
+            // Navigate to conditional presentation
+            setCurrentConditionalPresentation(interaction.presentationId);
+            setCurrentInteractionIndex(interaction.interactionIndex);
+        } else {
+            // Navigate to regular sequence presentation
+            setCurrentConditionalPresentation(null);
+            setCurrentPresIndex(interaction.presIndex);
+            setCurrentInteractionIndex(interaction.interactionIndex);
+        }
+        
+        // Reset UI state
+        setDynamicTutorText(null);
+        setShowNextButton(interaction.showNextButton ?? false);
+        setAnimationTrigger(false);
+    }, []);
+
+    const handleDevResetLesson = useCallback(() => {
+        setCurrentPresIndex(0);
+        setCurrentInteractionIndex(0);
+        setCurrentConditionalPresentation(null);
+        setDynamicTutorText(null);
+        setShowNextButton(false);
+        setAnimationTrigger(false);
+    }, []);
 
     const handleAnswer = (answerData) => {
         console.log('Answer selected:', answerData);
@@ -338,6 +373,11 @@ const InteractiveLesson = () => {
                     <Box>
                         <Typography variant="caption" sx={{ color: '#999', fontSize: '0.7rem', lineHeight: 1 }}>
                             LESSON {lessonId === 'perimeter' ? '1' : '1'}
+                            {isDevMode && (
+                                <span style={{ color: '#4CAF50', marginLeft: '8px', fontWeight: 600 }}>
+                                    • DEV MODE
+                                </span>
+                            )}
                         </Typography>
                         <Typography variant="h6" sx={{ color: '#fff', fontSize: '1.1rem', lineHeight: 1.2, textTransform: 'capitalize' }}>
                             {lesson?.title || 'Perimeter'}
@@ -346,6 +386,17 @@ const InteractiveLesson = () => {
 
                     {/* Right Side - Navigation */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {/* Developer Menu */}
+                        {isDevMode && (
+                            <DeveloperMenu
+                                lessonId={lessonId}
+                                currentPresIndex={currentPresIndex}
+                                currentInteractionIndex={currentInteractionIndex}
+                                currentConditionalPresentation={currentConditionalPresentation}
+                                onInteractionSelect={handleDevInteractionSelect}
+                                onResetLesson={handleDevResetLesson}
+                            />
+                        )}
                         <IconButton
                             sx={{
                                 color: '#fff',

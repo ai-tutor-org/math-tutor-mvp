@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ChapterCard from '../components/ChapterCard'
+import { useDevModeNavigate } from '../utils/devMode'
 
 function Home() {
-    const navigate = useNavigate()
+    const navigate = useDevModeNavigate()
     const [isLoaded, setIsLoaded] = useState(false)
     const [showSparkles, setShowSparkles] = useState(false)
 
