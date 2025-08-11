@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ChapterCard from '../components/ChapterCard'
+import LessonCard from '../components/LessonCard'
 import { useDevModeNavigate } from '../utils/devMode'
 
 function Home() {
@@ -14,8 +14,8 @@ function Home() {
         return () => clearTimeout(timer)
     }, [])
 
-    const handleChapterSelect = () => {
-        navigate('/chapter')
+    const handleLessonSelect = () => {
+        navigate('/lesson/perimeter')
     }
 
     const sparkles = ['✨', '🌟', '💫', '⭐', '🎯', '🎨', '🧮', '📐']
@@ -89,26 +89,10 @@ function Home() {
                     fontWeight: 'bold',
                     color: 'white',
                     marginBottom: '20px',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-                    background: 'linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4)',
-                    backgroundSize: '300% 300%',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    animation: 'gradientShift 3s ease-in-out infinite'
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
                 }}>
-                    🎓 TutorP
+                    🎓 AI Personal Tutor
                 </h1>
-
-                {/* Subtitle */}
-                <p style={{
-                    fontSize: '2rem',
-                    color: 'rgba(255,255,255,0.9)',
-                    marginBottom: '40px',
-                    fontWeight: '300',
-                    textShadow: '1px 1px 2px rgba(0,0,0,0.2)'
-                }}>
-                    Learning Math is FUN! 🚀
-                </p>
 
                 {/* Fun description */}
                 <div style={{
@@ -116,7 +100,7 @@ function Home() {
                     backdropFilter: 'blur(10px)',
                     borderRadius: '25px',
                     padding: '30px',
-                    marginBottom: '50px',
+                    marginBottom: '40px',
                     border: '1px solid rgba(255,255,255,0.2)',
                     maxWidth: '700px',
                     marginLeft: 'auto',
@@ -133,6 +117,17 @@ function Home() {
                         🎨✨
                     </p>
                 </div>
+
+                {/* Subtitle */}
+                <p style={{
+                    fontSize: '2rem',
+                    color: 'rgba(255,255,255,0.9)',
+                    marginBottom: '40px',
+                    fontWeight: '300',
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.2)'
+                }}>
+                    Choose your lesson! 🚀
+                </p>
 
                 {/* Sparkles animation */}
                 {showSparkles && (
@@ -161,17 +156,17 @@ function Home() {
                     </div>
                 )}
 
-                {/* Chapter card with enhanced styling */}
+                {/* Lesson card with enhanced styling */}
                 <div style={{
                     transform: `scale(${isLoaded ? 1 : 0.8})`,
                     transition: 'transform 0.8s ease-out 0.5s',
                     display: 'flex',
                     justifyContent: 'center'
                 }}>
-                    <ChapterCard
-                        title="Area and Perimeter"
-                        description="🎯 Explore shapes and their measurements in a fun way!"
-                        onClick={handleChapterSelect}
+                    <LessonCard
+                        title="Introduction to Perimeter"
+                        description="🎯 Learn how to calculate the perimeter of different shapes in a fun way!"
+                        onClick={handleLessonSelect}
                     />
                 </div>
 
