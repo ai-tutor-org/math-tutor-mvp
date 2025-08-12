@@ -14,6 +14,8 @@ export { default as RectangleSolution } from './RectangleSolution';
 export { default as RoomIllustration } from './RoomIllustration';
 export { default as SquareFarmMap } from './SquareFarmMap';
 export { default as SquareSolution } from './SquareSolution';
+export { default as TriangleFarmMap } from './TriangleFarmMap';
+export { default as TriangleSolution } from './TriangleSolution';
 export { default as RulerMeasurement } from './RulerMeasurement';
 export { default as StandardUnits } from './StandardUnits';
 export { default as ShapeMeasurement } from './ShapeMeasurement';
