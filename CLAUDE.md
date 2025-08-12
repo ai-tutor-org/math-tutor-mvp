@@ -64,6 +64,12 @@ If you want to add new presentations or interactions, follow best practices from
 - IDs must be unique across all presentations
 - ContentComponents need to be imported at the top of the file
 - Update `componentMap` in `InteractiveLesson.jsx` if using new interaction types
+- Except for conditional transitions, in all the other manual transitions, the CTA should come on the left column, not the right.
+- After all the interactions of a presentation are made, connect them with each other
+
+**Content Guidelines**
+- Try to keep most text content on left hand side (which the tutor will speak) along with the CTAs to move to next, or an input box as required for the transition
+- Right hand side is mostly for games and other complex interactions
 
 
 ### Deployment

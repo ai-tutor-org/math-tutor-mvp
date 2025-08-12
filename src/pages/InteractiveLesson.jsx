@@ -33,6 +33,11 @@ import StandardUnits from '../components/StandardUnits';
 import RulerMeasurement from '../components/RulerMeasurement';
 import MeterStick from '../components/MeterStick';
 import CrayonMeasurementQuestion from '../components/CrayonMeasurementQuestion';
+import MissionReadiness from '../components/MissionReadiness';
+import FarmerIntro from '../components/FarmerIntro';
+import FoxThreat from '../components/FoxThreat';
+import FarmMap from '../components/FarmMap';
+import PerimeterDefinition from '../components/PerimeterDefinition';
 
 import './InteractiveLesson.css';
 
@@ -45,7 +50,12 @@ const componentMap = {
     'ruler-measurement': RulerMeasurement,
     'meter-measurement': MeterStick,
     'interactive-question': CrayonMeasurementQuestion,
-    'multiple-choice-question': RoomIllustration
+    'multiple-choice-question': RoomIllustration,
+    'mission-readiness': MissionReadiness,
+    'farmer-intro': FarmerIntro,
+    'fox-threat': FoxThreat,
+    'farm-map': FarmMap,
+    'perimeter-definition': PerimeterDefinition
 };
 
 const InteractiveLesson = () => {

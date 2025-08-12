@@ -12,7 +12,12 @@ import {
     CrayonMeasurementQuestion,
     ConflictingMeasurements,
     StandardUnits,
-    ShapeMeasurement
+    ShapeMeasurement,
+    MissionReadiness,
+    FarmerIntro,
+    FoxThreat,
+    FarmMap,
+    PerimeterDefinition
 } from './components';
 
 export const lessons = {
@@ -320,40 +325,41 @@ export const presentations = {
         interactions: [
             {
                 id: 'mission-readiness',
-                type: 'tutor-monologue',
+                type: 'mission-readiness',
                 tutorText: "Fantastic! You're now set with your knowledge of units and shapes. With these tools, we're ready to help someone solve a real problem. Are you up for a mission?",
+                ContentComponent: MissionReadiness,
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "I'm Ready!"
             },
             {
                 id: 'meet-farmer',
-                type: 'tutor-monologue',
+                type: 'farmer-intro',
                 tutorText: "Excellent! Let me introduce you to Farmer Giles. He's in a bit of a pickle and needs our help.",
-                ContentComponent: () => null,
+                ContentComponent: FarmerIntro,
                 transitionType: 'auto'
             },
             {
                 id: 'fox-threat',
-                type: 'tutor-monologue',
+                type: 'fox-threat',
                 tutorText: "Farmer Giles loves his sheep, but a sneaky fox has been spotted nearby! He needs to build a fence around his entire farm to keep his flock safe.",
-                ContentComponent: () => null,
+                ContentComponent: FoxThreat,
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Help the Farmer!"
             },
             {
                 id: 'farm-map',
-                type: 'tutor-monologue',
+                type: 'farm-map',
                 tutorText: "Fantastic! Here's the plan. This is a map of his farm. It's a perfect rectangle. We need to figure out the total length of the boundary to know how much fencing material to buy.",
-                ContentComponent: () => null,
+                ContentComponent: FarmMap,
                 transitionType: 'auto'
             },
             {
                 id: 'perimeter-definition',
-                type: 'tutor-monologue',
+                type: 'perimeter-definition',
                 tutorText: "This total length around the outside edge of a shape has a very important name in mathematics. It's called the **Perimeter**.",
-                ContentComponent: () => null,
+                ContentComponent: PerimeterDefinition,
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: 'Next'
