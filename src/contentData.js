@@ -22,7 +22,9 @@ import {
     SquareFarmMap,
     SquareSolution,
     TriangleFarmMap,
-    TriangleSolution
+    TriangleSolution,
+    PentagonFarmMap,
+    PentagonSolution
 } from './components';
 
 export const lessons = {
@@ -464,7 +466,7 @@ export const presentations = {
                 id: 'pentagon-challenge',
                 type: 'perimeter-input',
                 tutorText: "Great job! Just one more to go!",
-                ContentComponent: () => null,
+                ContentComponent: PentagonFarmMap,
                 contentProps: {
                     shape: { type: 'pentagon', sides: [8, 8, 8, 8, 8], unit: 'meters' },
                     correctAnswer: 40,
@@ -588,8 +590,9 @@ export const presentations = {
             },
             {
                 id: 'pentagon-solution',
-                type: 'tutor-monologue',
+                type: 'pentagon-solution',
                 tutorText: "Let's add them up together:",
+                ContentComponent: PentagonSolution,
                 transitionType: 'auto'
             }
         ]

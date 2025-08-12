@@ -16,6 +16,8 @@ export { default as SquareFarmMap } from './SquareFarmMap';
 export { default as SquareSolution } from './SquareSolution';
 export { default as TriangleFarmMap } from './TriangleFarmMap';
 export { default as TriangleSolution } from './TriangleSolution';
+export { default as PentagonFarmMap } from './PentagonFarmMap';
+export { default as PentagonSolution } from './PentagonSolution';
 export { default as RulerMeasurement } from './RulerMeasurement';
 export { default as StandardUnits } from './StandardUnits';
 export { default as ShapeMeasurement } from './ShapeMeasurement';
