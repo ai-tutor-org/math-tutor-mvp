@@ -1,0 +1,123 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Tree definition -->
+    <g id="tree">
+      <circle cx="0" cy="-8" r="12" fill="#228B22"/>
+      <rect x="-2" y="-2" width="4" height="10" fill="#8B4513"/>
+    </g>
+    
+    <!-- Grass patch definition -->
+    <g id="grass">
+      <path d="M0,0 Q-2,-3 -4,0 Q-2,-4 0,0 Q2,-3 4,0 Q2,-4 0,0" fill="#32CD32"/>
+    </g>
+    
+    <!-- Sheep definition -->
+    <g id="sheep">
+      <ellipse cx="0" cy="0" rx="8" ry="6" fill="#F5F5DC"/>
+      <circle cx="-5" cy="-2" r="3" fill="#F5F5DC"/>
+      <circle cx="-7" cy="-3" r="1" fill="#000"/>
+      <rect x="-2" y="3" width="1" height="3" fill="#000"/>
+      <rect x="0" y="3" width="1" height="3" fill="#000"/>
+      <rect x="2" y="3" width="1" height="3" fill="#000"/>
+      <rect x="4" y="3" width="1" height="3" fill="#000"/>
+    </g>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="400" fill="#9ACD32" rx="20"/>
+  
+  <!-- Farm field (square) -->
+  <rect x="80" y="80" width="240" height="240" fill="#8FBC8F" stroke="#8B4513" stroke-width="8" rx="8"/>
+  
+  <!-- Inner farm area -->
+  <rect x="88" y="88" width="224" height="224" fill="#90EE90"/>
+  
+  <!-- Farmer in center -->
+  <g transform="translate(200, 200)">
+    <!-- Body -->
+    <rect x="-6" y="-8" width="12" height="16" fill="#4169E1"/>
+    <!-- Head -->
+    <circle cx="0" cy="-18" r="6" fill="#FDBCB4"/>
+    <!-- Hat -->
+    <rect x="-8" y="-26" width="16" height="4" fill="#8B4513"/>
+    <rect x="-6" y="-30" width="12" height="4" fill="#8B4513"/>
+    <!-- Beard -->
+    <path d="M-4,-15 Q0,-12 4,-15 Q2,-10 0,-12 Q-2,-10 -4,-15" fill="#8B4513"/>
+    <!-- Arms -->
+    <rect x="-10" y="-6" width="4" height="8" fill="#FDBCB4"/>
+    <rect x="6" y="-6" width="4" height="8" fill="#FDBCB4"/>
+    <!-- Legs -->
+    <rect x="-4" y="8" width="3" height="12" fill="#000080"/>
+    <rect x="1" y="8" width="3" height="12" fill="#000080"/>
+  </g>
+  
+  <!-- Sheep positioned around the field -->
+  <use href="#sheep" transform="translate(140, 140)"/>
+  <use href="#sheep" transform="translate(260, 140)"/>
+  <use href="#sheep" transform="translate(140, 260)"/>
+  <use href="#sheep" transform="translate(260, 260)"/>
+  
+  <!-- Trees at corners -->
+  <use href="#tree" transform="translate(90, 90)"/>
+  <use href="#tree" transform="translate(310, 90)"/>
+  <use href="#tree" transform="translate(90, 310)"/>
+  <use href="#tree" transform="translate(310, 310)"/>
+  
+  <!-- Grass patches -->
+  <use href="#grass" transform="translate(120, 120)"/>
+  <use href="#grass" transform="translate(180, 150)"/>
+  <use href="#grass" transform="translate(220, 130)"/>
+  <use href="#grass" transform="translate(280, 160)"/>
+  <use href="#grass" transform="translate(130, 200)"/>
+  <use href="#grass" transform="translate(270, 200)"/>
+  <use href="#grass" transform="translate(160, 240)"/>
+  <use href="#grass" transform="translate(240, 260)"/>
+  <use href="#grass" transform="translate(120, 280)"/>
+  <use href="#grass" transform="translate(280, 290)"/>
+  
+  <!-- Measurement labels -->
+  <!-- Top -->
+  <g transform="translate(200, 40)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">15 m</text>
+  </g>
+  
+  <!-- Right -->
+  <g transform="translate(360, 200) rotate(90)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">15 m</text>
+  </g>
+  
+  <!-- Bottom -->
+  <g transform="translate(200, 360)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">15 m</text>
+  </g>
+  
+  <!-- Left -->
+  <g transform="translate(40, 200) rotate(-90)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">15 m</text>
+  </g>
+  
+  <!-- Measurement lines -->
+  <!-- Top -->
+  <line x1="80" y1="50" x2="80" y2="60" stroke="#666" stroke-width="2"/>
+  <line x1="320" y1="50" x2="320" y2="60" stroke="#666" stroke-width="2"/>
+  <line x1="80" y1="50" x2="320" y2="50" stroke="#666" stroke-width="2"/>
+  
+  <!-- Right -->
+  <line x1="340" y1="80" x2="350" y2="80" stroke="#666" stroke-width="2"/>
+  <line x1="340" y1="320" x2="350" y2="320" stroke="#666" stroke-width="2"/>
+  <line x1="350" y1="80" x2="350" y2="320" stroke="#666" stroke-width="2"/>
+  
+  <!-- Bottom -->
+  <line x1="80" y1="340" x2="80" y2="350" stroke="#666" stroke-width="2"/>
+  <line x1="320" y1="340" x2="320" y2="350" stroke="#666" stroke-width="2"/>
+  <line x1="80" y1="350" x2="320" y2="350" stroke="#666" stroke-width="2"/>
+  
+  <!-- Left -->
+  <line x1="50" y1="80" x2="60" y2="80" stroke="#666" stroke-width="2"/>
+  <line x1="50" y1="320" x2="60" y2="320" stroke="#666" stroke-width="2"/>
+  <line x1="50" y1="80" x2="50" y2="320" stroke="#666" stroke-width="2"/>
+</svg>

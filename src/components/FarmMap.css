@@ -29,6 +29,16 @@
     background: #e5e5e5;
 }
 
+.farm-square {
+    width: 250px;
+    height: 250px;
+    border: 4px solid #666;
+    border-radius: 8px;
+    position: relative;
+    margin: 0 auto;
+    background: #e5e5e5;
+}
+
 .farm-interior {
     width: 100%;
     height: 100%;

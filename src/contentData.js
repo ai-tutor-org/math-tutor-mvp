@@ -18,7 +18,9 @@ import {
     FoxThreat,
     FarmMap,
     PerimeterDefinition,
-    RectangleSolution
+    RectangleSolution,
+    SquareFarmMap,
+    SquareSolution
 } from './components';
 
 export const lessons = {
@@ -399,10 +401,10 @@ export const presentations = {
     'square-field-practice': {
         interactions: [
             {
-                id: 'square-challenge',
+                id: 'square-challenge-input',
                 type: 'perimeter-input',
                 tutorText: "Now that you've got the hang of it, let's help some other people with their fencing problems. What's the perimeter of this next field?",
-                ContentComponent: () => null,
+                ContentComponent: SquareFarmMap,
                 contentProps: {
                     shape: { type: 'square', side: 15, unit: 'meters' },
                     correctAnswer: 60,
@@ -413,6 +415,15 @@ export const presentations = {
                     }
                 },
                 transitionType: 'manual'
+            },
+            {
+                id: 'square-celebration',
+                type: 'tutor-monologue',
+                tutorText: "Exactly! The perimeter of this square field is 60 meters.",
+                ContentComponent: () => null,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Next'
             }
         ]
     },
@@ -528,8 +539,9 @@ export const presentations = {
             },
             {
                 id: 'square-solution',
-                type: 'tutor-monologue',
+                type: 'square-solution',
                 tutorText: "Let's work this one out together. Since all four sides of a square are equal, we can add them up like this:",
+                ContentComponent: SquareSolution,
                 transitionType: 'auto'
             },
             {
