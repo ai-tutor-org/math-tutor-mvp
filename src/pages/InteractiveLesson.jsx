@@ -608,7 +608,7 @@ const InteractiveLesson = () => {
                     </Box>
 
                     {/* Perimeter Input Interface */}
-                    {interaction?.type === 'perimeter-input' && !isSpeaking && (
+                    {interaction?.type === 'perimeter-input' && !isSpeaking && !showNextButton && (
                         <Box sx={{ mb: 3, width: '100%' }}>
                             {/* Show solution equation if needed */}
                             {showPerimeterSolution && (
