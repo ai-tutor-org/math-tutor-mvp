@@ -553,7 +553,7 @@ export const presentations = {
             {
                 id: 'square-solution',
                 type: 'square-solution',
-                tutorText: "Let's work this one out together. Since all four sides of a square are equal, we can add them up like this:",
+                tutorText: "Let's work this one out together. Since all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
                 ContentComponent: SquareSolution,
                 transitionType: 'auto'
             },
@@ -572,7 +572,7 @@ export const presentations = {
             {
                 id: 'triangle-solution',
                 type: 'triangle-solution',
-                tutorText: "No problem. Let's add them up:",
+                tutorText: "No problem. Let's add them up: Ten plus twelve plus eighteen equals forty.",
                 ContentComponent: TriangleSolution,
                 transitionType: 'auto'
             },
@@ -591,7 +591,7 @@ export const presentations = {
             {
                 id: 'pentagon-solution',
                 type: 'pentagon-solution',
-                tutorText: "Let's add them up together:",
+                tutorText: "Let's add them up together: Eight plus eight plus eight plus eight plus eight equals forty.",
                 ContentComponent: PentagonSolution,
                 transitionType: 'auto'
             }

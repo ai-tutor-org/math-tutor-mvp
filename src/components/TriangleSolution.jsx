@@ -8,9 +8,9 @@ const TriangleSolution = ({ onAnswerSubmit }) => {
 
     useEffect(() => {
         const sequence = [
-            { side: 'bottom', delay: 4000, label: '10m' },
-            { side: 'right', delay: 5000, label: '12m' }, 
-            { side: 'left', delay: 6000, label: '18m' }
+            { side: 'bottom', delay: 2000, label: '10m' },
+            { side: 'right', delay: 3000, label: '12m' }, 
+            { side: 'left', delay: 4000, label: '18m' }
         ];
 
         const timeouts = sequence.map(({ side, delay, label }) => 
