@@ -10,6 +10,7 @@ export { default as MissionReadiness } from './MissionReadiness';
 export { default as NameInput } from './NameInput';
 export { default as Navigation } from './Navigation';
 export { default as PerimeterDefinition } from './PerimeterDefinition';
+export { default as RectangleSolution } from './RectangleSolution';
 export { default as RoomIllustration } from './RoomIllustration';
 export { default as RulerMeasurement } from './RulerMeasurement';
 export { default as StandardUnits } from './StandardUnits';
