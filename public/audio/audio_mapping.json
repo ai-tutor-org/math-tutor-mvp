@@ -26,7 +26,9 @@
   "To find the perimeter, we need to add up the lengths of all the sides. Let's give it a try with Farmer Giles' field. What's the total length of the fence he needs?": "tutor_58d1683168e3.mp3",
   "Great job! Farmer Giles needs 100 meters of fencing.": "tutor_f30eeb62c10a.mp3",
   "Now that you've got the hang of it, let's help some other people with their fencing problems. What's the perimeter of this next field?": "tutor_3083acaf236d.mp3",
+  "Exactly! The perimeter of this square field is 60 meters.": "tutor_3a991a560992.mp3",
   "You're a real pro at this! Ready for a new challenge?": "tutor_d9bdedf027e9.mp3",
+  "Perfect! The perimeter is 40 meters.": "tutor_99b86f018e13.mp3",
   "Great job! Just one more to go!": "tutor_772c70a593be.mp3",
   "You did it! You've successfully helped Farmer Giles and so many others. You're a perimeter pro!": "tutor_c9bf0d7e6836.mp3",
   "Exactly! Centimeters are perfect for that.": "tutor_4bfe0c2848af.mp3",
@@ -36,13 +38,11 @@
   "That's exactly right! The perimeter is 100 meters.": "tutor_e12d0a1a94b8.mp3",
   "Not quite. Remember, the perimeter is the total length around the entire outside edge of the farm. Take another look and try again.": "tutor_fc240f3b14ed.mp3",
   "Hmm, let's try a different approach. Let's add up the sides together. Thirty plus twenty plus thirty plus twenty equals one hundred.": "tutor_1d8b4caedf5d.mp3",
-  "Exactly! The perimeter of this square field is 60 meters.": "tutor_3a991a560992.mp3",
   "Not quite, try again!": "tutor_2a900451f69f.mp3",
-  "Let's work this one out together. Since all four sides of a square are equal, we can add them up like this:": "tutor_7534e543d33e.mp3",
-  "Perfect! The perimeter is 40 meters.": "tutor_99b86f018e13.mp3",
+  "Let's work this one out together. Since all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.": "tutor_2c5566829929.mp3",
   "That's not it. Give it another shot!": "tutor_24722b400820.mp3",
-  "No problem. Let's add them up:": "tutor_dd8998933192.mp3",
+  "No problem. Let's add them up: 10 + 12 + 18 = 40.": "tutor_3060f96c9844.mp3",
   "Incredible! The perimeter of this pentagon is 40 meters.": "tutor_b778788810f1.mp3",
   "Not quite right. Remember, a pentagon has five sides!": "tutor_f154183908bc.mp3",
-  "Let's add them up together:": "tutor_454477bbd614.mp3"
+  "Let's add them up together: Eight plus eight plus eight plus eight plus eight equals forty.": "tutor_4ff1a7c2eb17.mp3"
 }
