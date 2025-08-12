@@ -25,6 +25,26 @@ export const lessons = {
             },
             {
                 presentationId: 'measurement-practice-activities',
+                transition: { type: 'manual', buttonText: "Continue" }
+            },
+            {
+                presentationId: 'farmer-mission-intro',
+                transition: { type: 'manual', buttonText: "Continue" }
+            },
+            {
+                presentationId: 'farmer-rectangle-challenge',
+                transition: { type: 'manual', buttonText: "Continue" }
+            },
+            {
+                presentationId: 'square-field-practice',
+                transition: { type: 'manual', buttonText: "Continue" }
+            },
+            {
+                presentationId: 'triangle-field-practice',
+                transition: { type: 'manual', buttonText: "Continue" }
+            },
+            {
+                presentationId: 'pentagon-final-challenge',
                 transition: { type: 'manual', buttonText: "Done" }
             }
         ],
@@ -295,6 +315,149 @@ export const presentations = {
             }
         ]
     },
+    // FARMER MISSION PRESENTATIONS
+    'farmer-mission-intro': {
+        interactions: [
+            {
+                id: 'mission-readiness',
+                type: 'tutor-monologue',
+                tutorText: "Fantastic! You're now set with your knowledge of units and shapes. With these tools, we're ready to help someone solve a real problem. Are you up for a mission?",
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "I'm Ready!"
+            },
+            {
+                id: 'meet-farmer',
+                type: 'tutor-monologue',
+                tutorText: "Excellent! Let me introduce you to Farmer Giles. He's in a bit of a pickle and needs our help.",
+                ContentComponent: () => null,
+                transitionType: 'auto'
+            },
+            {
+                id: 'fox-threat',
+                type: 'tutor-monologue',
+                tutorText: "Farmer Giles loves his sheep, but a sneaky fox has been spotted nearby! He needs to build a fence around his entire farm to keep his flock safe.",
+                ContentComponent: () => null,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Help the Farmer!"
+            },
+            {
+                id: 'farm-map',
+                type: 'tutor-monologue',
+                tutorText: "Fantastic! Here's the plan. This is a map of his farm. It's a perfect rectangle. We need to figure out the total length of the boundary to know how much fencing material to buy.",
+                ContentComponent: () => null,
+                transitionType: 'auto'
+            },
+            {
+                id: 'perimeter-definition',
+                type: 'tutor-monologue',
+                tutorText: "This total length around the outside edge of a shape has a very important name in mathematics. It's called the **Perimeter**.",
+                ContentComponent: () => null,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Next'
+            }
+        ]
+    },
+    'farmer-rectangle-challenge': {
+        interactions: [
+            {
+                id: 'rectangle-challenge',
+                type: 'perimeter-input',
+                tutorText: "To find the perimeter, we need to add up the lengths of all the sides. Let's give it a try with Farmer Giles' field. What's the total length of the fence he needs?",
+                ContentComponent: () => null,
+                contentProps: {
+                    shape: { type: 'rectangle', width: 30, height: 20, unit: 'meters' },
+                    correctAnswer: 100,
+                    feedbackIds: {
+                        correct: 'rectangle-correct',
+                        hint1: 'rectangle-hint-1',
+                        solution: 'rectangle-solution'
+                    }
+                },
+                transitionType: 'manual'
+            },
+            {
+                id: 'farmer-celebration',
+                type: 'tutor-monologue',
+                tutorText: "Great job! Farmer Giles needs 100 meters of fencing.",
+                ContentComponent: () => null,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Next'
+            }
+        ]
+    },
+    'square-field-practice': {
+        interactions: [
+            {
+                id: 'square-challenge',
+                type: 'perimeter-input',
+                tutorText: "Now that you've got the hang of it, let's help some other people with their fencing problems. What's the perimeter of this next field?",
+                ContentComponent: () => null,
+                contentProps: {
+                    shape: { type: 'square', side: 15, unit: 'meters' },
+                    correctAnswer: 60,
+                    feedbackIds: {
+                        correct: 'square-correct',
+                        hint1: 'square-hint-1',
+                        solution: 'square-solution'
+                    }
+                },
+                transitionType: 'manual'
+            }
+        ]
+    },
+    'triangle-field-practice': {
+        interactions: [
+            {
+                id: 'triangle-challenge',
+                type: 'perimeter-input',
+                tutorText: "You're a real pro at this! Ready for a new challenge?",
+                ContentComponent: () => null,
+                contentProps: {
+                    shape: { type: 'triangle', sides: [10, 12, 18], unit: 'meters' },
+                    correctAnswer: 40,
+                    feedbackIds: {
+                        correct: 'triangle-correct',
+                        hint1: 'triangle-hint-1',
+                        solution: 'triangle-solution'
+                    }
+                },
+                transitionType: 'manual'
+            }
+        ]
+    },
+    'pentagon-final-challenge': {
+        interactions: [
+            {
+                id: 'pentagon-challenge',
+                type: 'perimeter-input',
+                tutorText: "Great job! Just one more to go!",
+                ContentComponent: () => null,
+                contentProps: {
+                    shape: { type: 'pentagon', sides: [8, 8, 8, 8, 8], unit: 'meters' },
+                    correctAnswer: 40,
+                    feedbackIds: {
+                        correct: 'pentagon-correct',
+                        hint1: 'pentagon-hint-1',
+                        solution: 'pentagon-solution'
+                    }
+                },
+                transitionType: 'manual'
+            },
+            {
+                id: 'mission-complete',
+                type: 'tutor-monologue',
+                tutorText: "You did it! You've successfully helped Farmer Giles and so many others. You're a perimeter pro!",
+                ContentComponent: () => null,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Go to Next Lesson"
+            }
+        ]
+    },
     // Feedback interactions - not part of sequential flow, used only for lookup
     'feedback-interactions': {
         interactions: [
@@ -322,6 +485,79 @@ export const presentations = {
                 id: 'shape-incorrect',
                 type: 'tutor-monologue',
                 tutorText: "Not quite. Try adjusting the ruler and measuring again.",
+                transitionType: 'auto'
+            },
+            // Perimeter feedback interactions
+            {
+                id: 'rectangle-correct',
+                type: 'tutor-monologue',
+                tutorText: "That's exactly right! The perimeter is 100 meters.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "Not quite. Remember, the perimeter is the total length around the entire outside edge of the farm. Take another look and try again.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-solution',
+                type: 'tutor-monologue',
+                tutorText: "Hmm, let's try a different approach. Let's add up the sides together.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'square-correct',
+                type: 'tutor-monologue',
+                tutorText: "Exactly! The perimeter of this square field is 60 meters.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'square-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "Not quite, try again!",
+                transitionType: 'auto'
+            },
+            {
+                id: 'square-solution',
+                type: 'tutor-monologue',
+                tutorText: "Let's work this one out together. Since all four sides of a square are equal, we can add them up like this:",
+                transitionType: 'auto'
+            },
+            {
+                id: 'triangle-correct',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! The perimeter is 40 meters.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'triangle-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "That's not it. Give it another shot!",
+                transitionType: 'auto'
+            },
+            {
+                id: 'triangle-solution',
+                type: 'tutor-monologue',
+                tutorText: "No problem. Let's add them up:",
+                transitionType: 'auto'
+            },
+            {
+                id: 'pentagon-correct',
+                type: 'tutor-monologue',
+                tutorText: "Incredible! The perimeter of this pentagon is 40 meters.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'pentagon-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "Not quite right. Remember, a pentagon has five sides!",
+                transitionType: 'auto'
+            },
+            {
+                id: 'pentagon-solution',
+                type: 'tutor-monologue',
+                tutorText: "Let's add them up together:",
                 transitionType: 'auto'
             }
         ]
