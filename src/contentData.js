@@ -20,7 +20,9 @@ import {
     PerimeterDefinition,
     RectangleSolution,
     SquareFarmMap,
-    SquareSolution
+    SquareSolution,
+    TriangleFarmMap,
+    TriangleSolution
 } from './components';
 
 export const lessons = {
@@ -433,7 +435,7 @@ export const presentations = {
                 id: 'triangle-challenge',
                 type: 'perimeter-input',
                 tutorText: "You're a real pro at this! Ready for a new challenge?",
-                ContentComponent: () => null,
+                ContentComponent: TriangleFarmMap,
                 contentProps: {
                     shape: { type: 'triangle', sides: [10, 12, 18], unit: 'meters' },
                     correctAnswer: 40,
@@ -444,6 +446,15 @@ export const presentations = {
                     }
                 },
                 transitionType: 'manual'
+            },
+            {
+                id: 'triangle-celebration',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! The perimeter is 40 meters.",
+                ContentComponent: () => null,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Next'
             }
         ]
     },
@@ -558,8 +569,9 @@ export const presentations = {
             },
             {
                 id: 'triangle-solution',
-                type: 'tutor-monologue',
+                type: 'triangle-solution',
                 tutorText: "No problem. Let's add them up:",
+                ContentComponent: TriangleSolution,
                 transitionType: 'auto'
             },
             {

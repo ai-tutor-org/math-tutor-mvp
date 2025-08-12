@@ -1,0 +1,109 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Tree definition -->
+    <g id="tree">
+      <circle cx="0" cy="-8" r="12" fill="#228B22"/>
+      <rect x="-2" y="-2" width="4" height="10" fill="#8B4513"/>
+    </g>
+    
+    <!-- Grass patch definition -->
+    <g id="grass">
+      <path d="M0,0 Q-2,-3 -4,0 Q-2,-4 0,0 Q2,-3 4,0 Q2,-4 0,0" fill="#32CD32"/>
+    </g>
+    
+    <!-- Sheep definition -->
+    <g id="sheep">
+      <ellipse cx="0" cy="0" rx="8" ry="6" fill="#F5F5DC"/>
+      <circle cx="-5" cy="-2" r="3" fill="#F5F5DC"/>
+      <circle cx="-7" cy="-3" r="1" fill="#000"/>
+      <rect x="-2" y="3" width="1" height="3" fill="#000"/>
+      <rect x="0" y="3" width="1" height="3" fill="#000"/>
+      <rect x="2" y="3" width="1" height="3" fill="#000"/>
+      <rect x="4" y="3" width="1" height="3" fill="#000"/>
+    </g>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="400" fill="#9ACD32" rx="20"/>
+  
+  <!-- Farm field (triangle) -->
+  <polygon points="200,80 320,280 80,280" fill="#8FBC8F" stroke="#8B4513" stroke-width="8" stroke-linejoin="round"/>
+  
+  <!-- Inner farm area -->
+  <polygon points="200,88 312,272 88,272" fill="#90EE90"/>
+  
+  <!-- Farmer in center -->
+  <g transform="translate(200, 220)">
+    <!-- Body -->
+    <rect x="-6" y="-8" width="12" height="16" fill="#4169E1"/>
+    <!-- Head -->
+    <circle cx="0" cy="-18" r="6" fill="#FDBCB4"/>
+    <!-- Hat -->
+    <rect x="-8" y="-26" width="16" height="4" fill="#8B4513"/>
+    <rect x="-6" y="-30" width="12" height="4" fill="#8B4513"/>
+    <!-- Beard -->
+    <path d="M-4,-15 Q0,-12 4,-15 Q2,-10 0,-12 Q-2,-10 -4,-15" fill="#8B4513"/>
+    <!-- Arms -->
+    <rect x="-10" y="-6" width="4" height="8" fill="#FDBCB4"/>
+    <rect x="6" y="-6" width="4" height="8" fill="#FDBCB4"/>
+    <!-- Legs -->
+    <rect x="-4" y="8" width="3" height="12" fill="#000080"/>
+    <rect x="1" y="8" width="3" height="12" fill="#000080"/>
+  </g>
+  
+  <!-- Sheep positioned within the triangular field -->
+  <use href="#sheep" transform="translate(160, 180)"/>
+  <use href="#sheep" transform="translate(240, 180)"/>
+  <use href="#sheep" transform="translate(140, 240)"/>
+  <use href="#sheep" transform="translate(260, 240)"/>
+  
+  <!-- Trees at corners -->
+  <use href="#tree" transform="translate(200, 85)"/>
+  <use href="#tree" transform="translate(315, 275)"/>
+  <use href="#tree" transform="translate(85, 275)"/>
+  
+  <!-- Grass patches -->
+  <use href="#grass" transform="translate(180, 140)"/>
+  <use href="#grass" transform="translate(220, 140)"/>
+  <use href="#grass" transform="translate(160, 200)"/>
+  <use href="#grass" transform="translate(240, 200)"/>
+  <use href="#grass" transform="translate(180, 250)"/>
+  <use href="#grass" transform="translate(220, 250)"/>
+  <use href="#grass" transform="translate(140, 260)"/>
+  <use href="#grass" transform="translate(260, 260)"/>
+  
+  <!-- Measurement labels -->
+  <!-- Left side (18 meters) -->
+  <g transform="translate(120, 180) rotate(-60)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">18 m</text>
+  </g>
+  
+  <!-- Right side (12 meters) -->
+  <g transform="translate(280, 180) rotate(60)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">12 m</text>
+  </g>
+  
+  <!-- Bottom side (10 meters) -->
+  <g transform="translate(200, 320)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">10 m</text>
+  </g>
+  
+  <!-- Measurement lines -->
+  <!-- Left side (18m) -->
+  <line x1="185" y1="90" x2="175" y2="100" stroke="#666" stroke-width="2"/>
+  <line x1="95" y1="270" x2="85" y2="260" stroke="#666" stroke-width="2"/>
+  <line x1="175" y1="100" x2="85" y2="260" stroke="#666" stroke-width="2"/>
+  
+  <!-- Right side (12m) -->
+  <line x1="215" y1="90" x2="225" y2="100" stroke="#666" stroke-width="2"/>
+  <line x1="305" y1="270" x2="315" y2="260" stroke="#666" stroke-width="2"/>
+  <line x1="225" y1="100" x2="315" y2="260" stroke="#666" stroke-width="2"/>
+  
+  <!-- Bottom side (10m) -->
+  <line x1="80" y1="290" x2="80" y2="300" stroke="#666" stroke-width="2"/>
+  <line x1="320" y1="290" x2="320" y2="300" stroke="#666" stroke-width="2"/>
+  <line x1="80" y1="300" x2="320" y2="300" stroke="#666" stroke-width="2"/>
+</svg>
