@@ -1,0 +1,80 @@
+.farmer-intro-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem;
+}
+
+.farmer-video {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}
+
+.video-fallback {
+    width: 100%;
+    padding: 2rem;
+}
+
+.farmer-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.farmer-emoji {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+}
+
+
+.sheep-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.sheep {
+    font-size: 1.5rem;
+    animation: bounce 2s infinite ease-in-out;
+}
+
+.sheep:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.sheep:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+.farmer-intro-text {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.farmer-intro-text h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.farmer-intro-text p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+    opacity: 0.9;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-5px);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+}
