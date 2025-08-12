@@ -32,10 +32,7 @@ The content system has three levels:
 
 The app follows this user journey:
 1. Home (`/`) → Chapter selection
-2. Chapter (`/chapter`) → Lesson selection  
-3. LessonStart (`/lesson-start`) → Name input
-4. Lesson (`/lesson`) → Basic lesson info
-5. InteractiveLesson (`/lesson/:lessonId`) → Main learning experience
+2. InteractiveLesson (`/lesson/:lessonId`) → Main learning experience
 
 ### Key Technologies
 
@@ -60,13 +57,14 @@ The app uses React's built-in state management with:
 - UI state (`layout`, `isSpeaking`, `showNextButton`)
 - Dynamic content state (`dynamicTutorText` for answer feedback)
 
-### Content Extension
+If you want to add new presentations or interactions, follow best practices from @adding-new-presentations.md.
 
-To add new lessons or interactions:
-1. Add lesson definition to `lessons` object in `contentData.js`. The TTS content need to be in this file so that it can be pre-generated.
-2. Add presentation definitions to `presentations` object
-3. Create any new interactive components in `src/components/`
-4. Update `componentMap` in `InteractiveLesson.jsx` if needed
+**Important Notes:**
+- All TTS content must be in `contentData.js` for pre-generation
+- IDs must be unique across all presentations
+- ContentComponents need to be imported at the top of the file
+- Update `componentMap` in `InteractiveLesson.jsx` if using new interaction types
+
 
 ### Deployment
 
