@@ -42,10 +42,10 @@ const PerimeterDefinition = ({ onAnswerSubmit }) => {
                 >
                     <svg width="100%" height="100%" className="perimeter-svg">
                         <rect
-                            x="10"
-                            y="10"
-                            width="calc(100% - 20px)"
-                            height="calc(100% - 20px)"
+                            x="95"
+                            y="65"
+                            width="calc(100% - 185px)"
+                            height="calc(100% - 145px)"
                             fill="none"
                             stroke="#fbbf24"
                             strokeWidth="6"
