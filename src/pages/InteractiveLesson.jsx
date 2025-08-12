@@ -39,6 +39,7 @@ import FarmerIntro from '../components/FarmerIntro';
 import FoxThreat from '../components/FoxThreat';
 import FarmMap from '../components/FarmMap';
 import PerimeterDefinition from '../components/PerimeterDefinition';
+import RectangleSolution from '../components/RectangleSolution';
 
 import './InteractiveLesson.css';
 
@@ -57,7 +58,8 @@ const componentMap = {
     'fox-threat': FoxThreat,
     'farm-map': FarmMap,
     'perimeter-definition': PerimeterDefinition,
-    'perimeter-input': FarmMap
+    'perimeter-input': FarmMap,
+    'rectangle-solution': RectangleSolution
 };
 
 const InteractiveLesson = () => {
@@ -79,6 +81,7 @@ const InteractiveLesson = () => {
     const [animationTrigger, setAnimationTrigger] = useState(false);
     const [showNextButton, setShowNextButton] = useState(false);
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
+    const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
 
     // Perimeter Input State
     const [perimeterInput, setPerimeterInput] = useState('');
@@ -110,9 +113,21 @@ const InteractiveLesson = () => {
         return null;
     }, []);
 
+    // Helper function to get full feedback interaction data including ContentComponent
+    const getFeedbackInteraction = useCallback((feedbackInteractionId) => {
+        for (const [presId, pres] of Object.entries(presentations)) {
+            const feedbackInteraction = pres.interactions.find(int => int.id === feedbackInteractionId);
+            if (feedbackInteraction) {
+                return feedbackInteraction;
+            }
+        }
+        return null;
+    }, []);
+
     const advanceToNext = useCallback(() => {
         setAnimationTrigger(false); // Reset trigger for the next interaction
         setDynamicTutorText(null); // Clear any lingering feedback text
+        setActiveFeedbackInteraction(null); // Clear any feedback component
 
         if (!presentation || !lesson) return;
 
@@ -270,6 +285,7 @@ const InteractiveLesson = () => {
 
         if (userAnswer === correctAnswer) {
             // Correct answer
+            console.log(userAnswer, correctAnswer);
             const feedbackText = getFeedbackText(feedbackIds?.correct);
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
@@ -292,10 +308,11 @@ const InteractiveLesson = () => {
                 setPerimeterInput(''); // Clear input for retry
             } else if (newAttempts === 2) {
                 // Second incorrect attempt - show solution
-                const feedbackText = getFeedbackText(feedbackIds?.solution);
-                if (feedbackText) {
-                    setDynamicTutorText(feedbackText);
-                    ttsRef.current?.triggerTTS(feedbackText);
+                const feedbackInteraction = getFeedbackInteraction(feedbackIds?.solution);
+                if (feedbackInteraction) {
+                    setDynamicTutorText(feedbackInteraction.tutorText);
+                    setActiveFeedbackInteraction(feedbackInteraction);
+                    ttsRef.current?.triggerTTS(feedbackInteraction.tutorText);
                 }
                 setShowPerimeterSolution(true);
                 setShowSideHighlighting(true);
@@ -404,6 +421,22 @@ const InteractiveLesson = () => {
     function renderContent() {
         if (!interaction) return null;
 
+        // Check if there's an active feedback interaction with a ContentComponent
+        if (activeFeedbackInteraction?.ContentComponent) {
+            const FeedbackComponent = activeFeedbackInteraction.ContentComponent;
+            const feedbackProps = {
+                key: `feedback-${activeFeedbackInteraction.id}`,
+                ...activeFeedbackInteraction.contentProps,
+                onAnimationComplete: handleAnimationComplete,
+                startAnimation: animationTrigger,
+                onAnswer: handleAnswer,
+                showSideHighlighting: showSideHighlighting,
+                onHighlightComplete: handleHighlightComplete,
+            };
+            return <FeedbackComponent {...feedbackProps} />;
+        }
+
+        // Otherwise, render the normal interaction component
         // Prioritize the ContentComponent defined directly in the interaction data
         const Component = interaction.ContentComponent || componentMap[interaction.type];
 

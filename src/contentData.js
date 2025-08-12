@@ -17,7 +17,8 @@ import {
     FarmerIntro,
     FoxThreat,
     FarmMap,
-    PerimeterDefinition
+    PerimeterDefinition,
+    RectangleSolution
 } from './components';
 
 export const lessons = {
@@ -508,8 +509,9 @@ export const presentations = {
             },
             {
                 id: 'rectangle-solution',
-                type: 'tutor-monologue',
+                type: 'rectangle-solution',
                 tutorText: "Hmm, let's try a different approach. Let's add up the sides together. Thirty plus twenty plus thirty plus twenty equals one hundred.",
+                ContentComponent: RectangleSolution,
                 transitionType: 'auto'
             },
             {
