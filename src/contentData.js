@@ -372,7 +372,7 @@ export const presentations = {
                 id: 'rectangle-challenge',
                 type: 'perimeter-input',
                 tutorText: "To find the perimeter, we need to add up the lengths of all the sides. Let's give it a try with Farmer Giles' field. What's the total length of the fence he needs?",
-                ContentComponent: () => null,
+                ContentComponent: FarmMap,
                 contentProps: {
                     shape: { type: 'rectangle', width: 30, height: 20, unit: 'meters' },
                     correctAnswer: 100,
@@ -509,7 +509,7 @@ export const presentations = {
             {
                 id: 'rectangle-solution',
                 type: 'tutor-monologue',
-                tutorText: "Hmm, let's try a different approach. Let's add up the sides together.",
+                tutorText: "Hmm, let's try a different approach. Let's add up the sides together. Thirty plus twenty plus thirty plus twenty equals one hundred.",
                 transitionType: 'auto'
             },
             {

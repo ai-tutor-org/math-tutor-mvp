@@ -10,7 +10,8 @@ import {
     Box,
     IconButton,
     Button,
-    Paper
+    Paper,
+    TextField
 } from '@mui/material';
 import {
     Home as HomeIcon,
@@ -55,7 +56,8 @@ const componentMap = {
     'farmer-intro': FarmerIntro,
     'fox-threat': FoxThreat,
     'farm-map': FarmMap,
-    'perimeter-definition': PerimeterDefinition
+    'perimeter-definition': PerimeterDefinition,
+    'perimeter-input': FarmMap
 };
 
 const InteractiveLesson = () => {
@@ -77,6 +79,13 @@ const InteractiveLesson = () => {
     const [animationTrigger, setAnimationTrigger] = useState(false);
     const [showNextButton, setShowNextButton] = useState(false);
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
+
+    // Perimeter Input State
+    const [perimeterInput, setPerimeterInput] = useState('');
+    const [perimeterAttempts, setPerimeterAttempts] = useState(0);
+    const [showPerimeterSolution, setShowPerimeterSolution] = useState(false);
+    const [showSideHighlighting, setShowSideHighlighting] = useState(false);
+    const [currentEquationStep, setCurrentEquationStep] = useState(0);
 
     // TTS Ref for direct control
     const ttsRef = React.useRef();
@@ -250,6 +259,53 @@ const InteractiveLesson = () => {
         }
     };
 
+    const handleHighlightComplete = () => {
+        setShowNextButton(true);
+    };
+
+    const handlePerimeterCheck = () => {
+        const userAnswer = parseInt(perimeterInput);
+        const correctAnswer = interaction?.contentProps?.correctAnswer;
+        const feedbackIds = interaction?.contentProps?.feedbackIds;
+
+        if (userAnswer === correctAnswer) {
+            // Correct answer
+            const feedbackText = getFeedbackText(feedbackIds?.correct);
+            if (feedbackText) {
+                setDynamicTutorText(feedbackText);
+                ttsRef.current?.triggerTTS(feedbackText);
+            }
+            setShowNextButton(true);
+            setPerimeterAttempts(0); // Reset for next interaction
+        } else {
+            // Incorrect answer
+            const newAttempts = perimeterAttempts + 1;
+            setPerimeterAttempts(newAttempts);
+
+            if (newAttempts === 1) {
+                // First incorrect attempt - show hint
+                const feedbackText = getFeedbackText(feedbackIds?.hint1);
+                if (feedbackText) {
+                    setDynamicTutorText(feedbackText);
+                    ttsRef.current?.triggerTTS(feedbackText);
+                }
+                setPerimeterInput(''); // Clear input for retry
+            } else if (newAttempts === 2) {
+                // Second incorrect attempt - show solution
+                const feedbackText = getFeedbackText(feedbackIds?.solution);
+                if (feedbackText) {
+                    setDynamicTutorText(feedbackText);
+                    ttsRef.current?.triggerTTS(feedbackText);
+                }
+                setShowPerimeterSolution(true);
+                setShowSideHighlighting(true);
+                setCurrentEquationStep(0);
+                setPerimeterInput(correctAnswer.toString());
+                setPerimeterAttempts(0); // Reset for next interaction
+            }
+        }
+    };
+
     const handleAnimationComplete = useCallback(() => {
         if (interaction?.transitionType === 'manual' && interaction.showNextButton) {
             setShowNextButton(true);
@@ -294,6 +350,13 @@ const InteractiveLesson = () => {
 
         // Reset dynamic tutor text when interaction changes
         setDynamicTutorText(null);
+        
+        // Reset perimeter input state when interaction changes
+        setPerimeterInput('');
+        setPerimeterAttempts(0);
+        setShowPerimeterSolution(false);
+        setShowSideHighlighting(false);
+        setCurrentEquationStep(0);
     }, [interaction]);
 
     // TTS Callbacks
@@ -353,6 +416,9 @@ const InteractiveLesson = () => {
             startAnimation: animationTrigger,
             // Pass the onAnswer handler to any component that might need it
             onAnswer: handleAnswer,
+            // Pass highlighting props for perimeter input interactions
+            showSideHighlighting: showSideHighlighting,
+            onHighlightComplete: handleHighlightComplete,
         };
 
         return <Component {...props} />;
@@ -507,6 +573,103 @@ const InteractiveLesson = () => {
                             {tutorText}
                         </Typography>
                     </Box>
+
+                    {/* Perimeter Input Interface */}
+                    {interaction?.type === 'perimeter-input' && !isSpeaking && (
+                        <Box sx={{ mb: 3, width: '100%' }}>
+                            {/* Show solution equation if needed */}
+                            {showPerimeterSolution && (
+                                <Box sx={{ mb: 2, textAlign: 'center' }}>
+                                    <Typography variant="body2" sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>
+                                        {interaction?.contentProps?.shape?.type === 'rectangle' && 
+                                            `${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} + ${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} = ${interaction.contentProps.correctAnswer}`
+                                        }
+                                        {interaction?.contentProps?.shape?.type === 'square' && 
+                                            `${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} = ${interaction.contentProps.correctAnswer}`
+                                        }
+                                        {interaction?.contentProps?.shape?.type === 'triangle' && interaction?.contentProps?.shape?.sides &&
+                                            `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
+                                        }
+                                        {interaction?.contentProps?.shape?.type === 'pentagon' && interaction?.contentProps?.shape?.sides &&
+                                            `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
+                                        }
+                                    </Typography>
+                                </Box>
+                            )}
+                            
+                            {/* Input field */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                                <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap' }}>
+                                    Perimeter =
+                                </Typography>
+                                <TextField
+                                    value={perimeterInput}
+                                    onChange={(e) => setPerimeterInput(e.target.value)}
+                                    type="number"
+                                    variant="outlined"
+                                    size="small"
+                                    disabled={showPerimeterSolution}
+                                    sx={{
+                                        flex: 1,
+                                        '& .MuiOutlinedInput-root': {
+                                            color: '#fff',
+                                            backgroundColor: '#2C2C2C',
+                                            '& fieldset': {
+                                                borderColor: '#555',
+                                            },
+                                            '&:hover fieldset': {
+                                                borderColor: '#777',
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#4CAF50',
+                                            },
+                                            '&.Mui-disabled': {
+                                                color: '#4CAF50',
+                                                backgroundColor: '#1E1E1E',
+                                                '& fieldset': {
+                                                    borderColor: '#4CAF50',
+                                                }
+                                            }
+                                        },
+                                        '& .MuiInputBase-input.Mui-disabled': {
+                                            WebkitTextFillColor: '#4CAF50',
+                                            opacity: 1
+                                        }
+                                    }}
+                                />
+                                <Typography variant="body2" sx={{ color: '#fff' }}>
+                                    {interaction?.contentProps?.shape?.unit || 'units'}
+                                </Typography>
+                            </Box>
+                            
+                            {/* Check button */}
+                            {!showNextButton && !showPerimeterSolution && (
+                                <Button
+                                    variant="contained"
+                                    onClick={handlePerimeterCheck}
+                                    disabled={!perimeterInput.trim()}
+                                    sx={{
+                                        padding: '8px',
+                                        borderRadius: '12px',
+                                        background: '#4CAF50',
+                                        color: '#fff',
+                                        textTransform: 'none',
+                                        fontSize: '1rem',
+                                        minWidth: '120px',
+                                        '&:hover': {
+                                            background: '#45a049'
+                                        },
+                                        '&:disabled': {
+                                            background: '#2C2C2C',
+                                            color: '#666'
+                                        }
+                                    }}
+                                >
+                                    Check
+                                </Button>
+                            )}
+                        </Box>
+                    )}
 
                     {/* Action Button */}
                     {showNextButton && (
