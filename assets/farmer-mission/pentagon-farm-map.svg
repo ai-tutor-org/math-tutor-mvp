@@ -1,0 +1,106 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Tree definition -->
+    <g id="tree">
+      <circle cx="0" cy="-8" r="12" fill="#228B22"/>
+      <rect x="-2" y="-2" width="4" height="10" fill="#8B4513"/>
+    </g>
+    
+    <!-- Grass patch definition -->
+    <g id="grass">
+      <path d="M0,0 Q-2,-3 -4,0 Q-2,-4 0,0 Q2,-3 4,0 Q2,-4 0,0" fill="#32CD32"/>
+    </g>
+    
+    <!-- Sheep definition -->
+    <g id="sheep">
+      <ellipse cx="0" cy="0" rx="8" ry="6" fill="#F5F5DC"/>
+      <circle cx="-5" cy="-2" r="3" fill="#F5F5DC"/>
+      <circle cx="-7" cy="-3" r="1" fill="#000"/>
+      <rect x="-2" y="3" width="1" height="3" fill="#000"/>
+      <rect x="0" y="3" width="1" height="3" fill="#000"/>
+      <rect x="2" y="3" width="1" height="3" fill="#000"/>
+      <rect x="4" y="3" width="1" height="3" fill="#000"/>
+    </g>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="400" fill="#9ACD32" rx="20"/>
+  
+  <!-- Farm field (regular pentagon) -->
+  <!-- Approximate regular pentagon centered at (200,210) -->
+  <!-- Outer boundary -->
+  <polygon points="200,80 315,170 272,310 128,310 85,170" fill="#8FBC8F" stroke="#8B4513" stroke-width="8" stroke-linejoin="round"/>
+  
+  <!-- Inner farm area (inset) -->
+  <polygon points="200,88 306,173 268,302 132,302 94,173" fill="#90EE90"/>
+  
+  <!-- Farmer in center -->
+  <g transform="translate(200, 220)">
+    <rect x="-6" y="-8" width="12" height="16" fill="#4169E1"/>
+    <circle cx="0" cy="-18" r="6" fill="#FDBCB4"/>
+    <rect x="-8" y="-26" width="16" height="4" fill="#8B4513"/>
+    <rect x="-6" y="-30" width="12" height="4" fill="#8B4513"/>
+    <path d="M-4,-15 Q0,-12 4,-15 Q2,-10 0,-12 Q-2,-10 -4,-15" fill="#8B4513"/>
+    <rect x="-10" y="-6" width="4" height="8" fill="#FDBCB4"/>
+    <rect x="6" y="-6" width="4" height="8" fill="#FDBCB4"/>
+    <rect x="-4" y="8" width="3" height="12" fill="#000080"/>
+    <rect x="1" y="8" width="3" height="12" fill="#000080"/>
+  </g>
+  
+  <!-- Sheep positioned within the pentagon field -->
+  <use href="#sheep" transform="translate(200, 190)"/>
+  <use href="#sheep" transform="translate(160, 240)"/>
+  <use href="#sheep" transform="translate(240, 240)"/>
+  <use href="#sheep" transform="translate(210, 285)"/>
+  <use href="#sheep" transform="translate(140, 285)"/>
+  
+  <!-- Trees near vertices -->
+  <use href="#tree" transform="translate(200, 85)"/>
+  <use href="#tree" transform="translate(312, 170)"/>
+  <use href="#tree" transform="translate(270, 308)"/>
+  <use href="#tree" transform="translate(130, 308)"/>
+  <use href="#tree" transform="translate(88, 170)"/>
+  
+  <!-- Grass patches -->
+  <use href="#grass" transform="translate(180, 150)"/>
+  <use href="#grass" transform="translate(220, 150)"/>
+  <use href="#grass" transform="translate(160, 210)"/>
+  <use href="#grass" transform="translate(240, 210)"/>
+  <use href="#grass" transform="translate(200, 260)"/>
+  <use href="#grass" transform="translate(150, 300)"/>
+  <use href="#grass" transform="translate(250, 300)"/>
+  
+  <!-- Measurement labels: one per edge (all 8 m) -->
+  <!-- Edge v1-v2 (top slanted) -->
+  <g transform="translate(258, 96) rotate(32)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
+  </g>
+  
+  <!-- Edge v2-v3 (right slanted) -->
+  <g transform="translate(318, 240) rotate(100)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
+  </g>
+  
+  <!-- Edge v3-v4 (bottom horizontal) -->
+  <g transform="translate(200, 344)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
+  </g>
+  
+  <!-- Edge v4-v5 (left slanted) -->
+  <g transform="translate(82, 240) rotate(-100)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
+  </g>
+  
+  <!-- Edge v5-v1 (upper-left slanted) -->
+  <g transform="translate(142, 96) rotate(-32)">
+    <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
+  </g>
+  
+  <!-- Measurement guide lines removed as requested -->
+</svg>
+
