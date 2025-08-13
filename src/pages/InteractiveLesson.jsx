@@ -247,7 +247,6 @@ const InteractiveLesson = () => {
                     const feedbackText = getFeedbackText('shape-correct');
                     if (feedbackText) {
                         setDynamicTutorText(feedbackText);
-                        ttsRef.current?.triggerTTS(feedbackText);
                     }
                     setShowNextButton(true);
                 }
@@ -255,7 +254,6 @@ const InteractiveLesson = () => {
                 const incorrectFeedback = getFeedbackText('shape-incorrect');
                 if (incorrectFeedback) {
                     setDynamicTutorText(incorrectFeedback);
-                    ttsRef.current?.triggerTTS(incorrectFeedback);
                 }
             }
             return;
@@ -265,7 +263,6 @@ const InteractiveLesson = () => {
             const feedbackText = getFeedbackText(feedbackId);
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
-                ttsRef.current?.triggerTTS(feedbackText);
                 setShowNextButton(true); // Show continue button after feedback
             }
         } else {
@@ -289,7 +286,6 @@ const InteractiveLesson = () => {
             const feedbackText = getFeedbackText(feedbackIds?.correct);
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
-                ttsRef.current?.triggerTTS(feedbackText);
             }
             setShowNextButton(true);
             setPerimeterAttempts(0); // Reset for next interaction
@@ -303,7 +299,6 @@ const InteractiveLesson = () => {
                 const feedbackText = getFeedbackText(feedbackIds?.hint1);
                 if (feedbackText) {
                     setDynamicTutorText(feedbackText);
-                    ttsRef.current?.triggerTTS(feedbackText);
                 }
                 setPerimeterInput(''); // Clear input for retry
             } else if (newAttempts === 2) {
@@ -312,7 +307,6 @@ const InteractiveLesson = () => {
                 if (feedbackInteraction) {
                     setDynamicTutorText(feedbackInteraction.tutorText);
                     setActiveFeedbackInteraction(feedbackInteraction);
-                    ttsRef.current?.triggerTTS(feedbackInteraction.tutorText);
                 }
                 setShowPerimeterSolution(true);
                 setShowSideHighlighting(true);
