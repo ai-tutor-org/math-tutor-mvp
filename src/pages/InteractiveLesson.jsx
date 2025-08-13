@@ -351,13 +351,8 @@ const InteractiveLesson = () => {
 
     // Effect to handle layout changes and initial setup
     useEffect(() => {
-        // For welcome, button starts hidden and shows after TTS
-        // For others, respect the showNextButton property
-        if (interaction?.type === 'welcome') {
-            setShowNextButton(false);
-        } else {
-            setShowNextButton(interaction?.showNextButton ?? false);
-        }
+        // All interactions should start with button hidden and wait for TTS to finish
+        setShowNextButton(false);
 
         // Reset dynamic tutor text when interaction changes
         setDynamicTutorText(null);
