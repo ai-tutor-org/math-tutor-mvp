@@ -93,6 +93,10 @@ const InteractiveLesson = () => {
     const [showSideHighlighting, setShowSideHighlighting] = useState(false);
     const [currentEquationStep, setCurrentEquationStep] = useState(0);
 
+    // Shape Design State
+    const [currentPerimeter, setCurrentPerimeter] = useState(0);
+    const [shapeDesignAttempts, setShapeDesignAttempts] = useState(0);
+
     // TTS Ref for direct control
     const ttsRef = React.useRef();
 
@@ -335,6 +339,47 @@ const InteractiveLesson = () => {
         }
     };
 
+    const handleShapeDesignCheck = () => {
+        const targetPerimeter = interaction?.contentProps?.targetPerimeter;
+        const feedbackIds = interaction?.contentProps?.feedbackIds;
+
+        if (currentPerimeter === targetPerimeter) {
+            // Correct answer
+            const feedbackText = getFeedbackText(feedbackIds?.correct);
+            if (feedbackText) {
+                setDynamicTutorText(feedbackText);
+            }
+            setShowNextButton(true);
+            setShapeDesignAttempts(0); // Reset for next interaction
+        } else {
+            // Incorrect answer
+            const newAttempts = shapeDesignAttempts + 1;
+            setShapeDesignAttempts(newAttempts);
+
+            if (newAttempts === 1) {
+                // First incorrect attempt - show hint
+                const feedbackText = getFeedbackText(feedbackIds?.hint1);
+                if (feedbackText) {
+                    setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
+                }
+            } else if (newAttempts === 2) {
+                // Second incorrect attempt - show second hint
+                const feedbackText = getFeedbackText(feedbackIds?.hint2);
+                if (feedbackText) {
+                    setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
+                }
+            } else if (newAttempts === 3) {
+                // Third incorrect attempt - show solution
+                const feedbackInteraction = getFeedbackInteraction(feedbackIds?.solution);
+                if (feedbackInteraction) {
+                    setDynamicTutorText(feedbackInteraction.tutorText);
+                    setActiveFeedbackInteraction(feedbackInteraction);
+                }
+                setShapeDesignAttempts(0); // Reset for next interaction
+            }
+        }
+    };
+
     const handleAnimationComplete = useCallback(() => {
         if (interaction?.transitionType === 'manual' && interaction.showNextButton) {
             setShowNextButton(true);
@@ -381,6 +426,10 @@ const InteractiveLesson = () => {
         setShowPerimeterSolution(false);
         setShowSideHighlighting(false);
         setCurrentEquationStep(0);
+
+        // Reset shape design state when interaction changes
+        setCurrentPerimeter(0);
+        setShapeDesignAttempts(0);
     }, [interaction]);
 
     // TTS Callbacks
@@ -463,6 +512,8 @@ const InteractiveLesson = () => {
             // Pass highlighting props for perimeter input interactions
             showSideHighlighting: showSideHighlighting,
             onHighlightComplete: handleHighlightComplete,
+            // Pass perimeter callback for shape design components
+            onPerimeterCalculated: setCurrentPerimeter,
         };
 
         return <Component {...props} />;
@@ -724,6 +775,38 @@ const InteractiveLesson = () => {
                                     Check
                                 </Button>
                             )}
+                        </Box>
+                    )}
+
+                    {/* Shape Design Validation Interface */}
+                    {interaction?.type === 'perimeter-design' && !isSpeaking && !showNextButton && (
+                        <Box sx={{ mb: 3, width: '100%' }}>
+                            {/* Show current vs target perimeter */}
+                            <Box sx={{ mb: 2, textAlign: 'center' }}>
+                                <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1 }}>
+                                    Target: {interaction?.contentProps?.targetPerimeter} units
+                                </Typography>
+                            </Box>
+                            
+                            {/* Check button */}
+                            <Button
+                                variant="contained"
+                                onClick={handleShapeDesignCheck}
+                                sx={{
+                                    padding: '8px',
+                                    borderRadius: '12px',
+                                    background: '#4CAF50',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontSize: '1rem',
+                                    minWidth: '140px',
+                                    '&:hover': {
+                                        background: '#45a049'
+                                    }
+                                }}
+                            >
+                                Check My Shape
+                            </Button>
                         </Box>
                     )}
 

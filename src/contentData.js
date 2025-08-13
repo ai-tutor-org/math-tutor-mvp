@@ -587,6 +587,77 @@ export const presentations = {
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: 'Continue'
+            },
+            // Design feedback interactions
+            {
+                id: 'rectangle-design-correct',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! A perimeter of 20 units. Great job!",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'success',
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSuccess: true,
+                    showCheckmark: true
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-design-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 20.",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'hint',
+                    targetPerimeter: 20,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-design-hint-2',
+                type: 'tutor-monologue',
+                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'hint',
+                    targetPerimeter: 20,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true,
+                    encouragementMode: true
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-design-solution',
+                type: 'tutor-monologue',
+                tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 6 units and 2 sides of 4 units. \n\n The total perimeter is 20 units.",
+                ContentComponent: ShapeDesigner, 
+                contentProps: {
+                    mode: 'solution',
+                    targetPerimeter: 20,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSolution: true,
+                    animateSolution: true,
+                    solutionWidth: 6,
+                    solutionHeight: 4
+                },
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
             }
         ]
     },
@@ -649,7 +720,7 @@ export const presentations = {
                     showGrid: true,
                     showSideLabels: true,
                     enableDragging: true,
-                    enableValidation: true,
+                    enableValidation: false,
                     correctAnswer: 20,
                     feedbackIds: {
                         correct: 'rectangle-design-correct',
@@ -660,77 +731,6 @@ export const presentations = {
                 },
                 transitionType: 'manual'
             },
-            // Design feedback interactions
-            {
-                id: 'rectangle-design-correct',
-                type: 'tutor-monologue',
-                tutorText: "Perfect! A perimeter of 20 units. Great job!",
-                ContentComponent: ShapeDesigner,
-                contentProps: { 
-                    mode: 'success',
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: false,
-                    showSuccess: true,
-                    showCheckmark: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 20.",
-                ContentComponent: ShapeDesigner,
-                contentProps: { 
-                    mode: 'hint',
-                    targetPerimeter: 20,
-                    showTarget: true,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: true,
-                    highlightDragIcon: true,
-                    showCurrentPerimeter: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-hint-2',
-                type: 'tutor-monologue',
-                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
-                ContentComponent: ShapeDesigner,
-                contentProps: { 
-                    mode: 'hint',
-                    targetPerimeter: 20,
-                    showTarget: true,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: true,
-                    highlightDragIcon: true,
-                    showCurrentPerimeter: true,
-                    encouragementMode: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-solution',
-                type: 'tutor-monologue',
-                tutorText: "Okay, I will show one correct solution.",
-                ContentComponent: ShapeDesigner, 
-                contentProps: { 
-                    mode: 'solution',
-                    targetPerimeter: 20,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: false,
-                    showSolution: true,
-                    animateSolution: true,
-                    solutionWidth: 6,
-                    solutionHeight: 4
-                },
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
-            }
         ]
     }
 }; 

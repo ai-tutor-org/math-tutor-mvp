@@ -43,5 +43,12 @@
   "No problem. Let's add them up:   Ten plus twelve plus eighteen equals forty.": "tutor_d61a8f6043a7.mp3",
   "Incredible! The perimeter of this pentagon is 40 meters.": "tutor_b778788810f1.mp3",
   "Not quite right. Remember, a pentagon has five sides!": "tutor_f154183908bc.mp3",
-  "Let's add them up together:   Eight plus eight plus eight plus eight plus eight equals forty.": "tutor_ada5e5b288ae.mp3"
+  "Let's add them up together:   Eight plus eight plus eight plus eight plus eight equals forty.": "tutor_ada5e5b288ae.mp3",
+  "Perfect! A perimeter of 20 units. Great job!": "tutor_501634397b40.mp3",
+  "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 20.": "tutor_d98f0e5f1100.mp3",
+  "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!": "tutor_a9c1ae79e26a.mp3",
+  "Okay, I will show one correct solution.   See it has 2 sides of 6 units and 2 sides of 4 units.    The total perimeter is 20 units.": "tutor_38a936ff37e4.mp3",
+  "I love your curiosity! Let's move from solving problems to *designing* things. Welcome to the Shape Designer. Here, you get to be the creator!": "tutor_9d640bc714e3.mp3",
+  "You can click and drag the corners of this rectangle to change its shape. Go ahead and play with it for a moment!": "tutor_b45d6e494750.mp3",
+  "Okay, designer, here's your first task. Can you create a **rectangle** that has a perimeter of exactly **20 units**? When you think you have it, press the check button.": "tutor_dba862067bd8.mp3"
 }
