@@ -461,6 +461,7 @@ const InteractiveLesson = () => {
                 text={tutorText}
                 onStart={handleTTSStart}
                 onEnd={handleTTSEnd}
+                isDevMode={isDevMode}
             />
 
             {/* Top Menu Bar */}
