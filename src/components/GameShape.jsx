@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { SHAPE_TYPES } from '../data/shapeDefinitions';
 import './GameShape.css';
 
@@ -18,6 +18,17 @@ const GameShape = ({
     isHighlighted = false,
     className = ''
 }) => {
+    // Motion values for better position tracking
+    const x = useMotionValue(shape.position?.x ?? 0);
+    const y = useMotionValue(shape.position?.y ?? 0);
+    
+    // Update motion values when shape position changes
+    React.useEffect(() => {
+        if (shape.position) {
+            x.set(shape.position.x ?? 0);
+            y.set(shape.position.y ?? 0);
+        }
+    }, [shape.position?.x, shape.position?.y, x, y]);
     // Determine shape-specific CSS classes
     const getShapeClasses = () => {
         const classes = ['game-shape', shape.type];
@@ -94,10 +105,22 @@ const GameShape = ({
         onDragStart?.(shape, event, info);
     };
 
-    // Handle drag end
+    // Handle drag end with improved position tracking
     const handleDragEnd = (event, info) => {
         if (isDisabled) return;
-        onDragEnd?.(shape, event, info);
+        
+        // Get current motion values for accurate position
+        const currentX = x.get();
+        const currentY = y.get();
+        
+        // Create enhanced info object with accurate positions
+        const enhancedInfo = {
+            ...info,
+            point: { x: currentX, y: currentY },
+            offset: { x: currentX - (shape.position?.x ?? 0), y: currentY - (shape.position?.y ?? 0) }
+        };
+        
+        onDragEnd?.(shape, event, enhancedInfo);
     };
 
     // Combined drag handler for both Framer Motion and HTML5 
@@ -123,8 +146,8 @@ const GameShape = ({
     const handleCombinedDragEnd = (event, info) => {
         if (isDisabled) return;
         
-        // Handle Framer Motion drag end
-        onDragEnd?.(shape, event, info);
+        // Handle Framer Motion drag end with enhanced position tracking
+        handleDragEnd(event, info);
         
         console.log('🎯 Combined drag end:', shape.type, shape.id);
     };
@@ -135,21 +158,15 @@ const GameShape = ({
             className={getShapeClasses()}
             style={{
                 position: 'absolute',
+                x: x, // Use motion value for x
+                y: y, // Use motion value for y
                 ...getDynamicStyles()
-            }}
-            // Initial position and animation
-            initial={{
-                x: shape.position?.x ?? 0,
-                y: shape.position?.y ?? 0
             }}
             // Animation for demo movement and positioning
             animate={shape.isAnimating ? {
                 x: shape.animationTarget?.x ?? shape.position?.x ?? 0,
                 y: shape.animationTarget?.y ?? shape.position?.y ?? 0
-            } : {
-                x: shape.position?.x ?? 0,
-                y: shape.position?.y ?? 0
-            }}
+            } : undefined}
             // Framer Motion drag functionality
             drag={!isDisabled && !shape.isAnimating}
             dragConstraints={dragConstraints}

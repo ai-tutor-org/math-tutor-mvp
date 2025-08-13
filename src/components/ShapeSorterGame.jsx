@@ -58,10 +58,10 @@ const initialState = {
     currentPhase: GAME_PHASES.INTRO,
     shapes: [],
     bins: {
-        [SHAPE_TYPES.TRIANGLE]: { shapes: [], count: 0, isGlowing: false, isHovered: false },
-        [SHAPE_TYPES.CIRCLE]: { shapes: [], count: 0, isGlowing: false, isHovered: false },
-        [SHAPE_TYPES.RECTANGLE]: { shapes: [], count: 0, isGlowing: false, isHovered: false },
-        [SHAPE_TYPES.SQUARE]: { shapes: [], count: 0, isGlowing: false, isHovered: false }
+        [SHAPE_TYPES.TRIANGLE]: { shapes: [], count: 0, isGlowing: false },
+        [SHAPE_TYPES.CIRCLE]: { shapes: [], count: 0, isGlowing: false },
+        [SHAPE_TYPES.RECTANGLE]: { shapes: [], count: 0, isGlowing: false },
+        [SHAPE_TYPES.SQUARE]: { shapes: [], count: 0, isGlowing: false }
     },
     interventionCount: 0,
     maxInterventions: 2,
@@ -287,17 +287,7 @@ const gameReducer = (state, action) => {
                 };
             }
 
-        case 'SET_BIN_HOVER':
-            return {
-                ...state,
-                bins: {
-                    ...state.bins,
-                    [action.binType]: {
-                        ...state.bins[action.binType],
-                        isHovered: action.isHovered
-                    }
-                }
-            };
+        // Removed SET_BIN_HOVER - hover handled by component
 
         case 'SET_TARGET_SHAPES':
             return {
@@ -382,7 +372,93 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     const gameContentRef = useRef(null); // For drag constraints - proper game boundaries
     const playAreaRef = useRef(null); // For positioning context
     
-    // Function removed - no longer needed with unified play area
+    // Unified coordinate system: Container positions cache (play-area relative)
+    const containerPositionsRef = useRef(new Map());
+    
+    // Helper function to get play area dimensions
+    const getPlayAreaDimensions = () => {
+        if (!playAreaRef.current) return { width: 800, height: 600 }; // fallback
+        return {
+            width: playAreaRef.current.offsetWidth,
+            height: playAreaRef.current.offsetHeight
+        };
+    };
+    
+    // Smart boundary detection with tolerance
+    const BOUNDARY_TOLERANCE = 20; // pixels of tolerance for edge detection
+    const CONTAINER_COLLISION_TOLERANCE = 10; // pixels to expand collision detection (make it more sensitive)
+    
+    const isWithinPlayAreaBounds = (x, y, shapeType, tolerance = BOUNDARY_TOLERANCE) => {
+        const playDimensions = getPlayAreaDimensions();
+        const shapeDims = getShapeDimensions(shapeType);
+        
+        // Use tolerance-based boundary checking instead of pixel-perfect
+        return x >= -tolerance && 
+               (x + shapeDims.width) <= (playDimensions.width + tolerance) &&
+               y >= -tolerance && 
+               (y + shapeDims.height) <= (playDimensions.height + tolerance);
+    };
+    
+    const shouldBounceFromBoundary = (x, y, shapeType) => {
+        const playDimensions = getPlayAreaDimensions();
+        const shapeDims = getShapeDimensions(shapeType);
+        
+        // Hard boundary check - shape is significantly outside play area
+        const hardBoundaryViolation = x < -BOUNDARY_TOLERANCE || 
+                                     (x + shapeDims.width) > (playDimensions.width + BOUNDARY_TOLERANCE) ||
+                                     y < -BOUNDARY_TOLERANCE || 
+                                     (y + shapeDims.height) > (playDimensions.height + BOUNDARY_TOLERANCE);
+        
+        return hardBoundaryViolation;
+    };
+    
+    // Helper function to update container positions cache (play-area relative)
+    const updateContainerPositions = () => {
+        const positions = new Map();
+        const playArea = playAreaRef.current;
+        if (!playArea) return;
+        
+        Object.values(SHAPE_TYPES).forEach(type => {
+            const containerElement = document.querySelector(`[data-container-type="${type}"]`);
+            if (containerElement) {
+                // Get container position relative to play area
+                const containerRect = containerElement.getBoundingClientRect();
+                const playAreaRect = playArea.getBoundingClientRect();
+                
+                positions.set(type, {
+                    x: containerRect.left - playAreaRect.left,
+                    y: containerRect.top - playAreaRect.top,
+                    width: containerRect.width,
+                    height: containerRect.height,
+                    centerX: (containerRect.left - playAreaRect.left) + containerRect.width / 2,
+                    centerY: (containerRect.top - playAreaRect.top) + containerRect.height / 2
+                });
+            }
+        });
+        
+        containerPositionsRef.current = positions;
+        console.log('🎯 Updated container positions cache:', Object.fromEntries(positions));
+    };
+    
+    // Update container positions when containers are rendered or window resizes
+    useEffect(() => {
+        const handleUpdate = () => {
+            // Wait for next frame to ensure containers are rendered
+            requestAnimationFrame(() => {
+                updateContainerPositions();
+            });
+        };
+        
+        // Update on mount and when needed
+        handleUpdate();
+        
+        // Update on window resize
+        window.addEventListener('resize', handleUpdate);
+        
+        return () => {
+            window.removeEventListener('resize', handleUpdate);
+        };
+    }, [state.currentPhase, state.bins]); // Re-run when phase changes or bins update
 
     // Demonstration logic for MODELING phase - triggered by phase initialization
     useEffect(() => {
@@ -419,20 +495,18 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 
                 // After 2 seconds for highlighting effect and container rendering, start the drag animation
                 setTimeout(() => {
-                    // Calculate target position relative to play area (unified coordinate system)
-                    const containerElement = document.querySelector(`[data-container-type="${SHAPE_TYPES.SQUARE}"]`);
-                    const playArea = playAreaRef.current;
+                    // Use unified coordinate system from cache
+                    updateContainerPositions(); // Ensure cache is fresh
+                    const containerPos = containerPositionsRef.current.get(SHAPE_TYPES.SQUARE);
                     let targetPosition = { x: 200, y: 350 }; // fallback position in play area
                     
-                    if (containerElement && playArea) {
-                        const containerRect = containerElement.getBoundingClientRect();
-                        const playAreaRect = playArea.getBoundingClientRect();
-                        
-                        // Calculate position relative to play area (unified coordinate system)
+                    if (containerPos) {
+                        // Calculate target position using cached container position (already play-area relative)
                         targetPosition = {
-                            x: containerRect.left + containerRect.width/2 - playAreaRect.left - 30, // Center of container minus shape half-width
-                            y: containerRect.top + containerRect.height/2 - playAreaRect.top - 30   // Center of container minus shape half-height
+                            x: containerPos.centerX - 30, // Center of container minus shape half-width
+                            y: containerPos.centerY - 30  // Center of container minus shape half-height
                         };
+                        console.log('🎯 Demo animation target (unified coords):', targetPosition);
                     }
                     
                     // Start the animation
@@ -467,18 +541,17 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         }
     }, [state.currentPhase, state.activeShapes.length, state.shapesInitialized, state.initialActiveCount]);
 
-    // Initialize play area dimensions on mount
+    // Initialize play area dimensions on mount using unified coordinate system
     useLayoutEffect(() => {
         if (!playAreaRef.current || !gameContentRef.current) return;
         
-        const playRect = playAreaRef.current.getBoundingClientRect();
-        const contentRect = gameContentRef.current.getBoundingClientRect();
+        const playDimensions = getPlayAreaDimensions();
         
-        console.log('🎯 Area setup - Play:', playRect.height, 'Content:', contentRect.height);
+        console.log('🎯 Area setup (unified coords) - Play area:', playDimensions);
         
         const playArea = { 
-            width: Math.round(playRect.width), 
-            height: Math.round(playRect.height) 
+            width: Math.round(playDimensions.width), 
+            height: Math.round(playDimensions.height) 
         };
         
         dispatch({ type: 'SET_PILE_AREA', pileArea: playArea }); // Reuse existing action for area dimensions
@@ -584,61 +657,146 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
 
     // Function removed - no longer needed without pile constraints
 
-    // Bounce shape back to random position in shape area (avoiding containers at bottom)
+    // Container-aware bounce back with collision validation and retry logic
     const bounceToRandomPositionInShapeArea = (shapeId) => {
         if (!playAreaRef.current) return;
         
-        const playAreaRect = playAreaRef.current.getBoundingClientRect();
+        const shape = state.activeShapes.find(s => s.id === shapeId);
+        if (!shape) return;
         
-        // Generate random position in upper 60% of play-area only (clear separation from containers)
-        const maxShapeAreaHeight = playAreaRect.height * 0.6; // Only upper 60% for shapes
-        const randomX = 40 + Math.random() * (playAreaRect.width - 100);  // 40px margin, 60px shape width
-        const randomY = 40 + Math.random() * (maxShapeAreaHeight - 100);  // Upper area only
+        const playDimensions = getPlayAreaDimensions();
+        const shapeDims = getShapeDimensions(shape.type);
+        
+        // Define safe zone parameters
+        const MARGIN = 40;
+        const maxShapeAreaHeight = playDimensions.height * 0.6; // Only upper 60% for shapes
+        const maxAttempts = 10; // Retry limit to avoid infinite loops
+        
+        let validPosition = null;
+        let attempts = 0;
+        
+        // Find a position that's clear of all containers
+        while (!validPosition && attempts < maxAttempts) {
+            const randomX = MARGIN + Math.random() * (playDimensions.width - shapeDims.width - MARGIN * 2);
+            const randomY = MARGIN + Math.random() * (maxShapeAreaHeight - shapeDims.height - MARGIN * 2);
+            
+            // Validate position is clear of containers and within bounds
+            if (isPositionClearOfContainers(randomX, randomY, shape.type) && 
+                isWithinPlayAreaBounds(randomX, randomY, shape.type, 0)) { // Use 0 tolerance for strict validation
+                validPosition = { x: randomX, y: randomY };
+            }
+            
+            attempts++;
+        }
+        
+        // Fallback to center-left if no valid position found
+        if (!validPosition) {
+            validPosition = {
+                x: MARGIN,
+                y: playDimensions.height * 0.3 // Middle of upper shape area
+            };
+            console.log(`🎯 Could not find clear position after ${maxAttempts} attempts, using fallback`);
+        }
         
         dispatch({
             type: 'UPDATE_SHAPE_POSITION',
             shapeId,
-            position: { x: randomX, y: randomY }
+            position: validPosition
         });
         
-        console.log(`🎯 Bounced shape ${shapeId} back to shape area at (${randomX}, ${randomY})`);
+        console.log(`🎯 Bounced shape ${shapeId} to container-safe position at (${validPosition.x}, ${validPosition.y}) - attempt ${attempts}`);
     };
 
-    // Centralized coordinate utilities for unified system
-    const getPlayAreaCoords = (screenX, screenY) => {
-        if (!playAreaRef.current) return { x: 0, y: 0 };
-        const playAreaRect = playAreaRef.current.getBoundingClientRect();
-        return {
-            x: screenX - playAreaRect.left,
-            y: screenY - playAreaRect.top
+    // Get shape dimensions based on type
+    const getShapeDimensions = (shapeType) => {
+        switch(shapeType) {
+            case SHAPE_TYPES.TRIANGLE:
+                return { width: 60, height: 52 };
+            case SHAPE_TYPES.CIRCLE:
+                return { width: 60, height: 60 };
+            case SHAPE_TYPES.RECTANGLE:
+                return { width: 80, height: 50 };
+            case SHAPE_TYPES.SQUARE:
+                return { width: 60, height: 60 };
+            default:
+                return { width: 60, height: 60 };
+        }
+    };
+
+    // AABB Collision Detection - Check if two rectangles overlap
+    const checkAABBCollision = (rect1, rect2) => {
+        return !(rect1.right < rect2.left || 
+                 rect1.left > rect2.right ||
+                 rect1.bottom < rect2.top ||
+                 rect1.top > rect2.bottom);
+    };
+
+    // Check if shape overlaps with any container using unified coordinate system with tolerance
+    const getOverlappingContainer = (shapeX, shapeY, shapeType) => {
+        const shapeDims = getShapeDimensions(shapeType);
+
+        // Shape bounds in play-area coordinates (unified system)
+        // Expand shape bounds OUTWARD to make collision detection more sensitive (easier to trigger)
+        const shapeBounds = {
+            left: shapeX - CONTAINER_COLLISION_TOLERANCE,
+            right: shapeX + shapeDims.width + CONTAINER_COLLISION_TOLERANCE,
+            top: shapeY - CONTAINER_COLLISION_TOLERANCE,
+            bottom: shapeY + shapeDims.height + CONTAINER_COLLISION_TOLERANCE
         };
+
+        // Check each container using cached positions (also in play-area coordinates)
+        for (const [containerType, containerPos] of containerPositionsRef.current) {
+            const containerBounds = {
+                left: containerPos.x,
+                right: containerPos.x + containerPos.width,
+                top: containerPos.y,
+                bottom: containerPos.y + containerPos.height
+            };
+
+            if (checkAABBCollision(shapeBounds, containerBounds)) {
+                console.log(`🎯 Collision detected (unified coords + tolerance): ${shapeType} with ${containerType} container`);
+                console.log(`🎯 Shape bounds:`, shapeBounds);
+                console.log(`🎯 Container bounds:`, containerBounds);
+                return containerType;
+            }
+        }
+        
+        return null;
     };
 
-    const isWithinPlayArea = (playX, playY) => {
-        if (!playAreaRef.current) return false;
-        const playAreaRect = playAreaRef.current.getBoundingClientRect();
-        return playX >= 20 && playX <= (playAreaRect.width - 80) && 
-               playY >= 20 && playY <= (playAreaRect.height - 40);
+    // Check if position is clear of all containers
+    const isPositionClearOfContainers = (x, y, shapeType) => {
+        return getOverlappingContainer(x, y, shapeType) === null;
     };
-
-    const isWithinContainer = (playX, playY, containerType) => {
-        const containers = document.querySelectorAll(`[data-container-type="${containerType}"]`);
-        if (containers.length === 0) return false;
+    
+    // Generate safe initial positions for shapes that avoid containers
+    const generateSafeShapePositions = (numShapes) => {
+        const positions = [];
+        const playDimensions = getPlayAreaDimensions();
+        const MARGIN = 40;
+        const SHAPE_SPACING = 80; // Minimum space between shapes
+        const maxShapeAreaHeight = playDimensions.height * 0.6;
         
-        const container = containers[0];
-        const containerRect = container.getBoundingClientRect();
-        const playAreaRect = playAreaRef.current?.getBoundingClientRect();
+        // Create a grid pattern for reliable positioning
+        const cols = Math.ceil(Math.sqrt(numShapes));
+        const rows = Math.ceil(numShapes / cols);
         
-        if (!playAreaRect) return false;
+        const cellWidth = (playDimensions.width - MARGIN * 2) / cols;
+        const cellHeight = (maxShapeAreaHeight - MARGIN * 2) / rows;
         
-        // Convert container bounds to play-area coordinates
-        const containerPlayX1 = containerRect.left - playAreaRect.left;
-        const containerPlayY1 = containerRect.top - playAreaRect.top;
-        const containerPlayX2 = containerRect.right - playAreaRect.left;
-        const containerPlayY2 = containerRect.bottom - playAreaRect.top;
+        let shapeIndex = 0;
+        for (let row = 0; row < rows && shapeIndex < numShapes; row++) {
+            for (let col = 0; col < cols && shapeIndex < numShapes; col++) {
+                const x = MARGIN + col * cellWidth + cellWidth * 0.2; // 20% offset from cell edge
+                const y = MARGIN + row * cellHeight + cellHeight * 0.2;
+                
+                positions.push({ x, y });
+                shapeIndex++;
+            }
+        }
         
-        return playX >= containerPlayX1 && playX <= containerPlayX2 &&
-               playY >= containerPlayY1 && playY <= containerPlayY2;
+        console.log('🎯 Generated safe shape positions:', positions);
+        return positions;
     };
 
     // Shape drag handlers
@@ -655,83 +813,64 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             return;
         }
         
-        const dropX = info.point.x;
-        const dropY = info.point.y;
+        // Get final position from enhanced motion tracking (already in play-area coordinates)
+        const finalX = info.point?.x ?? (info.offset.x + (shape.position?.x || 0));
+        const finalY = info.point?.y ?? (info.offset.y + (shape.position?.y || 0));
         
-        // Get final position from Framer Motion (play-area coordinates)
-        const finalX = info.offset.x + (shape.position?.x || 0);
-        const finalY = info.offset.y + (shape.position?.y || 0);
+        console.log('🎯 Drag end (enhanced tracking):', shape.type);
+        console.log('🎯 Final position (motion values):', finalX, finalY);
+        console.log('🎯 Position tracking - point:', info.point, 'offset:', info.offset);
         
-        console.log('🎯 Drag end:', shape.type);
-        console.log('🎯 Screen coords:', dropX, dropY);
-        console.log('🎯 Final position:', finalX, finalY);
-        console.log('🎯 Original position:', shape.position?.x, shape.position?.y);
+        // Use AABB collision to check if shape overlaps with any container
+        const overlappingContainer = getOverlappingContainer(finalX, finalY, shape.type);
         
-        // Check if shape is dropped on a sorting container
-        let droppedOnContainer = false;
-        const containers = document.querySelectorAll('[data-container-type]');
-        
-        // Convert final position to screen coordinates for consistent container detection
-        const playAreaRect = playAreaRef.current?.getBoundingClientRect();
-        if (playAreaRect) {
-            const shapeScreenX = playAreaRect.left + finalX;
-            const shapeScreenY = playAreaRect.top + finalY;
+        if (overlappingContainer) {
+            const isValid = overlappingContainer === shape.type;
             
-            console.log('🎯 Shape screen position:', shapeScreenX, shapeScreenY);
+            console.log(`🎯 Shape ${shape.type} overlaps ${overlappingContainer} container - Valid: ${isValid}`);
             
-            containers.forEach(container => {
-                const containerRect = container.getBoundingClientRect();
+            if (isValid) {
+                // Valid drop - move to container
+                dispatch({
+                    type: 'SHAPE_DROP',
+                    shapeId: shape.id,
+                    shapeType: shape.type,
+                    targetBin: overlappingContainer,
+                    isValidDrop: true
+                });
+            } else {
+                // Invalid drop on wrong container - bounce back to shape area
+                bounceToRandomPositionInShapeArea(shape.id);
+                console.log(`🎯 WRONG CONTAINER DETECTED! ${shape.type} shape touched ${overlappingContainer} container - bouncing back`);
+            }
+        } else {
+            // Not overlapping any container - check bounds using smart boundary detection
+            if (shouldBounceFromBoundary(finalX, finalY, shape.type)) {
+                // Shape outside hard boundaries - bounce back
+                bounceToRandomPositionInShapeArea(shape.id);
+                console.log(`🎯 Shape outside hard boundaries - bouncing back (smart detection)`);
+            } else if (isWithinPlayAreaBounds(finalX, finalY, shape.type)) {
+                // Shape within acceptable bounds - allow drop
+                dispatch({
+                    type: 'UPDATE_SHAPE_POSITION',
+                    shapeId: shape.id,
+                    position: { x: finalX, y: finalY }
+                });
+                console.log(`🎯 Shape dropped in empty space at (${finalX}, ${finalY}) - smart bounds`);
+            } else {
+                // Shape in tolerance zone - gently nudge back to safe area
+                const playDimensions = getPlayAreaDimensions();
+                const shapeDims = getShapeDimensions(shape.type);
                 
-                console.log('🎯 Container bounds:', containerRect.left, containerRect.top, containerRect.right, containerRect.bottom);
+                const clampedX = Math.max(0, Math.min(finalX, playDimensions.width - shapeDims.width));
+                const clampedY = Math.max(0, Math.min(finalY, playDimensions.height - shapeDims.height));
                 
-                // Check if shape's final position overlaps with container (consistent screen coordinates)
-                if (shapeScreenX >= containerRect.left && shapeScreenX <= containerRect.right &&
-                    shapeScreenY >= containerRect.top && shapeScreenY <= containerRect.bottom) {
-                    
-                    const containerType = container.getAttribute('data-container-type');
-                    const isValid = containerType === shape.type;
-                    
-                    console.log(`🎯 Shape ${shape.type} dropped on ${containerType} container - Valid: ${isValid}`);
-                    
-                    if (isValid) {
-                        // Valid drop - move to container
-                        dispatch({
-                            type: 'SHAPE_DROP',
-                            shapeId: shape.id,
-                            shapeType: shape.type,
-                            targetBin: containerType,
-                            isValidDrop: true
-                        });
-                        droppedOnContainer = true;
-                    } else {
-                        // Invalid drop on wrong container - bounce back to shape area
-                        bounceToRandomPositionInShapeArea(shape.id);
-                        droppedOnContainer = true;
-                        console.log(`🎯 Wrong container - bouncing back`);
-                    }
-                }
-            });
-        }
-        
-        // If not dropped on any container, allow shape to stay where dropped
-        if (!droppedOnContainer) {
-            const playAreaRect = playAreaRef.current?.getBoundingClientRect();
-            
-            if (playAreaRect) {
-                // Only bounce back if completely outside play area bounds
-                if (finalX < 20 || finalX > (playAreaRect.width - 80) || finalY < 20 || finalY > (playAreaRect.height - 40)) {
-                    // Shape outside play area bounds - bounce back to shape area
-                    bounceToRandomPositionInShapeArea(shape.id);
-                    console.log(`🎯 Shape bounced back - outside play area bounds`);
-                } else {
-                    // Update position to final drag position (anywhere within play area is valid)
-                    dispatch({
-                        type: 'UPDATE_SHAPE_POSITION',
-                        shapeId: shape.id,
-                        position: { x: finalX, y: finalY }
-                    });
-                    console.log(`🎯 Shape dropped in empty space at (${finalX}, ${finalY}) - staying there`);
-                }
+                dispatch({
+                    type: 'UPDATE_SHAPE_POSITION',
+                    shapeId: shape.id,
+                    position: { x: clampedX, y: clampedY }
+                });
+                console.log(`🎯 Shape nudged to safe bounds: (${clampedX}, ${clampedY}) from (${finalX}, ${finalY})`);
             }
         }
     };
@@ -751,14 +890,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         } else {
             console.log(`🎯 Oops! ${shapeType} belongs in a different container.`);
         }
-    };
-
-    const handleBinDragOver = (binType) => {
-        dispatch({ type: 'SET_BIN_HOVER', binType, isHovered: true });
-    };
-
-    const handleBinDragLeave = (binType) => {
-        dispatch({ type: 'SET_BIN_HOVER', binType, isHovered: false });
     };
 
     // Render current phase content
@@ -818,11 +949,8 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                             type={shapeType}
                                             count={state.bins[shapeType].count}
                                             isGlowing={state.bins[shapeType].isGlowing}
-                                            isHovered={state.bins[shapeType].isHovered}
                                             onShapeDrop={handleShapeDrop}
-                                            onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
-                                    />
+                                        />
                                 ))}
                             </motion.div>
                         )}
@@ -859,10 +987,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={state.bins[shapeType].isGlowing}
-                                        isHovered={state.bins[shapeType].isHovered}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -894,10 +1019,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={state.bins[shapeType].isGlowing}
-                                        isHovered={state.bins[shapeType].isHovered}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -929,10 +1051,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={false}
-                                        isHovered={state.bins[shapeType].isHovered}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -964,10 +1083,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={state.bins[shapeType].isGlowing}
-                                        isHovered={state.bins[shapeType].isHovered}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -999,10 +1115,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={state.bins[shapeType].isGlowing}
-                                        isHovered={state.bins[shapeType].isHovered}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -1034,10 +1147,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={state.bins[shapeType].isGlowing}
-                                        isHovered={state.bins[shapeType].isHovered}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -1069,10 +1179,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={false}
-                                        isHovered={state.bins[shapeType].isHovered}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -1104,10 +1211,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={state.bins[shapeType].isGlowing}
-                                        isHovered={state.bins[shapeType].isHovered}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -1139,10 +1243,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={state.bins[shapeType].isGlowing}
-                                        isHovered={state.bins[shapeType].isHovered}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -1174,10 +1275,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={false}
-                                        isHovered={false}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>
@@ -1197,10 +1295,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         type={shapeType}
                                         count={state.bins[shapeType].count}
                                         isGlowing={false}
-                                        isHovered={false}
                                         onShapeDrop={handleShapeDrop}
-                                        onDragOver={handleBinDragOver}
-                                        onDragLeave={handleBinDragLeave}
                                     />
                                 ))}
                             </div>

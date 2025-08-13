@@ -12,10 +12,8 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    overflow: hidden;
+    /* Removed border-radius, background, and border for clean container */
+    overflow: visible; /* Changed to visible for counter positioning */
     flex-shrink: 0; /* Prevent shrinking */
     
     /* Aspect ratio preservation for 1.1x hover scaling */
@@ -27,11 +25,11 @@
 .container-image-wrapper {
     position: relative;
     width: 100%;
-    height: 80%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    /* Remove overflow hidden to allow counter to show */
 }
 
 /* Container PNG Image */
@@ -40,7 +38,7 @@
     height: 100%;
     object-fit: contain;
     object-position: center;
-    transition: all 0.3s ease;
+    transition: filter 0.3s ease, transform 0.3s ease;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
@@ -73,33 +71,30 @@
 /* Shape Counter */
 .shape-counter {
     position: absolute;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: -5px;
+    right: -5px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 4px 8px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(4px);
-    min-width: 40px;
+    min-width: 24px;
+    min-height: 24px;
+    z-index: 2;
 }
 
 .counter-number {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     color: rgba(255, 255, 255, 0.9);
     line-height: 1;
 }
 
 .counter-label {
-    font-size: 8px;
-    color: rgba(255, 255, 255, 0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin-top: 1px;
+    display: none; /* Hide label for cleaner look */
 }
 
 /* Drop Zone Indicator */
@@ -126,9 +121,8 @@
 /* Hover Effects with 1.1x scaling and aspect-ratio preservation */
 .sorting-bin:hover,
 .sorting-bin.hovering {
-    border-color: rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    /* Removed border and background changes */
+    filter: brightness(1.1);
 }
 
 .sorting-bin:hover .container-image {
@@ -143,11 +137,8 @@
 
 /* Drag Over State */
 .sorting-bin.drag-over {
-    border-color: #4CAF50;
-    background: rgba(76, 175, 80, 0.1);
-    box-shadow: 
-        0 0 0 3px rgba(76, 175, 80, 0.3),
-        0 4px 20px rgba(0, 0, 0, 0.4);
+    /* Removed border and background changes */
+    filter: brightness(1.2) drop-shadow(0 0 10px rgba(76, 175, 80, 0.5));
     transform: scale(1.05);
 }
 
@@ -159,47 +150,35 @@
 }
 
 /* Shapes in Bin State */
-.sorting-bin.has-shapes {
-    border-color: rgba(76, 175, 80, 0.5);
-    background: rgba(76, 175, 80, 0.05);
+.sorting-bin.has-shapes .shape-counter {
+    background: rgba(76, 175, 80, 0.9);
+    border-color: #4CAF50;
 }
 
 .sorting-bin.has-shapes .counter-number {
-    color: #4CAF50;
+    color: #fff;
 }
 
-/* Glowing Effect for Interventions */
-.sorting-bin.glowing {
-    animation: binGlow 2s infinite alternate;
+/* Glowing Effect for Interventions - Applied to PNG image */
+.sorting-bin.glowing .container-image {
+    animation: imageGlow 2s infinite alternate;
 }
 
-@keyframes binGlow {
+@keyframes imageGlow {
     0% {
-        box-shadow: 
-            0 0 5px currentColor,
-            0 0 10px currentColor,
-            0 0 15px currentColor;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))
+                drop-shadow(0 0 10px var(--shape-color))
+                drop-shadow(0 0 20px var(--shape-color));
     }
     100% {
-        box-shadow: 
-            0 0 10px currentColor,
-            0 0 20px currentColor,
-            0 0 30px currentColor;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))
+                drop-shadow(0 0 20px var(--shape-color))
+                drop-shadow(0 0 30px var(--shape-color))
+                brightness(1.2);
     }
 }
 
-/* Glow Overlay for Manual Control */
-.glow-overlay {
-    position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    border: 3px solid;
-    border-radius: 15px;
-    pointer-events: none;
-    z-index: 1;
-}
+/* Glow Overlay - removed, handled by glowing class on image */
 
 /* Shape Type Specific Colors */
 .sorting-bin.triangle {
@@ -222,9 +201,7 @@
     color: var(--shape-color);
 }
 
-.sorting-bin:hover {
-    border-color: var(--shape-color);
-}
+/* Removed redundant hover rule */
 
 /* Debug Info (Development Only) */
 .bin-debug-info {

@@ -12,14 +12,10 @@ const SortingBin = ({
     type,
     count = 0,
     isGlowing = false,
-    isHovered = false,
     onShapeDrop,
-    onDragOver,
-    onDragLeave,
     className = ''
 }) => {
     const [isDragOver, setIsDragOver] = useState(false);
-    const [isHovering, setIsHovering] = useState(false);
     const binRef = useRef(null);
 
     // Get container definition for this shape type
@@ -33,24 +29,24 @@ const SortingBin = ({
     // Handle drag over events
     const handleDragOver = (event) => {
         event.preventDefault();
-        if (!isDragOver) {
-            setIsDragOver(true);
-            onDragOver?.(type, event);
-        }
+        event.stopPropagation();
+        setIsDragOver(true);
     };
 
     // Handle drag leave events
     const handleDragLeave = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         // Only trigger if leaving the container entirely
         if (!binRef.current?.contains(event.relatedTarget)) {
             setIsDragOver(false);
-            onDragLeave?.(type, event);
         }
     };
 
     // Handle drop events
     const handleDrop = (event) => {
         event.preventDefault();
+        event.stopPropagation();
         setIsDragOver(false);
         
         // Extract shape data from drag event (will be set by GameShape)
@@ -66,14 +62,7 @@ const SortingBin = ({
         }
     };
 
-    // Handle mouse events for hover effects
-    const handleMouseEnter = () => {
-        setIsHovering(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovering(false);
-    };
+    // Removed mouse event handlers - using Framer Motion for hover
 
     // Get dynamic CSS classes
     const getBinClasses = () => {
@@ -85,10 +74,6 @@ const SortingBin = ({
         
         if (isDragOver) {
             classes.push('drag-over');
-        }
-        
-        if (isHovering || isHovered) {
-            classes.push('hovering');
         }
         
         if (count > 0) {
@@ -116,8 +101,6 @@ const SortingBin = ({
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
             // Framer Motion hover effects with 1.1x scaling and aspect-ratio preservation
             whileHover={{
                 scale: 1.1,
@@ -126,7 +109,8 @@ const SortingBin = ({
             // Ensure aspect ratio is preserved during scaling
             style={{
                 transformOrigin: "center",
-                aspectRatio: "1 / 1.2" // Preserve container aspect ratio
+                aspectRatio: "1 / 1.2", // Preserve container aspect ratio
+                '--shape-color': containerDef.color // Set CSS variable for glow color
             }}
             // Layout animation for smooth transitions
             layout
@@ -150,38 +134,23 @@ const SortingBin = ({
                 {/* Clean container - fallback elements removed */}
             </div>
 
-            {/* Shape Counter */}
-            <motion.div 
-                className="shape-counter"
-                animate={{
-                    scale: count > 0 ? 1.1 : 1,
-                    color: count > 0 ? containerDef.color : 'rgba(255, 255, 255, 0.6)'
-                }}
-                transition={{ duration: 0.3 }}
-            >
-                <span className="counter-number">{count}</span>
-                <span className="counter-label">
-                    {count === 1 ? 'shape' : 'shapes'}
-                </span>
-            </motion.div>
-
-            {/* Clean container - drop zone text removed */}
-
-            {/* Glow Effect Overlay */}
-            {isGlowing && (
-                <motion.div
-                    className="glow-overlay"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{
-                        borderColor: containerDef.color,
-                        boxShadow: `0 0 20px ${containerDef.color}66`
+            {/* Shape Counter - Only show if count > 0 */}
+            {count > 0 && (
+                <motion.div 
+                    className="shape-counter"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ 
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 20 
                     }}
-                />
+                >
+                    <span className="counter-number">{count}</span>
+                </motion.div>
             )}
 
+            {/* Clean container - glow handled by CSS on image */}
             {/* Debug info removed for clean interface */}
         </motion.div>
     );
