@@ -70,7 +70,7 @@ export const lessons = {
                 transition: { type: 'manual', buttonText: "Continue" }
             },
             {
-                presentationId: 'rectangle-design-challenge', 
+                presentationId: 'rectangle-design-challenge',
                 transition: { type: 'manual', buttonText: "Done" }
             },
             {
@@ -265,7 +265,7 @@ export const conditionalPresentations = {
                 type: 'tutor-monologue',
                 tutorText: "Perfect! A perimeter of 20 units. Great job!",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'success',
                     showGrid: true,
                     showSideLabels: true,
@@ -280,7 +280,7 @@ export const conditionalPresentations = {
                 type: 'tutor-monologue',
                 tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 20.",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'hint',
                     targetPerimeter: 20,
                     showTarget: true,
@@ -297,7 +297,7 @@ export const conditionalPresentations = {
                 type: 'tutor-monologue',
                 tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'hint',
                     targetPerimeter: 20,
                     showTarget: true,
@@ -314,7 +314,7 @@ export const conditionalPresentations = {
                 id: 'rectangle-design-solution',
                 type: 'tutor-monologue',
                 tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 6 units and 2 sides of 4 units. \n\n The total perimeter is 20 units.",
-                ContentComponent: ShapeDesigner, 
+                ContentComponent: ShapeDesigner,
                 contentProps: {
                     mode: 'solution',
                     targetPerimeter: 20,
@@ -335,7 +335,7 @@ export const conditionalPresentations = {
                 type: 'tutor-monologue',
                 tutorText: "Great job! You are a Pro at this!",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'success',
                     showGrid: true,
                     showSideLabels: true,
@@ -350,7 +350,7 @@ export const conditionalPresentations = {
                 type: 'tutor-monologue',
                 tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 26.",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'hint',
                     targetPerimeter: 26,
                     showTarget: true,
@@ -367,7 +367,7 @@ export const conditionalPresentations = {
                 type: 'tutor-monologue',
                 tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'hint',
                     targetPerimeter: 26,
                     showTarget: true,
@@ -384,7 +384,7 @@ export const conditionalPresentations = {
                 id: 'rectangle-design-solution-2',
                 type: 'tutor-monologue',
                 tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 8 units and 2 sides of 5 units. \n\n The total perimeter is 26 units.",
-                ContentComponent: ShapeDesigner, 
+                ContentComponent: ShapeDesigner,
                 contentProps: {
                     mode: 'solution',
                     targetPerimeter: 26,
@@ -405,7 +405,7 @@ export const conditionalPresentations = {
                 type: 'tutor-monologue',
                 tutorText: "Awesome! That's perfect!",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'success',
                     showGrid: true,
                     showSideLabels: true,
@@ -420,7 +420,7 @@ export const conditionalPresentations = {
                 type: 'tutor-monologue',
                 tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 8.",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'hint',
                     targetPerimeter: 8,
                     showTarget: true,
@@ -437,7 +437,7 @@ export const conditionalPresentations = {
                 type: 'tutor-monologue',
                 tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'hint',
                     targetPerimeter: 8,
                     showTarget: true,
@@ -454,7 +454,7 @@ export const conditionalPresentations = {
                 id: 'rectangle-design-solution-3',
                 type: 'tutor-monologue',
                 tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 2 units and 2 sides of 2 units. \n\n The total perimeter is 8 units.",
-                ContentComponent: ShapeDesigner, 
+                ContentComponent: ShapeDesigner,
                 contentProps: {
                     mode: 'solution',
                     targetPerimeter: 8,
@@ -995,17 +995,16 @@ export const presentations = {
             }
         ]
     },
-
     'rectangle-design-challenge': {
         title: "Rectangle Challenge",
-        layout: "dual-panel", 
+        layout: "dual-panel",
         interactions: [
             {
                 id: 'rectangle-design-size-20',
                 type: 'perimeter-design',
                 tutorText: "Okay, designer, here's your first task. \n\nCan you create a rectangle that has a perimeter of exactly 20 units? When you think you have it, press the check button.",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'challenge',
                     targetPerimeter: 20,
                     showTarget: true,
@@ -1027,14 +1026,14 @@ export const presentations = {
     },
     'rectangle-design-challenge-2': {
         title: "Rectangle Challenge",
-        layout: "dual-panel", 
+        layout: "dual-panel",
         interactions: [
             {
                 id: 'rectangle-design-size-26',
                 type: 'perimeter-design',
                 tutorText: "Okay, let's design another rectangle. \n\nCan you create a rectangle that has a perimeter of exactly 26 units? When you think you have it, press the check button.",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'challenge',
                     targetPerimeter: 26,
                     showTarget: true,
@@ -1056,14 +1055,14 @@ export const presentations = {
     },
     'rectangle-design-challenge-3': {
         title: "Rectangle Challenge",
-        layout: "dual-panel", 
+        layout: "dual-panel",
         interactions: [
             {
                 id: 'rectangle-design-size-8',
                 type: 'perimeter-design',
                 tutorText: "Just one more challenge. \n\nCreate a rectangle that has a perimeter of exactly 8 units. When you think you have it, press the check button.",
                 ContentComponent: ShapeDesigner,
-                contentProps: { 
+                contentProps: {
                     mode: 'challenge',
                     targetPerimeter: 8,
                     showTarget: true,
@@ -1083,5 +1082,5 @@ export const presentations = {
             },
         ]
     }
-}; 
+};
 

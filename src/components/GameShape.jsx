@@ -22,13 +22,13 @@ const GameShape = ({
     const x = useMotionValue(shape.position?.x ?? 0);
     const y = useMotionValue(shape.position?.y ?? 0);
     
-    // Update motion values when shape position changes
+    // Update motion values when shape position changes (but not during animations)
     React.useEffect(() => {
-        if (shape.position) {
+        if (shape.position && !shape.isAnimating && !shape.isBouncing) {
             x.set(shape.position.x ?? 0);
             y.set(shape.position.y ?? 0);
         }
-    }, [shape.position?.x, shape.position?.y, x, y]);
+    }, [shape.position?.x, shape.position?.y, shape.isAnimating, shape.isBouncing, x, y]);
     // Determine shape-specific CSS classes
     const getShapeClasses = () => {
         const classes = ['game-shape', shape.type];
@@ -140,7 +140,6 @@ const GameShape = ({
             event.dataTransfer.effectAllowed = 'move';
         }
         
-        console.log('🎯 Combined drag start:', shape.type, shape.id);
     };
 
     const handleCombinedDragEnd = (event, info) => {
@@ -149,7 +148,6 @@ const GameShape = ({
         // Handle Framer Motion drag end with enhanced position tracking
         handleDragEnd(event, info);
         
-        console.log('🎯 Combined drag end:', shape.type, shape.id);
     };
 
 
@@ -162,10 +160,13 @@ const GameShape = ({
                 y: y, // Use motion value for y
                 ...getDynamicStyles()
             }}
-            // Animation for demo movement and positioning
+            // Animation for demo movement, positioning, and bounce back
             animate={shape.isAnimating ? {
                 x: shape.animationTarget?.x ?? shape.position?.x ?? 0,
                 y: shape.animationTarget?.y ?? shape.position?.y ?? 0
+            } : shape.isBouncing ? {
+                x: shape.position?.x ?? 0,
+                y: shape.position?.y ?? 0
             } : undefined}
             // Framer Motion drag functionality
             drag={!isDisabled && !shape.isAnimating}
@@ -189,10 +190,13 @@ const GameShape = ({
             } : {
                 duration: 0.1 // Faster transitions for better drag responsiveness
             }}
-            // Animation completion callback for demo timing
+            // Animation completion callback for demo timing and bounce back
             onAnimationComplete={() => {
                 if (shape.isAnimating && onAnimationComplete) {
                     onAnimationComplete(shape.id);
+                } else if (shape.isBouncing && onAnimationComplete) {
+                    // Clear bounce flag after bounce animation completes
+                    onAnimationComplete(shape.id, 'bounce');
                 }
             }}
         >

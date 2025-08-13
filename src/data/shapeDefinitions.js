@@ -120,12 +120,6 @@ export const generateShapes = () => {
         });
     }
 
-    console.log(`🎯 Generated ${shapes.length} shapes:`, {
-        triangles: shapes.filter(s => s.type === SHAPE_TYPES.TRIANGLE).length,
-        circles: shapes.filter(s => s.type === SHAPE_TYPES.CIRCLE).length,
-        rectangles: shapes.filter(s => s.type === SHAPE_TYPES.RECTANGLE).length,
-        squares: shapes.filter(s => s.type === SHAPE_TYPES.SQUARE).length
-    });
 
     return shapes;
 };

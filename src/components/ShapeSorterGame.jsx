@@ -152,6 +152,44 @@ const gameReducer = (state, action) => {
                 )
             };
 
+        case 'BOUNCE_SHAPE':
+            return {
+                ...state,
+                shapes: state.shapes.map(shape =>
+                    shape.id === action.shapeId 
+                        ? { 
+                            ...shape, 
+                            position: action.newPosition,
+                            isBouncing: true // Flag for animation
+                          }
+                        : shape
+                ),
+                activeShapes: state.activeShapes.map(shape =>
+                    shape.id === action.shapeId 
+                        ? { 
+                            ...shape, 
+                            position: action.newPosition,
+                            isBouncing: true // Flag for animation
+                          }
+                        : shape
+                )
+            };
+
+        case 'CLEAR_BOUNCE_FLAG':
+            return {
+                ...state,
+                shapes: state.shapes.map(shape =>
+                    shape.id === action.shapeId 
+                        ? { ...shape, isBouncing: false }
+                        : shape
+                ),
+                activeShapes: state.activeShapes.map(shape =>
+                    shape.id === action.shapeId 
+                        ? { ...shape, isBouncing: false }
+                        : shape
+                )
+            };
+
         case 'SORT_SHAPE':
             const { shapeId: sortShapeId, binType } = action;
             const shape = state.shapes.find(s => s.id === sortShapeId);
@@ -349,14 +387,12 @@ const gameReducer = (state, action) => {
 };
 
 const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimationComplete }) => {
-    console.log('🎯 ShapeSorterGame rendered with contentProps:', contentProps, 'startAnimation:', startAnimation);
     
     // Calculate initial state based on props (like other components)
     const initialGameState = useMemo(() => {
         const { phaseConfig } = contentProps;
         const phase = phaseConfig?.initialPhase || GAME_PHASES.INTRO;
         
-        console.log('🎯 Calculating initial state from props - phase:', phase);
         
         return {
             ...initialState,
@@ -437,7 +473,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         });
         
         containerPositionsRef.current = positions;
-        console.log('🎯 Updated container positions cache:', Object.fromEntries(positions));
     };
     
     // Update container positions when containers are rendered or window resizes
@@ -467,7 +502,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             state.shapesInitialized &&
             !state.demoStarted) { // Only run once
             
-            console.log('🎯 Starting demonstration after TTS completion');
             
             // Mark demo as started to prevent re-execution
             dispatch({ type: 'START_DEMO' });
@@ -477,7 +511,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             
             if (squareToDemo) {
                 // Start demonstration immediately after TTS
-                console.log('🎯 Demonstrating square sort:', squareToDemo.id);
                 
                 // Highlight the square
                 dispatch({ 
@@ -506,7 +539,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                             x: containerPos.centerX - 30, // Center of container minus shape half-width
                             y: containerPos.centerY - 30  // Center of container minus shape half-height
                         };
-                        console.log('🎯 Demo animation target (unified coords):', targetPosition);
                     }
                     
                     // Start the animation
@@ -529,8 +561,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             state.initialActiveCount > 0 &&  // Had shapes to begin with
             state.activeShapes.length === 0) {  // Now empty (completed)
             
-            console.log('🎯 GUIDED phase completed - triangle sorted successfully');
-            console.log('🎯 Initial active count:', state.initialActiveCount, 'Current active:', state.activeShapes.length);
             
             // Signal completion to InteractiveLesson after brief delay
             setTimeout(() => {
@@ -547,7 +577,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         
         const playDimensions = getPlayAreaDimensions();
         
-        console.log('🎯 Area setup (unified coords) - Play area:', playDimensions);
         
         const playArea = { 
             width: Math.round(playDimensions.width), 
@@ -579,7 +608,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     // Initialize shapes after play area is set
     useEffect(() => {
         if (state.pileArea.width > 0 && state.shapes.length === 0) {
-            console.log('🎯 Initializing shapes with play area:', state.pileArea);
             
             // Generate the 12 shapes
             const generatedShapes = generateShapes();
@@ -605,7 +633,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 targetShapes: targetCount
             });
             
-            console.log(`🎯 Generated ${positionedShapes.length} shapes for the Shape Factory!`);
         }
     }, [state.pileArea, state.shapes.length, contentProps]);
     
@@ -624,14 +651,21 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     };
 
     // Handle shape animation completion for immediate timing
-    const handleShapeAnimationComplete = (shapeId) => {
-        console.log('🎯 Shape animation completed:', shapeId);
+    const handleShapeAnimationComplete = (shapeId, type = 'demo') => {
+        
+        // Handle bounce completion
+        if (type === 'bounce') {
+            dispatch({
+                type: 'CLEAR_BOUNCE_FLAG',
+                shapeId
+            });
+            return;
+        }
         
         // Immediately trigger SHAPE_DROP for demo square
         if (state.currentPhase === GAME_PHASES.MODELING) {
             const animatedShape = state.activeShapes.find(s => s.id === shapeId && s.isAnimating);
             if (animatedShape && animatedShape.type === SHAPE_TYPES.SQUARE) {
-                console.log('🎯 Demo square reached container, triggering immediate drop');
                 
                 // Immediate SHAPE_DROP without delay
                 dispatch({
@@ -642,12 +676,10 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     isValidDrop: true
                 });
                 
-                console.log('🎯 Demo completed: Square sorted to squares container');
                 
                 // Trigger parent callback after brief moment for visual feedback
                 setTimeout(() => {
                     if (onAnimationComplete) {
-                        console.log('🎯 Demo animation completed, notifying parent');
                         onAnimationComplete();
                     }
                 }, 300); // Brief delay just for visual confirmation
@@ -662,7 +694,9 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         if (!playAreaRef.current) return;
         
         const shape = state.activeShapes.find(s => s.id === shapeId);
-        if (!shape) return;
+        if (!shape) {
+            return;
+        }
         
         const playDimensions = getPlayAreaDimensions();
         const shapeDims = getShapeDimensions(shape.type);
@@ -695,16 +729,17 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 x: MARGIN,
                 y: playDimensions.height * 0.3 // Middle of upper shape area
             };
-            console.log(`🎯 Could not find clear position after ${maxAttempts} attempts, using fallback`);
         }
         
+        
+        // Proper solution: Update position and let Framer Motion handle the transition
         dispatch({
-            type: 'UPDATE_SHAPE_POSITION',
+            type: 'BOUNCE_SHAPE',
             shapeId,
-            position: validPosition
+            newPosition: validPosition
         });
         
-        console.log(`🎯 Bounced shape ${shapeId} to container-safe position at (${validPosition.x}, ${validPosition.y}) - attempt ${attempts}`);
+        
     };
 
     // Get shape dimensions based on type
@@ -752,11 +787,8 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 top: containerPos.y,
                 bottom: containerPos.y + containerPos.height
             };
-
+            
             if (checkAABBCollision(shapeBounds, containerBounds)) {
-                console.log(`🎯 Collision detected (unified coords + tolerance): ${shapeType} with ${containerType} container`);
-                console.log(`🎯 Shape bounds:`, shapeBounds);
-                console.log(`🎯 Container bounds:`, containerBounds);
                 return containerType;
             }
         }
@@ -795,7 +827,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             }
         }
         
-        console.log('🎯 Generated safe shape positions:', positions);
         return positions;
     };
 
@@ -805,7 +836,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             return false;
         }
         
-        console.log('🎯 Drag start:', shape.type, shape.id);
     };
 
     const handleShapeDragEnd = (shape, event, info) => {
@@ -817,9 +847,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         const finalX = info.point?.x ?? (info.offset.x + (shape.position?.x || 0));
         const finalY = info.point?.y ?? (info.offset.y + (shape.position?.y || 0));
         
-        console.log('🎯 Drag end (enhanced tracking):', shape.type);
-        console.log('🎯 Final position (motion values):', finalX, finalY);
-        console.log('🎯 Position tracking - point:', info.point, 'offset:', info.offset);
         
         // Use AABB collision to check if shape overlaps with any container
         const overlappingContainer = getOverlappingContainer(finalX, finalY, shape.type);
@@ -827,7 +854,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         if (overlappingContainer) {
             const isValid = overlappingContainer === shape.type;
             
-            console.log(`🎯 Shape ${shape.type} overlaps ${overlappingContainer} container - Valid: ${isValid}`);
             
             if (isValid) {
                 // Valid drop - move to container
@@ -841,14 +867,12 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             } else {
                 // Invalid drop on wrong container - bounce back to shape area
                 bounceToRandomPositionInShapeArea(shape.id);
-                console.log(`🎯 WRONG CONTAINER DETECTED! ${shape.type} shape touched ${overlappingContainer} container - bouncing back`);
             }
         } else {
             // Not overlapping any container - check bounds using smart boundary detection
             if (shouldBounceFromBoundary(finalX, finalY, shape.type)) {
                 // Shape outside hard boundaries - bounce back
                 bounceToRandomPositionInShapeArea(shape.id);
-                console.log(`🎯 Shape outside hard boundaries - bouncing back (smart detection)`);
             } else if (isWithinPlayAreaBounds(finalX, finalY, shape.type)) {
                 // Shape within acceptable bounds - allow drop
                 dispatch({
@@ -856,7 +880,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     shapeId: shape.id,
                     position: { x: finalX, y: finalY }
                 });
-                console.log(`🎯 Shape dropped in empty space at (${finalX}, ${finalY}) - smart bounds`);
             } else {
                 // Shape in tolerance zone - gently nudge back to safe area
                 const playDimensions = getPlayAreaDimensions();
@@ -870,7 +893,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     shapeId: shape.id,
                     position: { x: clampedX, y: clampedY }
                 });
-                console.log(`🎯 Shape nudged to safe bounds: (${clampedX}, ${clampedY}) from (${finalX}, ${finalY})`);
             }
         }
     };
@@ -886,15 +908,12 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         });
         
         if (isValid) {
-            console.log(`🎯 Great! ${shapeType} sorted correctly!`);
         } else {
-            console.log(`🎯 Oops! ${shapeType} belongs in a different container.`);
         }
     };
 
     // Render current phase content
     const renderPhaseContent = () => {
-        console.log('🎯 Rendering phase:', state.currentPhase, 'activeShapes:', state.activeShapes.length, 'showContainers:', state.showContainers);
         
         switch (state.currentPhase) {
             case GAME_PHASES.INTRO:
