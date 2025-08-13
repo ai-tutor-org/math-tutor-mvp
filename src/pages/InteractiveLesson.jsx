@@ -141,6 +141,13 @@ const InteractiveLesson = () => {
                 return feedbackInteraction;
             }
         }
+
+        for (const [presId, pres] of Object.entries(conditionalPresentations)) {
+            const feedbackInteraction = pres.interactions.find(int => int.id === feedbackInteractionId);
+            if (feedbackInteraction) {
+                return feedbackInteraction;
+            }
+        }
         return null;
     }, []);
 
