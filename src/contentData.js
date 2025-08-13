@@ -81,13 +81,6 @@ export const presentations = {
                 showWelcomeButton: true,
             },
             {
-                id: 'tutor-intro',
-                type: 'tutor-monologue',
-                tutorText: "Awesome! Now I'm going to move over here to the left side so we can see our learning space better! ✨",
-                layoutChange: 'dual-panel',
-                transitionType: 'auto',
-            },
-            {
                 id: 'room-question',
                 type: 'room-question',
                 tutorText: "Perfect! Let's start with a simple question. Imagine this is your room. How would you figure out how long it is from one wall to the other?",
