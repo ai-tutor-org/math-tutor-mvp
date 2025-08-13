@@ -589,7 +589,7 @@ const InteractiveLesson = () => {
                     {/* Tutor Avatar */}
                     <Box sx={{ mb: 3 }}>
                         <img
-                            src="/images/tutor_avatar.png"
+                            src="/math-tutor-mvp/images/tutor_avatar.png"
                             alt="AI Tutor"
                             style={{
                                 width: '100px',
