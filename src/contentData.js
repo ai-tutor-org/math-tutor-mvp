@@ -38,7 +38,11 @@ export const lessons = {
             },
             {
                 presentationId: 'measurement-practice-activities',
-                transition: { type: 'manual', buttonText: "Continue" }
+                transition: { type: 'automatic' }
+            },
+            {
+                presentationId: 'shape-sorting-factory',
+                transition: { type: 'manual', buttonText: "Complete Lesson" }
             },
             {
                 presentationId: 'farmer-mission-intro',
@@ -66,9 +70,183 @@ export const lessons = {
             'measurement-reason-incorrect',
             'measurement-reason-correct'
         ]
+    },
+    // Test lesson for Shape Sorting Game (B1.1 Testing)
+    'shape-game-test': {
+        title: "Shape Sorting Game Test",
+        sequence: [
+            {
+                presentationId: 'shape-sorting-game-test',
+                transition: { type: 'manual', buttonText: "Complete" }
+            }
+        ]
     }
 };
 
+// Conditional/feedback presentations - triggered conditionally, not part of main sequence
+export const conditionalPresentations = {
+    'measurement-reason-incorrect': {
+        interactions: [
+            {
+                id: 'measurement-reason-retry',
+                type: 'multiple-choice-question',
+                tutorText: "No, the size of the room is the same. Choose again.",
+                ContentComponent: RoomIllustration,
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a',
+                    showQuestion: true,
+                    question: "What do you think is the reason?",
+                    choices: [
+                        { text: "The size of my feet and my friend's feet are different", isCorrect: true }
+                    ]
+                },
+                transitionType: 'manual',
+            }
+        ]
+    },
+    'measurement-reason-correct': {
+        interactions: [
+            {
+                id: 'measurement-reason-explanation',
+                type: 'tutor-monologue',
+                tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
+                ContentComponent: RoomIllustration,
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a'
+                },
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue',
+                navigateToInteraction: 'standard-units-intro' // Continue to standard units explanation
+            }
+        ]
+    },
+    'feedback-interactions': {
+        interactions: [
+            {
+                id: 'crayon-correct',
+                type: 'tutor-monologue',
+                tutorText: "Exactly! Centimeters are perfect for that.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'crayon-incorrect',
+                type: 'tutor-monologue',
+                tutorText: "Good try, but a meter is way too big for a crayon! Centimeters are the better choice here.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'shape-correct',
+                type: 'tutor-monologue',
+                tutorText: "Correct! Great job measuring.",
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Continue"
+            },
+            {
+                id: 'shape-incorrect',
+                type: 'tutor-monologue',
+                tutorText: "Not quite. Try adjusting the ruler and measuring again.",
+                transitionType: 'auto'
+            },
+            // Perimeter feedback interactions
+            {
+                id: 'rectangle-correct',
+                type: 'tutor-monologue',
+                tutorText: "That's exactly right! The perimeter is 100 meters.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "Not quite. Remember, the perimeter is the total length around the entire outside edge of the farm. \n\nTake another look and try again.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-solution',
+                type: 'rectangle-solution',
+                tutorText: "Hmm, let's try a different approach. Let's add up the sides together. \n\nThirty plus twenty plus thirty plus twenty equals one hundred.",
+                ContentComponent: RectangleSolution,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
+            },
+            {
+                id: 'square-correct',
+                type: 'tutor-monologue',
+                tutorText: "Exactly! The perimeter of this square field is 60 meters.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'square-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "Not quite, try again!",
+                transitionType: 'auto'
+            },
+            {
+                id: 'square-solution',
+                type: 'square-solution',
+                tutorText: "Let's work this one out together. \n\nSince all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
+                ContentComponent: SquareSolution,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
+            },
+            {
+                id: 'triangle-correct',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! The perimeter is 40 meters.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'triangle-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "That's not it. Give it another shot!",
+                transitionType: 'auto'
+            },
+            {
+                id: 'triangle-solution',
+                type: 'triangle-solution',
+                tutorText: "No problem. Let's add them up: \n\nTen plus twelve plus eighteen equals forty.",
+                ContentComponent: TriangleSolution,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
+            },
+            {
+                id: 'pentagon-correct',
+                type: 'tutor-monologue',
+                tutorText: "Incredible! The perimeter of this pentagon is 40 meters.",
+                transitionType: 'auto'
+            },
+            {
+                id: 'pentagon-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "Not quite right. Remember, a pentagon has five sides!",
+                transitionType: 'auto'
+            },
+            {
+                id: 'pentagon-solution',
+                type: 'pentagon-solution',
+                tutorText: "Let's add them up together: \n\nEight plus eight plus eight plus eight plus eight equals forty.",
+                ContentComponent: PentagonSolution,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
+            }
+        ]
+    }
+};
+
+// Main sequential presentations - the primary lesson flow
 export const presentations = {
     'introduction-to-standard-units': {
         interactions: [
@@ -268,56 +446,139 @@ export const presentations = {
             {
                 id: 'measurement-conclusion',
                 type: 'tutor-monologue',
-                tutorText: "And that's a wrap! You did a fantastic job measuring those shapes. \n\nUsing tools like rulers is a very important skill in math and science. You should be proud!",
+                tutorText: "And that's a wrap! You did a fantastic job measuring those shapes. Using tools like rulers is a very important skill in math and science. You should be proud! Now let's move on to something fun...",
                 ContentComponent: () => null,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "Done"
+                transitionType: 'auto'
             }
         ]
     },
-    // Conditional presentations for the measurement reason question
-    'measurement-reason-incorrect': {
+    // Test presentation for Shape Sorting Game (B1.1 Testing)
+    'shape-sorting-game-test': {
         interactions: [
             {
-                id: 'measurement-reason-retry',
-                type: 'multiple-choice-question',
-                tutorText: "No, the size of the room is the same. Choose again.",
-                ContentComponent: RoomIllustration,
-                contentProps: {
-                    showBothFootsteps: true,
-                    yourSteps: 10,
-                    friendSteps: 8,
-                    yourFootColor: '#4A90E2',
-                    friendFootColor: '#e24a4a',
-                    showQuestion: true,
-                    question: "What do you think is the reason?",
-                    choices: [
-                        { text: "The size of my feet and my friend's feet are different", isCorrect: true }
-                    ]
-                },
+                id: 'shape-game-test',
+                type: 'shape-sorting-game',
+                tutorText: "Welcome to the Shape Factory! Let's test our new sorting game.",
+                layout: 'full-screen',
                 transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Complete Test"
             }
         ]
     },
-    'measurement-reason-correct': {
+    'shape-sorting-factory': {
         interactions: [
             {
-                id: 'measurement-reason-explanation',
-                type: 'tutor-monologue',
-                tutorText: "Exactly, the size of your feet and your friend's feet are different. \n\nBecause of this, we cannot use our feet to measure the room, because everyone will get a different number.",
-                ContentComponent: RoomIllustration,
-                contentProps: {
-                    showBothFootsteps: true,
-                    yourSteps: 10,
-                    friendSteps: 8,
-                    yourFootColor: '#4A90E2',
-                    friendFootColor: '#e24a4a'
-                },
+                id: 'shape-factory-intro',
+                type: 'shape-sorting-game',
+                tutorText: "Now that you've mastered measuring with standard units, let's apply what you've learned! Welcome to the Shape Factory - where we sort shapes by type. I'll guide you through this step by step.",
+                layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: 'Continue',
-                navigateToInteraction: 'standard-units-intro' // Continue to standard units explanation
+                nextButtonText: "Continue",
+                phaseConfig: { initialPhase: 'intro' }
+            },
+            {
+                id: 'shape-tools-reveal',
+                type: 'shape-sorting-game',
+                tutorText: "Perfect! Let me show you your sorting tools - these special containers will help organize our shapes.",
+                layout: 'full-screen',
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Continue",
+                phaseConfig: { initialPhase: 'tools' }
+            },
+            {
+                id: 'shape-demo-modeling',
+                type: 'shape-sorting-game',
+                tutorText: "Watch carefully! I'll demonstrate by sorting one square into its matching container. See how the square goes to the squares container?",
+                layout: 'full-screen',
+                transitionType: 'interaction',
+                showNextButton: true,
+                nextButtonText: "Try It Yourself!",
+                phaseConfig: { initialPhase: 'modeling' }
+            },
+            {
+                id: 'shape-guided-practice',
+                type: 'shape-sorting-game',
+                tutorText: "Now it's your turn! Try sorting this triangle into the correct container. Drag it to where you think it belongs.",
+                layout: 'full-screen',
+                transitionType: 'interaction-based',
+                phaseConfig: { initialPhase: 'guided', targetShapes: 1 }
+            },
+            {
+                id: 'shape-guided-success',
+                type: 'shape-sorting-game',
+                tutorText: "Excellent work! You correctly identified that triangles belong in the triangles container. You're getting the hang of this!",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'guided_success' }
+            },
+            {
+                id: 'shape-practice-setup',
+                type: 'shape-sorting-game',
+                tutorText: "Ready for more? This time you'll sort 3 different shapes. Remember - triangles with triangles, circles with circles, and so on. I'll help if you need it!",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'practice_setup', targetShapes: 3 }
+            },
+            {
+                id: 'shape-practice-main',
+                type: 'shape-sorting-game',
+                tutorText: "Go ahead and sort these 3 shapes! Take your time and think about which container each shape belongs in.",
+                layout: 'full-screen',
+                transitionType: 'interaction-based',
+                phaseConfig: { initialPhase: 'practice', maxInterventions: 2 }
+            },
+            {
+                id: 'shape-intervention',
+                type: 'shape-sorting-game',
+                tutorText: "Let me give you a hint! Look at the shape of this piece and match it to the container with the same shape. The triangle has three sides, so it goes with other triangles!",
+                layout: 'full-screen',
+                transitionType: 'interaction-based',
+                phaseConfig: { initialPhase: 'intervention' }
+            },
+            {
+                id: 'shape-correction',
+                type: 'shape-sorting-game',
+                tutorText: "I'll help you out by showing the correct placement. Watch as this shape moves to its proper container automatically.",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'correction' }
+            },
+            {
+                id: 'shape-challenge-setup',
+                type: 'shape-sorting-game',
+                tutorText: "Great progress! Now for the final challenge - you'll sort 8 shapes with minimal help. This will show how well you understand shape sorting!",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'challenge_setup', targetShapes: 8 }
+            },
+            {
+                id: 'shape-final-challenge',
+                type: 'shape-sorting-game',
+                tutorText: "Here we go! Sort all 8 shapes into their correct containers. You've got this!",
+                layout: 'full-screen',
+                transitionType: 'interaction-based',
+                phaseConfig: { initialPhase: 'challenge', maxInterventions: 1 }
+            },
+            {
+                id: 'shape-completion',
+                type: 'shape-sorting-game',
+                tutorText: "Outstanding work! You've successfully completed the Shape Factory challenge. You've shown you can identify and sort shapes accurately!",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'completion' }
+            },
+            {
+                id: 'shape-recap',
+                type: 'shape-sorting-game',
+                tutorText: "Let's recap what you learned: shapes can be sorted by their type - triangles, circles, rectangles, and squares each have their own group. This skill will help you in many areas of math!",
+                layout: 'full-screen',
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Continue to Next Lesson",
+                phaseConfig: { initialPhase: 'recap' }
             }
         ]
     },
@@ -465,120 +726,4 @@ export const presentations = {
             }
         ]
     },
-    // Feedback interactions - not part of sequential flow, used only for lookup
-    'feedback-interactions': {
-        interactions: [
-            {
-                id: 'crayon-correct',
-                type: 'tutor-monologue',
-                tutorText: "Exactly! Centimeters are perfect for that.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'crayon-incorrect',
-                type: 'tutor-monologue',
-                tutorText: "Good try, but a meter is way too big for a crayon! Centimeters are the better choice here.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'shape-correct',
-                type: 'tutor-monologue',
-                tutorText: "Correct! Great job measuring.",
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "Continue"
-            },
-            {
-                id: 'shape-incorrect',
-                type: 'tutor-monologue',
-                tutorText: "Not quite. Try adjusting the ruler and measuring again.",
-                transitionType: 'auto'
-            },
-            // Perimeter feedback interactions
-            {
-                id: 'rectangle-correct',
-                type: 'tutor-monologue',
-                tutorText: "That's exactly right! The perimeter is 100 meters.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "Not quite. Remember, the perimeter is the total length around the entire outside edge of the farm. \n\nTake another look and try again.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-solution',
-                type: 'rectangle-solution',
-                tutorText: "Hmm, let's try a different approach. Let's add up the sides together. \n\nThirty plus twenty plus thirty plus twenty equals one hundred.",
-                ContentComponent: RectangleSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
-            },
-            {
-                id: 'square-correct',
-                type: 'tutor-monologue',
-                tutorText: "Exactly! The perimeter of this square field is 60 meters.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'square-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "Not quite, try again!",
-                transitionType: 'auto'
-            },
-            {
-                id: 'square-solution',
-                type: 'square-solution',
-                tutorText: "Let's work this one out together. \n\nSince all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
-                ContentComponent: SquareSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
-            },
-            {
-                id: 'triangle-correct',
-                type: 'tutor-monologue',
-                tutorText: "Perfect! The perimeter is 40 meters.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'triangle-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "That's not it. Give it another shot!",
-                transitionType: 'auto'
-            },
-            {
-                id: 'triangle-solution',
-                type: 'triangle-solution',
-                tutorText: "No problem. Let's add them up: \n\nTen plus twelve plus eighteen equals forty.",
-                ContentComponent: TriangleSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
-            },
-            {
-                id: 'pentagon-correct',
-                type: 'tutor-monologue',
-                tutorText: "Incredible! The perimeter of this pentagon is 40 meters.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'pentagon-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "Not quite right. Remember, a pentagon has five sides!",
-                transitionType: 'auto'
-            },
-            {
-                id: 'pentagon-solution',
-                type: 'pentagon-solution',
-                tutorText: "Let's add them up together: \n\nEight plus eight plus eight plus eight plus eight equals forty.",
-                ContentComponent: PentagonSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
-            }
-        ]
-    }
 }; 

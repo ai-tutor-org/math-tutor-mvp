@@ -21,7 +21,7 @@ import {
     Pause as PauseIcon
 } from '@mui/icons-material';
 
-import { lessons, presentations } from '../contentData'; // Import centralized data
+import { lessons, presentations, conditionalPresentations } from '../contentData'; // Import centralized data
 
 import TTSManager from '../components/TTSManager';
 import DeveloperMenu from '../components/DeveloperMenu';
@@ -34,6 +34,7 @@ import StandardUnits from '../components/StandardUnits';
 import RulerMeasurement from '../components/RulerMeasurement';
 import MeterStick from '../components/MeterStick';
 import CrayonMeasurementQuestion from '../components/CrayonMeasurementQuestion';
+import ShapeSorterGame from '../components/ShapeSorterGame';
 import MissionReadiness from '../components/MissionReadiness';
 import FarmerIntro from '../components/FarmerIntro';
 import FoxThreat from '../components/FoxThreat';
@@ -53,6 +54,7 @@ const componentMap = {
     'meter-measurement': MeterStick,
     'interactive-question': CrayonMeasurementQuestion,
     'multiple-choice-question': RoomIllustration,
+    'shape-sorting-game': ShapeSorterGame,
     'mission-readiness': MissionReadiness,
     'farmer-intro': FarmerIntro,
     'fox-threat': FoxThreat,
@@ -66,7 +68,7 @@ const InteractiveLesson = () => {
     const navigate = useDevModeNavigate();
     const location = useLocation();
     const { userName = 'Explorer', lessonId = 'perimeter' } = location.state || {};
-    
+
     // Developer mode detection
     const isDevMode = useIsDevMode();
 
@@ -99,12 +101,23 @@ const InteractiveLesson = () => {
         // Use conditional presentation if set, otherwise use normal sequence
         return currentConditionalPresentation || lesson.sequence[currentPresIndex]?.presentationId;
     }, [lesson, currentPresIndex, currentConditionalPresentation]);
-    const presentation = useMemo(() => presentations[presentationId], [presentationId]);
+    const presentation = useMemo(() => {
+        // Check main presentations first, then conditional presentations
+        return presentations[presentationId] || conditionalPresentations[presentationId];
+    }, [presentationId]);
     const interaction = useMemo(() => presentation?.interactions[currentInteractionIndex], [presentation, currentInteractionIndex]);
 
     // Helper function to get feedback text from contentData
     const getFeedbackText = useCallback((feedbackInteractionId) => {
+        // Check main presentations first
         for (const [presId, pres] of Object.entries(presentations)) {
+            const feedbackInteraction = pres.interactions.find(int => int.id === feedbackInteractionId);
+            if (feedbackInteraction) {
+                return feedbackInteraction.tutorText;
+            }
+        }
+        // Then check conditional presentations
+        for (const [presId, pres] of Object.entries(conditionalPresentations)) {
             const feedbackInteraction = pres.interactions.find(int => int.id === feedbackInteractionId);
             if (feedbackInteraction) {
                 return feedbackInteraction.tutorText;
@@ -181,7 +194,7 @@ const InteractiveLesson = () => {
     // Developer mode handlers
     const handleDevInteractionSelect = useCallback((interaction) => {
         console.log('Dev navigation to:', interaction);
-        
+
         if (interaction.isConditional) {
             // Navigate to conditional presentation
             setCurrentConditionalPresentation(interaction.presentationId);
@@ -192,7 +205,7 @@ const InteractiveLesson = () => {
             setCurrentPresIndex(interaction.presIndex);
             setCurrentInteractionIndex(interaction.interactionIndex);
         }
-        
+
         // Reset UI state
         setDynamicTutorText(null);
         setShowNextButton(interaction.showNextButton ?? false);
@@ -247,6 +260,7 @@ const InteractiveLesson = () => {
                     const feedbackText = getFeedbackText('shape-correct');
                     if (feedbackText) {
                         setDynamicTutorText(feedbackText);
+                        ttsRef.current?.triggerTTS(feedbackText);
                     }
                     setShowNextButton(true);
                 }
@@ -254,6 +268,7 @@ const InteractiveLesson = () => {
                 const incorrectFeedback = getFeedbackText('shape-incorrect');
                 if (incorrectFeedback) {
                     setDynamicTutorText(incorrectFeedback);
+                    ttsRef.current?.triggerTTS(incorrectFeedback);
                 }
             }
             return;
@@ -263,6 +278,7 @@ const InteractiveLesson = () => {
             const feedbackText = getFeedbackText(feedbackId);
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
+                ttsRef.current?.triggerTTS(feedbackText);
                 setShowNextButton(true); // Show continue button after feedback
             }
         } else {
@@ -318,6 +334,13 @@ const InteractiveLesson = () => {
     };
 
     const handleAnimationComplete = useCallback(() => {
+        // Special handling for demo animation completion
+        if (interaction?.id === 'shape-demo-modeling') {
+            console.log('🎯 Demo animation completed, showing button');
+            setShowNextButton(true); // Show button instead of auto-advance
+            return;
+        }
+
         if (interaction?.transitionType === 'manual' && interaction.showNextButton) {
             setShowNextButton(true);
         } else {
@@ -356,7 +379,7 @@ const InteractiveLesson = () => {
 
         // Reset dynamic tutor text when interaction changes
         setDynamicTutorText(null);
-        
+
         // Reset perimeter input state when interaction changes
         setPerimeterInput('');
         setPerimeterAttempts(0);
@@ -374,13 +397,24 @@ const InteractiveLesson = () => {
         const currentInteraction = activeFeedbackInteraction || interaction;
 
         // This should ONLY trigger for animations that start immediately after speech.
-        const shouldAutoAnimate = currentInteraction?.type.startsWith('footsteps-') ||
-            currentInteraction?.type === 'meter-measurement' ||
-            currentInteraction?.type === 'ruler-measurement';
+        const shouldAutoAnimate = interaction?.type.startsWith('footsteps-') ||
+            interaction?.type === 'meter-measurement' ||
+            interaction?.type === 'ruler-measurement' ||
+            (interaction?.type === 'shape-sorting-game' && interaction?.id === 'shape-demo-modeling');
 
-        if (currentInteraction?.transitionType === 'auto') {
+        // Special handling for demo animation - don't trigger here, let component handle internally
+        if (interaction?.id === 'shape-demo-modeling') {
+            console.log('🎯 Demo interaction - TTS ended, waiting for component internal animation trigger');
+            return; // Don't trigger animation here - component will handle it internally
+        }
+
+        if (interaction?.transitionType === 'auto') {
             setTimeout(advanceToNext, 500);
-        } else if (currentInteraction?.type === 'welcome') {
+        } else if (interaction?.transitionType === 'interaction-based') {
+            // Wait for component to signal completion - don't auto-advance
+            console.log('🎯 Waiting for interaction-based completion');
+            return;
+        } else if (interaction?.type === 'welcome') {
             setTimeout(() => setShowNextButton(true), 500);
         } else if (shouldAutoAnimate) {
             // Specifically trigger footsteps, meter stick, or ruler animation after speech
@@ -397,6 +431,24 @@ const InteractiveLesson = () => {
             setIsWaving(true);
         }
     }, [interaction]);
+
+    // Listen for custom advancement events from components like ShapeSorterGame
+    useEffect(() => {
+        const handleAdvanceInteraction = () => {
+            console.log('🎯 Custom interaction advancement triggered');
+            advanceToNext();
+        };
+
+        window.addEventListener('advanceInteraction', handleAdvanceInteraction);
+
+        // Also expose advanceToNext globally for components to use
+        window.advanceToNextInteraction = advanceToNext;
+
+        return () => {
+            window.removeEventListener('advanceInteraction', handleAdvanceInteraction);
+            delete window.advanceToNextInteraction;
+        };
+    }, [advanceToNext]);
 
     const tutorText = dynamicTutorText || (interaction?.tutorText.replace('{userName}', userName) ?? '');
 
@@ -436,7 +488,6 @@ const InteractiveLesson = () => {
 
         let props = {
             key: `${currentPresIndex}-${currentInteractionIndex}`,
-            ...interaction.contentProps,
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
             // Pass the onAnswer handler to any component that might need it
@@ -445,6 +496,21 @@ const InteractiveLesson = () => {
             showSideHighlighting: showSideHighlighting,
             onHighlightComplete: handleHighlightComplete,
         };
+
+        // Special handling for shape-sorting-game component
+        if (interaction.type === 'shape-sorting-game') {
+            props.contentProps = {
+                ...interaction.contentProps,
+                phaseConfig: interaction.phaseConfig
+            };
+            // Pass animation completion callback for demo interaction
+            if (interaction.id === 'shape-demo-modeling') {
+                props.onAnimationComplete = handleAnimationComplete;
+            }
+        } else {
+            // For other components, spread contentProps directly
+            props = { ...props, ...interaction.contentProps };
+        }
 
         return <Component {...props} />;
     }
@@ -595,12 +661,12 @@ const InteractiveLesson = () => {
 
                     {/* Tutor Speech */}
                     <Box sx={{ mb: 3 }}>
-                        <Typography 
-                            variant="body2" 
-                            sx={{ 
-                                color: '#fff', 
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: '#fff',
                                 lineHeight: 1.6,
-                                fontSize: '1rem', 
+                                fontSize: '1rem',
                                 textAlign: 'left',
                                 maxWidth: '100%',
                                 wordBreak: 'break-word',
@@ -618,10 +684,10 @@ const InteractiveLesson = () => {
                             {showPerimeterSolution && (
                                 <Box sx={{ mb: 2, textAlign: 'center' }}>
                                     <Typography variant="body2" sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>
-                                        {interaction?.contentProps?.shape?.type === 'rectangle' && 
+                                        {interaction?.contentProps?.shape?.type === 'rectangle' &&
                                             `${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} + ${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} = ${interaction.contentProps.correctAnswer}`
                                         }
-                                        {interaction?.contentProps?.shape?.type === 'square' && 
+                                        {interaction?.contentProps?.shape?.type === 'square' &&
                                             `${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} = ${interaction.contentProps.correctAnswer}`
                                         }
                                         {interaction?.contentProps?.shape?.type === 'triangle' && interaction?.contentProps?.shape?.sides &&
@@ -633,7 +699,7 @@ const InteractiveLesson = () => {
                                     </Typography>
                                 </Box>
                             )}
-                            
+
                             {/* Input field */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                                 <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap' }}>
@@ -678,7 +744,7 @@ const InteractiveLesson = () => {
                                     {interaction?.contentProps?.shape?.unit || 'units'}
                                 </Typography>
                             </Box>
-                            
+
                             {/* Check button */}
                             {!showNextButton && !showPerimeterSolution && (
                                 <Button

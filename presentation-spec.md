@@ -2,7 +2,7 @@
 # Presentation Specification
 
 ## Purpose
-This file contains the detailed specification for a presentation including all interactions, content, and expected behaviors. It serves as the single source of truth for what needs to be implemented.
+This file contains the detailed specification for a presentation including all interactions, content, and expected behaviors. It serves as the single source of truth for what needs to be implemented. This is a game which has various interactions to teach shape sorting through a guided learning experience.
 
 ## Usage
 - User provides the complete presentation specification in markdown format
@@ -29,7 +29,6 @@ The AI Tutor's avatar is on the left side of the screen, next to their dialogue.
 On the main screen area, a pile of jumbled, unsorted shapes is shown at the top.
 There are no sorting containers visible yet.
 A single button appears: "I can help!"
-
 
 Interaction Q2: Introducing the Tools
 Type: User Clicks "I can help!"
@@ -101,7 +100,6 @@ ELSE (if intervention_count is 2):
 The AI Tutor remains silent. No intervention is triggered.
 The system plays the gentle "bloop" sound and the shape animates back to the top, just like a first attempt. The user must now solve it through trial and error.
 
-
 Interaction Q12: Game Completion
 Type: Automatic (Triggers after the last shape is successfully sorted)
 Content (Right Side): Celebratory animation with stars and confetti.
@@ -110,7 +108,6 @@ IF the user sorted everything with zero interventions:
 AI Tutor: "A perfect score! You're a true shape superstar! ⭐ You've made the factory perfectly organized without any help at all!"
 ELSE (if the user received one or more interventions):
 AI Tutor: "All sorted! Fantastic job finishing the puzzle. Even when it was tough, you kept trying and figured it all out. That perseverance is what makes a great problem-solver!"
-
 
 Interaction Q13: Final Recap
 Type: User Clicks "Next"

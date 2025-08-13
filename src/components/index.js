@@ -22,6 +22,9 @@ export { default as PentagonSolution } from './PentagonSolution';
 export { default as RulerMeasurement } from './RulerMeasurement';
 export { default as StandardUnits } from './StandardUnits';
 export { default as ShapeMeasurement } from './ShapeMeasurement';
+export { default as ShapeSorterGame } from './ShapeSorterGame';
+export { default as GameShape } from './GameShape';
+export { default as SortingBin } from './SortingBin';
 export { default as TTSManager } from './TTSManager';
 export { default as TutorAvatar } from './TutorAvatar';
 

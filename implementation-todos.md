@@ -184,7 +184,7 @@ Each todo should include:
 
 ## Phase B: Shape Sorting Game (Implemented Second)
 
-### B1: Game Foundation Setup
+### B1: Foundation Setup (Independent Batch)
 **Status**: ⏳ **Pending**
 
 **B1.1 - Create ShapeSorterGame Main Component**
@@ -244,32 +244,32 @@ Each todo should include:
   - Displays shape counter below each container
   - 1.1x hover scaling with aspect-ratio preservation
   - Drop detection functionality
-  - Glowing effect for interventions
+  - Glowing effect capability for interventions
 - **Files Affected**:
   - `src/components/SortingBin.jsx` (new)
   - `src/components/SortingBin.css` (new)
 - **Testing Notes**: Test PNG loading, hover effects, drop detection, counter updates
 
-**B1.5 - Implement Basic Drag and Drop**
+**B1.5 - Implement Basic Drag and Drop with Positioning**
 - **ID**: GAME-005
-- **Title**: Set up Framer Motion drag and drop system
-- **Description**: Implement basic drag and drop functionality between shapes pile and sorting bins
+- **Title**: Set up Framer Motion drag and drop with shape positioning utilities
+- **Description**: Implement basic drag and drop functionality with existing positioning utilities for proper shape arrangement
 - **Dependencies**: GAME-003, GAME-004
 - **Acceptance Criteria**:
   - Shapes can be dragged from pile to bins
   - Drop detection works correctly
+  - Uses existing `shapePositioning.js` utilities for overlap prevention
   - Shapes return to pile on incorrect drops (0.6s animation)
-  - Random positioning when returning to pile
+  - Random positioning when returning to pile using utilities
   - Smooth drag experience with proper constraints
 - **Files Affected**:
   - `src/components/ShapeSorterGame.jsx`
   - `src/components/GameShape.jsx`
   - `src/components/SortingBin.jsx`
-- **Testing Notes**: Test drag from pile to bins, verify return animation, check performance with all 12 shapes
+  - `src/utils/shapePositioning.js` (integrate existing)
+- **Testing Notes**: Test drag from pile to bins, verify return animation, check positioning utilities integration
 
-
-
-### B2: Game Logic Implementation
+### B2: Core Game Mechanics (Independent Batch)
 **Status**: ⏳ **Pending**
 
 **B2.1 - Implement Shape Type Attempt Tracking**
@@ -280,18 +280,19 @@ Each todo should include:
 - **Acceptance Criteria**:
   - Tracks attempts per shape type: triangle, circle, rectangle, square
   - Increments on incorrect drops only
-  - Triggers intervention on 3rd incorrect attempt per shape type
+  - Triggers intervention flag on 3rd incorrect attempt per shape type
   - Resets appropriately between game phases
+  - Clear data structure for attempt management
 - **Files Affected**:
   - `src/components/ShapeSorterGame.jsx`
   - `src/utils/attemptTracker.js` (new)
-- **Testing Notes**: Test attempt counting, intervention triggers
+- **Testing Notes**: Test attempt counting, intervention trigger flags, phase reset behavior
 
 **B2.2 - Add Web Audio API Sound Effects**
 - **ID**: GAME-007
 - **Title**: Implement success/failure sound generation
 - **Description**: Create Web Audio API sounds for success (higher pitch pop) and failure (lower pitch bloop), quieter than TTS
-- **Dependencies**: GAME-006
+- **Dependencies**: None (independent of attempt tracking)
 - **Acceptance Criteria**:
   - Success sound: higher pitch, pleasant tone
   - Failure sound: lower pitch, gentle tone
@@ -303,67 +304,45 @@ Each todo should include:
   - `src/components/ShapeSorterGame.jsx`
 - **Testing Notes**: Test both sounds, verify volume levels, test fallback, verify cross-browser compatibility
 
-
-
-**B2.3 - Create Intervention System Logic**
+**B2.3 - Enhance Shape Return Animations**
 - **ID**: GAME-008
-- **Title**: Build targeted intervention and correction system
-- **Description**: Implement intervention overlay and automated correction for struggling users
-- **Dependencies**: GAME-006, GAME-007
-- **Acceptance Criteria**:
-  - Triggers on 3rd incorrect attempt per shape type
-  - Shows targeted feedback based on specific shape and bin
-  - Provides automated correction if user still fails
-  - Respects help limit (2 max interventions)
-  - Updates help star counter appropriately
-- **Files Affected**:
-  - `src/components/InterventionOverlay.jsx` (new)
-  - `src/components/InterventionOverlay.css` (new)
-  - `src/components/ShapeSorterGame.jsx`
-- **Testing Notes**: Test intervention triggers, automated correction, help limits, verify state transitions with edge cases
-
-
-
-**B2.4 - Implement Help Counter and Star System**
-- **ID**: GAME-009
-- **Title**: Build help stars indicator for final challenge
-- **Description**: Create progress indicator showing available help (2 stars) during final challenge only
-- **Dependencies**: GAME-008
-- **Acceptance Criteria**:
-  - Shows 2 stars during final challenge phase only
-  - Stars fade when help is used
-  - Hidden during other game phases
-  - Visual indicator of remaining help available
-- **Files Affected**:
-  - `src/components/ProgressIndicator.jsx` (new)
-  - `src/components/ProgressIndicator.css` (new)
-  - `src/components/ShapeSorterGame.jsx`
-- **Testing Notes**: Test visibility during final challenge, star fading
-
-**B2.5 - Add Shape Return Animations**
-- **ID**: GAME-010
-- **Title**: Implement shape return to pile animations
-- **Description**: Create smooth 0.6s animations for shapes returning to pile with random positioning
-- **Dependencies**: GAME-005, GAME-007
+- **Title**: Implement smooth shape return animations with positioning
+- **Description**: Create polished 0.6s animations for shapes returning to pile with proper positioning using existing utilities
+- **Dependencies**: GAME-005 (positioning utilities)
 - **Acceptance Criteria**:
   - 0.6s animation duration for shape returns
-  - Random positioning in pile area
+  - Uses positioning utilities for non-overlapping placement
   - Smooth animation with proper easing
   - No overlap issues with other shapes
-  - Works with both incorrect drops and automated corrections
+  - Works with both incorrect drops and manual corrections
 - **Files Affected**:
   - `src/components/GameShape.jsx`
   - `src/components/ShapeSorterGame.jsx`
-- **Testing Notes**: Test return animations, verify timing and positioning
+  - `src/utils/shapePositioning.js` (integrate existing)
+- **Testing Notes**: Test return animations, verify timing and positioning, test overlap prevention
 
-### B3: Intervention System Implementation
+**B2.4 - Integrate Basic Success/Failure Handling**
+- **ID**: GAME-009
+- **Title**: Connect attempt tracking with audio feedback
+- **Description**: Integrate attempt tracking system with audio feedback and basic game progression logic
+- **Dependencies**: GAME-006, GAME-007, GAME-008
+- **Acceptance Criteria**:
+  - Successful drops play success sound and update counters
+  - Failed drops play failure sound, increment attempts, and return shape
+  - Proper integration between tracking and audio systems
+  - Clean state management for success/failure flows
+- **Files Affected**:
+  - `src/components/ShapeSorterGame.jsx`
+- **Testing Notes**: Test success/failure flows, verify audio timing, test state consistency
+
+### B3: Intervention Foundation (Independent Batch)
 **Status**: ⏳ **Pending**
 
 **B3.1 - Create InterventionOverlay Component**
-- **ID**: GAME-011
+- **ID**: GAME-010
 - **Title**: Build modal overlay for targeted help
 - **Description**: Create overlay component that appears during interventions with specific shape-focused feedback
-- **Dependencies**: GAME-008
+- **Dependencies**: None (independent component)
 - **Acceptance Criteria**:
   - Modal-style overlay that appears during interventions
   - Shows specific feedback based on shape type and incorrect bin
@@ -371,15 +350,15 @@ Each todo should include:
   - Smooth enter/exit animations
   - Accessible for screen readers
 - **Files Affected**:
-  - `src/components/InterventionOverlay.jsx`
-  - `src/components/InterventionOverlay.css`
-- **Testing Notes**: Test overlay appearance, different feedback messages
+  - `src/components/InterventionOverlay.jsx` (new)
+  - `src/components/InterventionOverlay.css` (new)
+- **Testing Notes**: Test overlay appearance, animation timing, accessibility
 
-**B3.2 - Implement Targeted Feedback Logic**
-- **ID**: GAME-012
-- **Title**: Build context-aware feedback system
+**B3.2 - Implement Targeted Feedback System**
+- **ID**: GAME-011
+- **Title**: Build context-aware feedback logic
 - **Description**: Create smart feedback that provides specific guidance based on the shape being sorted and the incorrect bin chosen
-- **Dependencies**: GAME-011
+- **Dependencies**: GAME-010
 - **Acceptance Criteria**:
   - Feedback specific to shape type (e.g., "A triangle has 3 sides")
   - References the incorrect bin chosen
@@ -390,11 +369,11 @@ Each todo should include:
   - `src/components/InterventionOverlay.jsx`
 - **Testing Notes**: Test different shape/bin combinations for appropriate feedback
 
-**B3.3 - Add Automated Correction System**
-- **ID**: GAME-013
+**B3.3 - Create Automated Correction System**
+- **ID**: GAME-012
 - **Title**: Implement automated shape placement
 - **Description**: Build system that automatically places shapes in correct bins when user continues to struggle
-- **Dependencies**: GAME-011, GAME-012
+- **Dependencies**: GAME-010, GAME-011
 - **Acceptance Criteria**:
   - Activates if user fails after targeted intervention
   - Smooth animation of shape moving to correct bin
@@ -406,61 +385,60 @@ Each todo should include:
   - `src/utils/automatedCorrection.js` (new)
 - **Testing Notes**: Test automated placement, verify counters and feedback
 
-**B3.4 - Implement Help Limit Enforcement**
-- **ID**: GAME-014
-- **Title**: Build help limit system (2 max interventions)
-- **Description**: Enforce maximum of 2 interventions during final challenge, after which user must solve independently
-- **Dependencies**: GAME-009, GAME-013
+**B3.4 - Create Help Counter and Star System**
+- **ID**: GAME-013
+- **Title**: Build help stars indicator for final challenge
+- **Description**: Create progress indicator showing available help (2 stars) during final challenge only
+- **Dependencies**: GAME-012 (for help usage tracking)
 - **Acceptance Criteria**:
-  - Tracks intervention count during final challenge
-  - Allows maximum 2 interventions
-  - After limit reached, no more interventions trigger
-  - User must solve remaining shapes through trial and error
-  - Clear indication when help is exhausted
+  - Shows 2 stars during final challenge phase only
+  - Stars fade when help is used
+  - Hidden during other game phases
+  - Visual indicator of remaining help available
+  - Integrates with help limit enforcement
 - **Files Affected**:
+  - `src/components/ProgressIndicator.jsx` (new)
+  - `src/components/ProgressIndicator.css` (new)
   - `src/components/ShapeSorterGame.jsx`
-  - `src/components/ProgressIndicator.jsx`
-- **Testing Notes**: Test help limit enforcement, behavior after limit reached
+- **Testing Notes**: Test visibility during final challenge, star fading, help limit tracking
 
-**B3.5 - Create Glowing Bucket Effects**
-- **ID**: GAME-015
-- **Title**: Implement visual feedback for interventions
-- **Description**: Add glowing effects to correct bins during interventions and hover state enhancements
-- **Dependencies**: GAME-004, GAME-011
-- **Acceptance Criteria**:
-  - Correct bin glows during intervention
-  - Smooth glow animation with appropriate colors
-  - Enhanced hover effects (1.1x scaling with aspect-ratio preservation)
-  - Glowing stops when intervention ends
-  - No performance impact from glow effects
-- **Files Affected**:
-  - `src/components/SortingBin.jsx`
-  - `src/components/SortingBin.css`
-- **Testing Notes**: Test glow effects, hover scaling, performance impact
-
-### B4: Advanced Game Flow
+### B4A: Basic Game Flow (Q1-Q6) (Independent Batch)
 **Status**: ⏳ **Pending**
 
-**B4.1 - Implement Q1-Q2: Introduction and Tools**
-- **ID**: GAME-016
-- **Title**: Build intro phase with "I can help!" button and container animations
-- **Description**: Implement first two interactions - problem introduction and tools reveal
-- **Dependencies**: GAME-001, GAME-015
+**B4A.1 - Implement Q1: Problem Introduction**
+- **ID**: GAME-014
+- **Title**: Build initial problem introduction phase
+- **Description**: Implement Q1 with jumbled shapes pile and problem introduction
+- **Dependencies**: B1 (Foundation), B2 (Core Mechanics)
 - **Acceptance Criteria**:
-  - Q1: Jumbled shapes pile visible, "I can help!" button functional
-  - Q2: Four containers animate in (0.8s) after button click
-  - Proper tutor text for both phases
-  - Smooth transition between Q1 and Q2
+  - Jumbled shapes pile visible with proper positioning
+  - All shapes disabled for interaction initially
+  - Proper tutor text: "Oh no! Welcome to the Shape Factory..."
+  - "I can help!" button visible and functional
 - **Files Affected**:
   - `src/components/ShapeSorterGame.jsx`
   - `src/data/gamePhases.js` (new)
-- **Testing Notes**: Test button functionality, container animations, tutor text
+- **Testing Notes**: Test initial state, button functionality
 
-**B4.2 - Implement Q3: Modeling Phase**
-- **ID**: GAME-017
+**B4A.2 - Implement Q2: Tools Reveal**
+- **ID**: GAME-015
+- **Title**: Build tools reveal with container animations
+- **Description**: Implement Q2 where containers animate in after help button click
+- **Dependencies**: GAME-014
+- **Acceptance Criteria**:
+  - Four containers animate in (0.8s) after button click
+  - Smooth container slide-in animation
+  - Proper tutor text for tools introduction
+  - Transition to modeling phase setup
+- **Files Affected**:
+  - `src/components/ShapeSorterGame.jsx`
+- **Testing Notes**: Test container animations, timing, tutor text
+
+**B4A.3 - Implement Q3: Modeling Phase**
+- **ID**: GAME-016
 - **Title**: Build automated demonstration with square sorting
 - **Description**: Implement "I Do" phase where system demonstrates sorting one square automatically
-- **Dependencies**: GAME-016
+- **Dependencies**: GAME-015
 - **Acceptance Criteria**:
   - Automated square selection and movement to correct bin
   - Tutor explains square properties during animation
@@ -470,70 +448,121 @@ Each todo should include:
   - `src/components/ShapeSorterGame.jsx`
 - **Testing Notes**: Test automated sorting animation, sound effects, tutor timing
 
-**B4.3 - Implement Q4-Q5: Guided Practice**
-- **ID**: GAME-018
+**B4A.4 - Implement Q4: Guided Practice Setup**
+- **ID**: GAME-017
 - **Title**: Build guided triangle sorting with disabled shapes
 - **Description**: Implement guided phase where user sorts one triangle with other shapes semi-transparent
-- **Dependencies**: GAME-017
+- **Dependencies**: GAME-016
 - **Acceptance Criteria**:
-  - Only triangle enabled for interaction (other shapes semi-transparent)
+  - Only triangle enabled for interaction
+  - Other shapes become semi-transparent and non-interactive
   - Basic success/failure feedback without interventions
-  - Shape returns to pile on incorrect drop (0.6s animation)
-  - Transition to practice phase after success
+  - Proper tutor guidance text
 - **Files Affected**:
   - `src/components/ShapeSorterGame.jsx`
   - `src/components/GameShape.jsx`
-- **Testing Notes**: Test shape enabling/disabling, return animations
+- **Testing Notes**: Test shape enabling/disabling, opacity changes, interaction restrictions
 
-**B4.4 - Implement Q6-Q7: Practice Phase**
-- **ID**: GAME-019
-- **Title**: Build practice sorting with 3 shapes and basic interventions
-- **Description**: Implement practice phase with 3 shapes (rectangle, circle, square) and intervention system
-- **Dependencies**: GAME-018, GAME-008 (intervention system)
+**B4A.5 - Implement Q5: Guided Success Transition**
+- **ID**: GAME-018
+- **Title**: Handle guided practice completion
+- **Description**: Implement transition logic when guided triangle sorting is completed successfully
+- **Dependencies**: GAME-017
 - **Acceptance Criteria**:
-  - 3 shapes available for sorting (rectangle, circle, square)
-  - Intervention triggers on 3rd wrong attempt per shape type
-  - Basic targeted feedback and automated correction
-  - Transition to final challenge after all 3 sorted
+  - Shape returns to pile on incorrect drop (0.6s animation)
+  - Success feedback when triangle sorted correctly
+  - Automatic transition to practice phase after success
+  - Proper state management for phase transition
 - **Files Affected**:
   - `src/components/ShapeSorterGame.jsx`
-- **Testing Notes**: Test intervention triggers, automated corrections, phase transition
+- **Testing Notes**: Test success detection, transition timing, state changes
 
-**B4.5 - Implement Q8-Q9: Intervention System Integration**
+**B4A.6 - Implement Q6: Practice Phase Setup**
+- **ID**: GAME-019
+- **Title**: Build practice sorting with 3 shapes
+- **Description**: Implement practice phase with 3 shapes (rectangle, circle, square) enabled
+- **Dependencies**: GAME-018
+- **Acceptance Criteria**:
+  - 3 shapes available for sorting (rectangle, circle, square)
+  - All other shapes remain disabled/transparent
+  - Basic success/failure feedback (no interventions yet)
+  - Proper tutor text for practice phase
+  - Foundation ready for intervention integration
+- **Files Affected**:
+  - `src/components/ShapeSorterGame.jsx`
+- **Testing Notes**: Test 3-shape enabling, basic feedback, phase setup
+
+### B4B: Intervention Integration (Q7-Q10) (Independent Batch)
+**Status**: ⏳ **Pending**
+
+**B4B.1 - Implement Q7: Practice with Interventions**
 - **ID**: GAME-020
-- **Title**: Integrate targeted intervention and automated correction
-- **Description**: Implement Q8 (targeted intervention) and Q9 (automated correction) within game flow
-- **Dependencies**: GAME-019, GAME-011, GAME-012, GAME-013
+- **Title**: Integrate intervention system into practice phase
+- **Description**: Add intervention triggers to Q6 practice phase with attempt tracking
+- **Dependencies**: B3 (Intervention Foundation), GAME-019
+- **Acceptance Criteria**:
+  - Intervention triggers on 3rd wrong attempt per shape type
+  - Uses intervention overlay and targeted feedback
+  - Maintains practice phase with 3 shapes
+  - Proper attempt tracking integration
+- **Files Affected**:
+  - `src/components/ShapeSorterGame.jsx`
+  - Integration with B3 intervention components
+- **Testing Notes**: Test intervention triggers, attempt tracking, overlay integration
+
+**B4B.2 - Implement Q8: Targeted Intervention**
+- **ID**: GAME-021
+- **Title**: Execute targeted intervention flow
+- **Description**: Implement full targeted intervention experience within practice phase
+- **Dependencies**: GAME-020
 - **Acceptance Criteria**:
   - Targeted feedback based on shape type and incorrect bin
   - Glowing bucket indication during intervention
-  - Automated correction if user still fails after intervention
-  - Proper help counter management
+  - Clear intervention flow with proper timing
+  - User can attempt correction after intervention
 - **Files Affected**:
   - `src/components/ShapeSorterGame.jsx`
   - `src/components/InterventionOverlay.jsx`
-- **Testing Notes**: Test intervention flow, glowing effects, automated correction
+- **Testing Notes**: Test intervention flow, glowing effects, user experience
 
-**B4.6 - Implement Q10: Final Challenge Setup**
-- **ID**: GAME-021
+**B4B.3 - Implement Q9: Automated Correction**
+- **ID**: GAME-022
+- **Title**: Execute automated correction flow
+- **Description**: Implement automated correction if user still fails after intervention
+- **Dependencies**: GAME-021
+- **Acceptance Criteria**:
+  - Automated correction activates if user fails after intervention
+  - Smooth animation of shape moving to correct bin
+  - Updates bin counters appropriately
+  - Provides encouraging tutor feedback
+  - Tracks that help was used
+- **Files Affected**:
+  - `src/components/ShapeSorterGame.jsx`
+- **Testing Notes**: Test automated correction, animation smoothness, help tracking
+
+**B4B.4 - Implement Q10: Final Challenge Setup**
+- **ID**: GAME-023
 - **Title**: Build transition to final challenge with help stars
 - **Description**: Implement transition phase that introduces remaining 8 shapes and help star system
-- **Dependencies**: GAME-020, GAME-009 (help counter)
+- **Dependencies**: GAME-022, B3 (Help Counter System)
 - **Acceptance Criteria**:
-  - Remaining 8 shapes appear at top
+  - Remaining 8 shapes appear and become available
   - Help stars (⭐ ⭐) counter visible
-  - Tutor transition speech
-  - intervention_count reset to 0
+  - Tutor transition speech for final challenge
+  - Intervention count reset to 0 for final challenge
 - **Files Affected**:
   - `src/components/ShapeSorterGame.jsx`
   - `src/components/ProgressIndicator.jsx`
 - **Testing Notes**: Test shape appearance, help counter visibility, state reset
 
-**B4.7 - Implement Q11: Final Challenge Gameplay**
-- **ID**: GAME-022
+### B4C: Final Challenge (Q11-Q13) (Independent Batch)
+**Status**: ⏳ **Pending**
+
+**B4C.1 - Implement Q11: Final Challenge Gameplay**
+- **ID**: GAME-024
 - **Title**: Build final challenge with limited help system
 - **Description**: Implement complex final challenge logic with help limits and attempt tracking
-- **Dependencies**: GAME-021, GAME-014 (help limit enforcement)
+- **Dependencies**: GAME-023
 - **Acceptance Criteria**:
   - Full drag/drop functionality for all 8 remaining shapes
   - Help limit enforcement (2 max interventions)
@@ -544,79 +573,49 @@ Each todo should include:
   - `src/components/ShapeSorterGame.jsx`
 - **Testing Notes**: Test help limits, silent failure mode, completion triggers
 
-**B4.8 - Implement Q12: Game Completion**
-- **ID**: GAME-023
+**B4C.2 - Implement Q12: Game Completion**
+- **ID**: GAME-025
 - **Title**: Build performance-based completion messages
 - **Description**: Implement adaptive completion phase with different messages based on performance
-- **Dependencies**: GAME-022
+- **Dependencies**: GAME-024
 - **Acceptance Criteria**:
   - Perfect score message: "A perfect score! You're a true shape superstar!"
   - Help used message: "All sorted! Fantastic job finishing the puzzle..."
   - Performance tracking accurate (zero interventions vs interventions used)
+  - Celebratory animations (3-second duration)
   - Smooth transition to final recap
 - **Files Affected**:
   - `src/components/ShapeSorterGame.jsx`
   - `src/data/completionMessages.js` (new)
-- **Testing Notes**: Test both message types based on actual performance
+  - `src/components/CelebrationEffect.jsx` (new)
+  - `src/components/CelebrationEffect.css` (new)
+- **Testing Notes**: Test both message types, celebration timing, performance tracking
 
-**B4.9 - Implement Q13: Final Recap**
-- **ID**: GAME-024
+**B4C.3 - Implement Q13: Final Recap**
+- **ID**: GAME-026
 - **Title**: Build final shape properties summary
 - **Description**: Implement final recap view with shape categories and properties
-- **Dependencies**: GAME-023
+- **Dependencies**: GAME-025
 - **Acceptance Criteria**:
   - Clean summary graphic with all 4 shape types
   - Key properties visually highlighted for each shape
   - "Next" button functionality (exits to home page)
   - Professional visual design
+  - Automatic navigation capability
 - **Files Affected**:
-  - `src/components/ShapeSummary.jsx` (already planned)
-  - `src/components/ShapeSummary.css` (already planned)
+  - `src/components/ShapeSummary.jsx` (new)
+  - `src/components/ShapeSummary.css` (new)
   - `src/components/ShapeSorterGame.jsx`
-- **Testing Notes**: Test recap display, Next button navigation
+- **Testing Notes**: Test recap display, Next button navigation, visual design
 
-**B4.10 - Add Celebratory Animations**
-- **ID**: GAME-025
-- **Title**: Create completion celebration effects
-- **Description**: Implement confetti and star animations for game completion with 3-second duration
-- **Dependencies**: GAME-023 (Q12 completion)
-- **Acceptance Criteria**:
-  - Celebratory animation triggers on game completion
-  - 3-second duration with confetti/stars effects
-  - Performance-optimized animations
-  - Works on different screen sizes
-  - Smooth transition to completion message
-- **Files Affected**:
-  - `src/components/CelebrationEffect.jsx` (new)
-  - `src/components/CelebrationEffect.css` (new)
-- **Testing Notes**: Test celebration animation, verify timing and performance
-
-**B4.11 - Integrate TTS with Dynamic Content**
-- **ID**: GAME-026
-- **Title**: Connect game with TTSManager for speech
-- **Description**: Integrate all tutor speech with existing TTSManager, including dynamic performance-based content
-- **Dependencies**: GAME-024 (Q13 recap)
-- **Acceptance Criteria**:
-  - All tutor text plays through existing TTSManager
-  - Dynamic content generation based on user performance
-  - Speech timing doesn't conflict with game sounds
-  - Proper audio hierarchy (TTS louder than game sounds)
-  - Error handling if TTS fails (visual feedback only)
-- **Files Affected**:
-  - `src/components/ShapeSorterGame.jsx`
-  - `src/contentData.js`
-- **Testing Notes**: Test speech playback, dynamic content, audio levels, verify TTS + Web Audio coordination
-
-
-
-### B5: Polish and Final Integration
+### B5: Polish & Integration (Independent Batch)
 **Status**: ⏳ **Pending**
 
 **B5.1 - Optimize Animation Timings**
 - **ID**: GAME-027
 - **Title**: Fine-tune all animation specifications
 - **Description**: Ensure all animations meet specified timings and provide smooth user experience
-- **Dependencies**: GAME-010, GAME-015, GAME-025
+- **Dependencies**: All B4 batches complete
 - **Acceptance Criteria**:
   - Container slide-in: 0.8 seconds
   - Shape return animation: 0.6 seconds
@@ -628,26 +627,11 @@ Each todo should include:
   - `src/components/ShapeSorterGame.jsx`
 - **Testing Notes**: Time all animations, verify smoothness across devices
 
-**B5.2 - Implement Semi-Transparent Disabled Shapes**
+**B5.2 - Add ContentData Integration**
 - **ID**: GAME-028
-- **Title**: Add visual feedback for guided phase
-- **Description**: Make non-active shapes semi-transparent during guided interaction phase
-- **Dependencies**: GAME-003, GAME-018 (Q4-Q5 guided practice)
-- **Acceptance Criteria**:
-  - Other shapes fade to semi-transparent during guided phase (Q4)
-  - Smooth opacity transitions
-  - Clear visual distinction between active and inactive shapes
-  - No interaction possible with disabled shapes
-- **Files Affected**:
-  - `src/components/GameShape.jsx`
-  - `src/components/GameShape.css`
-- **Testing Notes**: Test guided phase shape states, verify opacity and interactions
-
-**B5.3 - Add ContentData Integration**
-- **ID**: GAME-029
 - **Title**: Connect game to lesson content data system
 - **Description**: Integrate ShapeSorterGame with contentData.js as a presentation in the lesson system
-- **Dependencies**: GAME-026, GAME-028
+- **Dependencies**: GAME-026 (Q13 complete)
 - **Acceptance Criteria**:
   - Game appears as 'shape-sorting-game' presentation in contentData.js
   - Follows "measurement-practice-activities" presentation
@@ -659,11 +643,27 @@ Each todo should include:
   - `src/components/index.js`
 - **Testing Notes**: Test lesson progression, verify game integration
 
+**B5.3 - Integrate TTS with Dynamic Content**
+- **ID**: GAME-029
+- **Title**: Connect game with TTSManager for speech
+- **Description**: Integrate all tutor speech with existing TTSManager, including dynamic performance-based content
+- **Dependencies**: GAME-028
+- **Acceptance Criteria**:
+  - All tutor text plays through existing TTSManager
+  - Dynamic content generation based on user performance
+  - Speech timing doesn't conflict with game sounds
+  - Proper audio hierarchy (TTS louder than game sounds)
+  - Error handling if TTS fails (visual feedback only)
+- **Files Affected**:
+  - `src/components/ShapeSorterGame.jsx`
+  - `src/contentData.js`
+- **Testing Notes**: Test speech playback, dynamic content, audio levels
+
 **B5.4 - Error Handling and Edge Cases**
 - **ID**: GAME-030
 - **Title**: Implement comprehensive error handling
 - **Description**: Add robust error handling for all game scenarios using global toast system
-- **Dependencies**: GAME-007, GAME-029
+- **Dependencies**: GAME-029
 - **Acceptance Criteria**:
   - Web Audio API failure notifications via toast
   - Container PNG loading error handling
@@ -679,7 +679,7 @@ Each todo should include:
 - **ID**: GAME-031
 - **Title**: Optimize performance and conduct final integration testing
 - **Description**: Final performance optimization and comprehensive testing of complete system
-- **Dependencies**: GAME-027, GAME-028, GAME-029, GAME-030
+- **Dependencies**: GAME-030
 - **Acceptance Criteria**:
   - Smooth performance with 12 shapes and animations
   - No memory leaks during extended play
@@ -693,29 +693,34 @@ Each todo should include:
 
 ## Summary
 
-**Total Todos**: 37 (10 Phase A ✅ + 27 Phase B)
+**Total Todos**: 31 (10 Phase A ✅ + 21 Phase B)
 **Current Status**: 
 - Phase A: ✅ **COMPLETED** - Global toast infrastructure ready
 - Phase B: ⏳ **PENDING** - Shape Sorting Game implementation
 
-**Critical Path Dependencies**:
-1. ✅ Phase A must be completed before Phase B
-2. Foundation components (B1) before game logic (B2)
-3. Game logic (B2) before intervention system (B3)
-4. Core systems (B1-B3) before advanced flow (B4)
-5. Complete functionality (B4) before polish (B5)
+**Independent Batch Structure**:
+1. ✅ Phase A: Complete - Global toast system ready
+2. ⏳ B1: Foundation Setup (5 todos) - Basic game structure
+3. ⏳ B2: Core Game Mechanics (4 todos) - Tracking, audio, animations
+4. ⏳ B3: Intervention Foundation (4 todos) - Help system components  
+5. ⏳ B4A: Basic Game Flow Q1-Q6 (6 todos) - Core interactions
+6. ⏳ B4B: Intervention Integration Q7-Q10 (4 todos) - Help system integration
+7. ⏳ B4C: Final Challenge Q11-Q13 (3 todos) - Completion experience
+8. ⏳ B5: Polish & Integration (5 todos) - Final optimization
 
 **Key Milestones**:
-- ✅ A3.3: Phase A Complete - Global toast system ready
-- ⏳ B1.5: Basic game structure functional
-- ⏳ B3.5: Complete intervention system working
-- ⏳ B4.9: All 13 interaction phases implemented (Q1-Q13)
-- ⏳ B4.11: Full game experience with TTS integration
+- ✅ A3.3: Phase A Complete - Global toast system ready  
+- ⏳ B1.5: Foundation complete - Basic game structure functional
+- ⏳ B2.4: Core mechanics complete - Tracking and audio working
+- ⏳ B3.4: Intervention foundation complete - Help system components ready
+- ⏳ B4A.6: Basic flow complete - Q1-Q6 interactions working
+- ⏳ B4B.4: Intervention integration complete - Q7-Q10 with help system
+- ⏳ B4C.3: Final challenge complete - Q11-Q13 completion experience
 - ⏳ B5.5: Production-ready Shape Sorting Game
 
-**B4 Phase Breakdown (13 Interaction Implementation)**:
-- B4.1-B4.2: Introduction and modeling (Q1-Q3)
-- B4.3-B4.4: Guided and practice phases (Q4-Q7)
-- B4.5-B4.7: Intervention system and final challenge setup (Q8-Q11)
-- B4.8-B4.9: Completion and recap (Q12-Q13)
-- B4.10-B4.11: Polish integration (celebration + TTS) 
+**Batch Testing Strategy**:
+Each batch can be independently implemented, tested, and validated before proceeding to the next batch. This allows for:
+- Isolated testing of each system
+- Early detection of integration issues
+- Incremental progress tracking
+- Flexible development scheduling 

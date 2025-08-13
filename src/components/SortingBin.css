@@ -1,0 +1,349 @@
+/* SortingBin Component Styles - B1.4 */
+
+.sorting-bin {
+    position: relative;
+    width: 100px; /* Further reduced to ensure fit */
+    height: 120px; /* Proportionally reduced height */
+    max-width: 100px; /* Enforce maximum width */
+    max-height: 120px; /* Enforce maximum height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    flex-shrink: 0; /* Prevent shrinking */
+    
+    /* Aspect ratio preservation for 1.1x hover scaling */
+    aspect-ratio: 1 / 1.2;
+    transform-origin: center;
+}
+
+/* Container Image Wrapper */
+.container-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Container PNG Image */
+.container-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Fallback display when PNG fails to load */
+.container-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.container-icon {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.container-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Shape Counter */
+.shape-counter {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 4px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    min-width: 40px;
+}
+
+.counter-number {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1;
+}
+
+.counter-label {
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 1px;
+}
+
+/* Drop Zone Indicator */
+.drop-zone-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+}
+
+/* Hover Effects with 1.1x scaling and aspect-ratio preservation */
+.sorting-bin:hover,
+.sorting-bin.hovering {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.sorting-bin:hover .container-image {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4)) brightness(1.1);
+}
+
+.sorting-bin:hover .drop-zone-indicator,
+.sorting-bin.hovering .drop-zone-indicator {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* Drag Over State */
+.sorting-bin.drag-over {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+    box-shadow: 
+        0 0 0 3px rgba(76, 175, 80, 0.3),
+        0 4px 20px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+}
+
+.sorting-bin.drag-over .drop-zone-indicator {
+    opacity: 1;
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Shapes in Bin State */
+.sorting-bin.has-shapes {
+    border-color: rgba(76, 175, 80, 0.5);
+    background: rgba(76, 175, 80, 0.05);
+}
+
+.sorting-bin.has-shapes .counter-number {
+    color: #4CAF50;
+}
+
+/* Glowing Effect for Interventions */
+.sorting-bin.glowing {
+    animation: binGlow 2s infinite alternate;
+}
+
+@keyframes binGlow {
+    0% {
+        box-shadow: 
+            0 0 5px currentColor,
+            0 0 10px currentColor,
+            0 0 15px currentColor;
+    }
+    100% {
+        box-shadow: 
+            0 0 10px currentColor,
+            0 0 20px currentColor,
+            0 0 30px currentColor;
+    }
+}
+
+/* Glow Overlay for Manual Control */
+.glow-overlay {
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border: 3px solid;
+    border-radius: 15px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Shape Type Specific Colors */
+.sorting-bin.triangle {
+    --shape-color: #E74C3C;
+}
+
+.sorting-bin.circle {
+    --shape-color: #3498DB;
+}
+
+.sorting-bin.rectangle {
+    --shape-color: #2ECC71;
+}
+
+.sorting-bin.square {
+    --shape-color: #F39C12;
+}
+
+.sorting-bin.glowing {
+    color: var(--shape-color);
+}
+
+.sorting-bin:hover {
+    border-color: var(--shape-color);
+}
+
+/* Debug Info (Development Only) */
+.bin-debug-info {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #FFD700;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    font-family: monospace;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.sorting-bin:hover .bin-debug-info {
+    opacity: 1;
+}
+
+.debug-type {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.debug-count {
+    color: #2196F3;
+    margin-top: 1px;
+}
+
+.debug-states {
+    display: flex;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.debug-states span {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-size: 7px;
+}
+
+.state-glow {
+    color: #FFD700 !important;
+}
+
+.state-drag {
+    color: #4CAF50 !important;
+}
+
+.state-hover {
+    color: #2196F3 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sorting-bin {
+        width: 100px;
+        height: 120px;
+    }
+    
+    .container-icon {
+        font-size: 28px;
+    }
+    
+    .container-label {
+        font-size: 10px;
+    }
+    
+    .shape-counter {
+        bottom: 6px;
+        padding: 3px 6px;
+    }
+    
+    .counter-number {
+        font-size: 14px;
+    }
+    
+    .counter-label {
+        font-size: 7px;
+    }
+    
+    .drop-zone-indicator {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .sorting-bin {
+        border-width: 3px;
+    }
+    
+    .container-image {
+        filter: contrast(1.2) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    }
+    
+    .shape-counter {
+        background: rgba(0, 0, 0, 0.9);
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .sorting-bin,
+    .container-image,
+    .drop-zone-indicator {
+        transition: none;
+    }
+    
+    .sorting-bin.glowing {
+        animation: none;
+        box-shadow: 0 0 10px var(--shape-color);
+    }
+}

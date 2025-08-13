@@ -1,0 +1,350 @@
+/* Shape Sorter Game Styles - B1.1 Foundation */
+
+.shape-sorter-game {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.87);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Game Header */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 0 8px;
+}
+
+.game-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.game-stats {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.game-stats span {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.current-phase {
+    color: #4CAF50 !important;
+    font-weight: 500;
+}
+
+/* Game Content Area */
+.game-content {
+    height: 100%;
+    min-height: 400px;
+    max-height: 100%;
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden; /* Prevent shapes/containers from escaping */
+}
+
+.phase-container {
+    display: contents; /* Allow grid items to participate in parent grid */
+}
+
+/* Play Area - Unified dragging context */
+.play-area {
+    position: relative; /* Drag constraints boundary AND positioning context for shapes */
+    width: 100%;
+    height: 100%;
+    min-height: 400px; /* Ensure sufficient height for content */
+    z-index: 0; /* Base stacking context */
+    box-sizing: border-box; /* Include any padding/border in dimensions */
+}
+
+/* Phase-specific Styles */
+.phase-intro,
+.phase-tools,
+.phase-modeling,
+.phase-default {
+    display: contents; /* Let children participate in parent grid */
+}
+
+.tutor-message {
+    grid-row: 1; /* First row of grid */
+    text-align: center;
+    background: rgba(79, 172, 254, 0.1);
+    border: 2px solid rgba(79, 172, 254, 0.3);
+    border-radius: 12px;
+    padding: 16px 24px;
+    max-width: 600px;
+    justify-self: center;
+}
+
+.tutor-message p {
+    font-size: 18px;
+    margin: 0;
+    color: #fff;
+    line-height: 1.4;
+}
+
+/* Shapes Pile Area */
+.shapes-pile {
+    position: relative; /* Visual boundary only - not positioning context */
+    width: 400px;
+    height: 100%; /* Fill available grid space in play-area */
+    min-height: 200px; /* Minimum usable height */
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    overflow: visible; /* Allow shapes to move out during animations */
+    z-index: 1; /* Below animated shapes */
+}
+
+.shapes-container {
+    position: relative; /* Positioning context for shapes */
+    width: 100%;
+    height: 100%;
+    /* This becomes the drag constraints boundary */
+}
+
+.pile-placeholder {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.pile-placeholder p {
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+
+/* Shape Items - Replaced by GameShape component (B1.3) */
+/* Old shape-item styles removed - now using GameShape component */
+
+/* Help Button */
+.help-button {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.help-button:hover {
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    transform: translateY(-2px);
+}
+
+.help-button:active {
+    transform: translateY(0);
+}
+
+/* Containers Area */
+.containers-area {
+    position: absolute;
+    bottom: 0; /* Align to actual bottom of play-area */
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Align containers to bottom */
+    gap: 15px;
+    flex-wrap: nowrap; /* Force single row */
+    z-index: 2; /* Above shapes for proper drop zones */
+    padding: 0 10px 20px 10px; /* Padding: top right bottom left */
+    box-sizing: border-box;
+    pointer-events: none; /* Let clicks pass through empty space */
+}
+
+.containers-area > * {
+    pointer-events: auto; /* But containers themselves are clickable */
+}
+
+.container-placeholder {
+    width: 120px;
+    height: 140px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.container-placeholder:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Shape Type Colors for Containers */
+.container-placeholder.triangles {
+    border-color: rgba(231, 76, 60, 0.5);
+    color: #E74C3C;
+}
+
+.container-placeholder.circles {
+    border-color: rgba(52, 152, 219, 0.5);
+    color: #3498DB;
+}
+
+.container-placeholder.rectangles {
+    border-color: rgba(46, 204, 113, 0.5);
+    color: #2ECC71;
+}
+
+.container-placeholder.squares {
+    border-color: rgba(243, 156, 18, 0.5);
+    color: #F39C12;
+}
+
+/* Default Phase Implementation Status */
+.phase-default {
+    text-align: center;
+}
+
+.implementation-status {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 400px;
+    margin-top: 20px;
+}
+
+.implementation-status h4 {
+    color: #fff;
+    margin: 0 0 12px 0;
+    font-size: 16px;
+}
+
+.implementation-status ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.implementation-status li {
+    padding: 4px 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+/* Debug Panel */
+.debug-panel {
+    margin-top: 24px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.debug-panel h4 {
+    margin: 0 0 12px 0;
+    color: #FFD700;
+    font-size: 14px;
+}
+
+.debug-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+}
+
+.debug-info p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.debug-info strong {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .shape-sorter-game {
+        padding: 16px;
+    }
+    
+    .game-header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
+    .game-stats {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .shapes-pile {
+        width: 320px;
+        height: 240px;
+    }
+    
+    .containers-area {
+        gap: 16px;
+    }
+    
+    .container-placeholder {
+        width: 100px;
+        height: 120px;
+        font-size: 12px;
+    }
+    
+    .debug-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animation Support */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.phase-container {
+    animation: slideIn 0.3s ease-out;
+}

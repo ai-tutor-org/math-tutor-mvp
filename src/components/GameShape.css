@@ -1,0 +1,267 @@
+/* GameShape Component Styles - B1.3 */
+
+.game-shape {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    border: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: grab;
+    transition: opacity 0.2s ease, filter 0.2s ease; /* Only animate non-position properties */
+    user-select: none;
+    position: relative;
+    
+    /* Simple CSS shadows (no drag-following complexity) */
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.2),
+        0 1px 2px rgba(0, 0, 0, 0.1);
+    
+    /* Background gradient for depth */
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        rgba(255, 255, 255, 0.05) 50%, 
+        rgba(0, 0, 0, 0.05) 100%);
+}
+
+.game-shape:active {
+    cursor: grabbing;
+}
+
+/* Disabled state */
+.game-shape.disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+    filter: grayscale(50%);
+    /* Disable position/transform transitions that interfere with Framer Motion */
+    transition: opacity 0.2s ease, filter 0.2s ease !important;
+}
+
+/* Demo active state - overrides disabled for demo squares */
+.game-shape.demo-active {
+    opacity: 1 !important;
+    filter: none !important;
+    cursor: not-allowed; /* Still not draggable */
+    /* Enhanced demo styling */
+    border-color: #FFD700 !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4) !important;
+    /* Animated glow effect for demo */
+    animation: demo-glow 2s infinite alternate;
+}
+
+@keyframes demo-glow {
+    0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+    100% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+}
+
+/* Removed transform: none rule that was conflicting with Framer Motion positioning */
+
+/* Highlighted state for interventions */
+.game-shape.highlighted {
+    border-color: #FFD700 !important;
+    box-shadow: 
+        0 0 0 3px rgba(255, 215, 0, 0.3),
+        0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(255, 215, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+
+/* Bouncing animation for return to pile */
+.game-shape.bouncing {
+    animation: shapeBounceback 0.6s ease-out;
+}
+
+@keyframes shapeBounceback {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.2) rotate(5deg); }
+    50% { transform: scale(0.95) rotate(-3deg); }
+    75% { transform: scale(1.05) rotate(2deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+/* Shape Type Specific Styles */
+
+/* Triangle styling */
+.game-shape.triangle {
+    border-radius: 0;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    width: 60px;
+    height: 52px; /* Adjust height for triangle aspect ratio */
+}
+
+.game-shape.triangle.right {
+    clip-path: polygon(0% 0%, 0% 100%, 100% 100%);
+}
+
+.game-shape.triangle.isosceles {
+    clip-path: polygon(50% 0%, 15% 100%, 85% 100%);
+}
+
+/* Circle styling */
+.game-shape.circle {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+
+/* Rectangle styling */
+.game-shape.rectangle {
+    width: 80px;
+    height: 50px;
+    border-radius: 6px;
+}
+
+/* Square styling */  
+.game-shape.square {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+}
+
+/* Thickness variations */
+.game-shape.thin {
+    border-width: 1px;
+}
+
+.game-shape.normal {
+    border-width: 3px;
+}
+
+.game-shape.thick {
+    border-width: 5px;
+}
+
+/* Shape Content */
+.shape-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.shape-label {
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    line-height: 1;
+}
+
+.shape-details {
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: capitalize;
+    margin-top: 2px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* Triangle content adjustments */
+.triangle-content .shape-label {
+    margin-bottom: -8px; /* Adjust for clipped shape */
+}
+
+.triangle-content .shape-details {
+    margin-top: -4px;
+}
+
+/* Rectangle content adjustments */
+.rectangle-content .shape-label {
+    font-size: 18px;
+}
+
+/* Debug Info Overlay (Development Only) */
+.shape-debug-info {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #FFD700;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    font-family: monospace;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.game-shape:hover .shape-debug-info {
+    opacity: 1;
+}
+
+.debug-id {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.debug-details {
+    color: #FFA500;
+    margin-top: 1px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .game-shape {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .game-shape.rectangle {
+        width: 65px;
+        height: 40px;
+    }
+    
+    .game-shape.triangle {
+        width: 50px;
+        height: 43px;
+    }
+    
+    .shape-label {
+        font-size: 16px;
+    }
+    
+    .shape-details {
+        font-size: 7px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .game-shape {
+        border-width: 4px;
+    }
+    
+    .game-shape.disabled {
+        opacity: 0.5;
+        filter: none;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .game-shape {
+        transition: none;
+    }
+    
+    .game-shape.highlighted {
+        animation: none;
+        border-color: #FFD700 !important;
+    }
+    
+    .game-shape.bouncing {
+        animation: none;
+    }
+}
