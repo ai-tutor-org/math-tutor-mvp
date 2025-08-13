@@ -206,7 +206,7 @@ function Home() {
             opacity: 0;
           }
         }
-      `}</style>
+            `}</style>
         </div>
     )
 }

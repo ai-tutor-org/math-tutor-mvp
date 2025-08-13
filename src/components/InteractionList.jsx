@@ -8,7 +8,7 @@ import {
     Box,
     Chip
 } from '@mui/material';
-import { lessons, presentations } from '../contentData';
+import { lessons, presentations, conditionalPresentations } from '../contentData';
 
 /**
  * Component that displays all interactions in the current lesson for developer navigation
@@ -30,7 +30,7 @@ const InteractionList = ({
 
         // Add interactions from main sequence
         lesson.sequence.forEach((sequenceItem, presIndex) => {
-            const presentation = presentations[sequenceItem.presentationId];
+            const presentation = presentations[sequenceItem.presentationId] || conditionalPresentations[sequenceItem.presentationId];
             if (presentation && presentation.interactions) {
                 presentation.interactions.forEach((interaction, interactionIndex) => {
                     allInteractions.push({
@@ -52,7 +52,7 @@ const InteractionList = ({
         // Add conditional presentations
         if (lesson.conditionalPresentations) {
             lesson.conditionalPresentations.forEach(presId => {
-                const presentation = presentations[presId];
+                const presentation = conditionalPresentations[presId] || presentations[presId];
                 if (presentation && presentation.interactions) {
                     presentation.interactions.forEach((interaction, interactionIndex) => {
                         allInteractions.push({
@@ -72,7 +72,7 @@ const InteractionList = ({
         }
 
         // Add feedback interactions for reference (but mark them as non-navigable)
-        const feedbackPresentation = presentations['feedback-interactions'];
+        const feedbackPresentation = conditionalPresentations['feedback-interactions'] || presentations['feedback-interactions'];
         if (feedbackPresentation && feedbackPresentation.interactions) {
             feedbackPresentation.interactions.forEach((interaction, interactionIndex) => {
                 allInteractions.push({
