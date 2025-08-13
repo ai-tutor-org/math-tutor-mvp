@@ -3,6 +3,7 @@ export { default as ConflictingMeasurements } from './ConflictingMeasurements';
 export { default as CrayonMeasurementQuestion } from './CrayonMeasurementQuestion';
 export { default as FarmMap } from './FarmMap';
 export { default as FarmerIntro } from './FarmerIntro';
+export { default as FarmerCelebration } from './FarmerCelebration';
 export { default as FoxThreat } from './FoxThreat';
 export { default as LessonCard } from './LessonCard';
 export { default as MeterStick } from './MeterStick';

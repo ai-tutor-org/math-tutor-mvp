@@ -15,6 +15,7 @@ import {
     ShapeMeasurement,
     MissionReadiness,
     FarmerIntro,
+    FarmerCelebration,
     FoxThreat,
     FarmMap,
     PerimeterDefinition,
@@ -395,7 +396,7 @@ export const presentations = {
                 id: 'farmer-celebration',
                 type: 'tutor-monologue',
                 tutorText: "Great job! Farmer Giles needs 100 meters of fencing.",
-                ContentComponent: () => null,
+                ContentComponent: FarmerCelebration,
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: 'Next'
