@@ -755,7 +755,7 @@ export const presentations = {
             {
                 id: 'rectangle-design-hint-1-3',
                 type: 'tutor-monologue',
-                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 26.",
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 8.",
                 ContentComponent: ShapeDesigner,
                 contentProps: { 
                     mode: 'hint',
@@ -859,7 +859,7 @@ export const presentations = {
             {
                 id: 'rectangle-design-size-20',
                 type: 'perimeter-design',
-                tutorText: "Okay, designer, here's your first task. Can you create a **rectangle** that has a perimeter of exactly **20 units**? When you think you have it, press the check button.",
+                tutorText: "Okay, designer, here's your first task. \n\nCan you create a rectangle that has a perimeter of exactly 20 units? When you think you have it, press the check button.",
                 ContentComponent: ShapeDesigner,
                 contentProps: { 
                     mode: 'challenge',
@@ -888,7 +888,7 @@ export const presentations = {
             {
                 id: 'rectangle-design-size-26',
                 type: 'perimeter-design',
-                tutorText: "Okay, let's design another rectangle. Can you create a rectangle that has a perimeter of exactly 26 units? When you think you have it, press the check button.",
+                tutorText: "Okay, let's design another rectangle. \n\nCan you create a rectangle that has a perimeter of exactly 26 units? When you think you have it, press the check button.",
                 ContentComponent: ShapeDesigner,
                 contentProps: { 
                     mode: 'challenge',
@@ -917,7 +917,7 @@ export const presentations = {
             {
                 id: 'rectangle-design-size-8',
                 type: 'perimeter-design',
-                tutorText: "Okay, let's design another rectangle. Can you create a rectangle that has a perimeter of exactly 8 units? When you think you have it, press the check button.",
+                tutorText: "Just one more challenge. \n\nCreate a rectangle that has a perimeter of exactly 8 units. When you think you have it, press the check button.",
                 ContentComponent: ShapeDesigner,
                 contentProps: { 
                     mode: 'challenge',
