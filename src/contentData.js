@@ -597,6 +597,7 @@ export const presentations = {
         interactions: [
             {
                 id: 'shape-designer-welcome',
+                type: 'shape-designer',
                 tutorText: "I love your curiosity! Let's move from solving problems to *designing* things. Welcome to the Shape Designer. Here, you get to be the creator!",
                 ContentComponent: ShapeDesigner,
                 contentProps: {
@@ -611,6 +612,7 @@ export const presentations = {
             },
             {
                 id: 'shape-designer-practice',
+                type: 'shape-designer',
                 tutorText: "You can click and drag the corners of this rectangle to change its shape. Go ahead and play with it for a moment!",
                 ContentComponent: ShapeDesigner,
                 contentProps: {

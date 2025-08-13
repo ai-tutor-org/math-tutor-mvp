@@ -40,6 +40,7 @@ import FoxThreat from '../components/FoxThreat';
 import FarmMap from '../components/FarmMap';
 import PerimeterDefinition from '../components/PerimeterDefinition';
 import RectangleSolution from '../components/RectangleSolution';
+import ShapeDesigner from '../components/ShapeDesigner';
 
 import './InteractiveLesson.css';
 
@@ -59,7 +60,8 @@ const componentMap = {
     'farm-map': FarmMap,
     'perimeter-definition': PerimeterDefinition,
     'perimeter-input': FarmMap,
-    'rectangle-solution': RectangleSolution
+    'rectangle-solution': RectangleSolution,
+    'shape-designer': ShapeDesigner
 };
 
 const InteractiveLesson = () => {
@@ -82,6 +84,7 @@ const InteractiveLesson = () => {
     const [showNextButton, setShowNextButton] = useState(false);
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
+    const [hasUserInteracted, setHasUserInteracted] = useState(false); // Track user interaction for conditional transitions
 
     // Perimeter Input State
     const [perimeterInput, setPerimeterInput] = useState('');
@@ -197,6 +200,7 @@ const InteractiveLesson = () => {
         setDynamicTutorText(null);
         setShowNextButton(interaction.showNextButton ?? false);
         setAnimationTrigger(false);
+        setHasUserInteracted(false);
     }, []);
 
     const handleDevResetLesson = useCallback(() => {
@@ -206,7 +210,21 @@ const InteractiveLesson = () => {
         setDynamicTutorText(null);
         setShowNextButton(false);
         setAnimationTrigger(false);
+        setHasUserInteracted(false);
     }, []);
+
+    // Handle user interaction for conditional transitions
+    const handleUserInteraction = useCallback(() => {
+        setHasUserInteracted(true);
+        
+        // If this is a conditional transition, handle the wait time and button appearance
+        if (interaction?.transitionType === 'conditional' && interaction?.condition === 'hasInteracted') {
+            const waitTime = interaction?.waitTime || 3000; // Default 3 seconds
+            setTimeout(() => {
+                setShowNextButton(true);
+            }, waitTime);
+        }
+    }, [interaction]);
 
     const handleAnswer = (answerData) => {
         console.log('Answer selected:', answerData);
@@ -439,6 +457,7 @@ const InteractiveLesson = () => {
             ...interaction.contentProps,
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
+            onInteraction: handleUserInteraction,
             // Pass the onAnswer handler to any component that might need it
             onAnswer: handleAnswer,
             // Pass highlighting props for perimeter input interactions
@@ -727,7 +746,9 @@ const InteractiveLesson = () => {
                                 }
                             }}
                         >
-                            {(activeFeedbackInteraction || interaction)?.type === 'welcome' ? "Let's Go!" : ((activeFeedbackInteraction || interaction)?.nextButtonText || "Continue")}
+                            {(activeFeedbackInteraction || interaction)?.type === 'welcome' ? "Let's Go!" : 
+                             (interaction?.transitionType === 'conditional' && interaction?.buttonText ? interaction.buttonText : 
+                             ((activeFeedbackInteraction || interaction)?.nextButtonText || "Continue"))}
                         </Button>
                     )}
                 </Box>

@@ -20,6 +20,7 @@ This is a React-based educational application for teaching perimeter concepts, b
 - **Component-based Interactions**: Interactive elements are implemented as reusable components in `src/components/` that can be dynamically rendered based on content data
 - **State-driven Progression**: The lesson flow is controlled by state indices (`currentPresIndex`, `currentInteractionIndex`) that track progress through structured content
 - **Dynamic Layout System**: The UI can switch between `full-screen` and `dual-panel` layouts depending on the interaction type
+- **Individual CSS files for each component**
 
 ### Core Data Structure
 
