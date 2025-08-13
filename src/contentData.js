@@ -25,7 +25,8 @@ import {
     TriangleFarmMap,
     TriangleSolution,
     PentagonFarmMap,
-    PentagonSolution
+    PentagonSolution,
+    ShapeDesigner
 } from './components';
 
 export const lessons = {
@@ -58,6 +59,14 @@ export const lessons = {
             },
             {
                 presentationId: 'pentagon-final-challenge',
+                transition: { type: 'manual', buttonText: "Continue" }
+            },
+            {
+                presentationId: 'shape-designer-intro',
+                transition: { type: 'manual', buttonText: "Continue" }
+            },
+            {
+                presentationId: 'rectangle-design-challenge', 
                 transition: { type: 'manual', buttonText: "Done" }
             }
         ],
@@ -575,6 +584,147 @@ export const presentations = {
                 type: 'pentagon-solution',
                 tutorText: "Let's add them up together: \n\nEight plus eight plus eight plus eight plus eight equals forty.",
                 ContentComponent: PentagonSolution,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
+            }
+        ]
+    },
+
+    'shape-designer-intro': {
+        title: "Shape Designer Tool",
+        layout: "dual-panel",
+        interactions: [
+            {
+                id: 'shape-designer-welcome',
+                tutorText: "I love your curiosity! Let's move from solving problems to *designing* things. Welcome to the Shape Designer. Here, you get to be the creator!",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'welcome',
+                    initialWidth: 4,
+                    initialHeight: 3,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'shape-designer-practice',
+                tutorText: "You can click and drag the corners of this rectangle to change its shape. Go ahead and play with it for a moment!",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'practice',
+                    initialWidth: 4,
+                    initialHeight: 3,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    trackInteraction: true
+                },
+                transitionType: 'conditional',
+                condition: 'hasInteracted',
+                buttonText: "I'm Ready for a Challenge!",
+                waitTime: 3000
+            }
+        ]
+    },
+
+    'rectangle-design-challenge': {
+        title: "Rectangle Challenge",
+        layout: "dual-panel", 
+        interactions: [
+            {
+                id: 'rectangle-design-input',
+                type: 'perimeter-design',
+                tutorText: "Okay, designer, here's your first task. Can you create a **rectangle** that has a perimeter of exactly **20 units**? When you think you have it, press the check button.",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'challenge',
+                    targetPerimeter: 20,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    enableValidation: true,
+                    correctAnswer: 20,
+                    feedbackIds: {
+                        correct: 'rectangle-design-correct',
+                        hint1: 'rectangle-design-hint-1',
+                        hint2: 'rectangle-design-hint-2',
+                        solution: 'rectangle-design-solution'
+                    }
+                },
+                transitionType: 'manual'
+            },
+            // Design feedback interactions
+            {
+                id: 'rectangle-design-correct',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! A perimeter of 20 units. Great job!",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'success',
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSuccess: true,
+                    showCheckmark: true
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-design-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 20.",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'hint',
+                    targetPerimeter: 20,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-design-hint-2',
+                type: 'tutor-monologue',
+                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'hint',
+                    targetPerimeter: 20,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true,
+                    encouragementMode: true
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-design-solution',
+                type: 'tutor-monologue',
+                tutorText: "Okay, I will show one correct solution.",
+                ContentComponent: ShapeDesigner, 
+                contentProps: { 
+                    mode: 'solution',
+                    targetPerimeter: 20,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSolution: true,
+                    animateSolution: true,
+                    solutionWidth: 6,
+                    solutionHeight: 4
+                },
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: 'Continue'
