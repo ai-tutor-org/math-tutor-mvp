@@ -72,6 +72,10 @@ export const lessons = {
             {
                 presentationId: 'rectangle-design-challenge-2',
                 transition: { type: 'manual', buttonText: "Done" }
+            },
+            {
+                presentationId: 'rectangle-design-challenge-3',
+                transition: { type: 'manual', buttonText: "Done" }
             }
         ],
         // These presentations are not in the main sequence - they are navigated to conditionally
@@ -732,6 +736,76 @@ export const presentations = {
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: 'Continue'
+            },
+            {
+                id: 'rectangle-design-correct-3',
+                type: 'tutor-monologue',
+                tutorText: "Awesome! That's perfect!",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'success',
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSuccess: true,
+                    showCheckmark: true
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-design-hint-1-3',
+                type: 'tutor-monologue',
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 26.",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'hint',
+                    targetPerimeter: 8,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-design-hint-2-3',
+                type: 'tutor-monologue',
+                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'hint',
+                    targetPerimeter: 8,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true,
+                    encouragementMode: true
+                },
+                transitionType: 'auto'
+            },
+            {
+                id: 'rectangle-design-solution-3',
+                type: 'tutor-monologue',
+                tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 2 units and 2 sides of 2 units. \n\n The total perimeter is 8 units.",
+                ContentComponent: ShapeDesigner, 
+                contentProps: {
+                    mode: 'solution',
+                    targetPerimeter: 8,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSolution: true,
+                    animateSolution: true,
+                    solutionWidth: 2,
+                    solutionHeight: 2
+                },
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
             }
         ]
     },
@@ -807,7 +881,6 @@ export const presentations = {
             },
         ]
     },
-
     'rectangle-design-challenge-2': {
         title: "Rectangle Challenge",
         layout: "dual-panel", 
@@ -831,6 +904,35 @@ export const presentations = {
                         hint1: 'rectangle-design-hint-1-2',
                         hint2: 'rectangle-design-hint-2-2',
                         solution: 'rectangle-design-solution-2'
+                    }
+                },
+                transitionType: 'manual'
+            },
+        ]
+    },
+    'rectangle-design-challenge-3': {
+        title: "Rectangle Challenge",
+        layout: "dual-panel", 
+        interactions: [
+            {
+                id: 'rectangle-design-size-8',
+                type: 'perimeter-design',
+                tutorText: "Okay, let's design another rectangle. Can you create a rectangle that has a perimeter of exactly 8 units? When you think you have it, press the check button.",
+                ContentComponent: ShapeDesigner,
+                contentProps: { 
+                    mode: 'challenge',
+                    targetPerimeter: 8,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    enableValidation: false,
+                    correctAnswer: 8,
+                    feedbackIds: {
+                        correct: 'rectangle-design-correct-3',
+                        hint1: 'rectangle-design-hint-1-3',
+                        hint2: 'rectangle-design-hint-2-3',
+                        solution: 'rectangle-design-solution-3'
                     }
                 },
                 transitionType: 'manual'
