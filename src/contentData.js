@@ -519,7 +519,9 @@ export const presentations = {
                 type: 'rectangle-solution',
                 tutorText: "Hmm, let's try a different approach. Let's add up the sides together. Thirty plus twenty plus thirty plus twenty equals one hundred.",
                 ContentComponent: RectangleSolution,
-                transitionType: 'auto'
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
             },
             {
                 id: 'square-correct',
@@ -538,7 +540,9 @@ export const presentations = {
                 type: 'square-solution',
                 tutorText: "Let's work this one out together. Since all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
                 ContentComponent: SquareSolution,
-                transitionType: 'auto'
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
             },
             {
                 id: 'triangle-correct',
@@ -557,7 +561,9 @@ export const presentations = {
                 type: 'triangle-solution',
                 tutorText: "No problem. Let's add them up: Ten plus twelve plus eighteen equals forty.",
                 ContentComponent: TriangleSolution,
-                transitionType: 'auto'
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
             },
             {
                 id: 'pentagon-correct',
@@ -576,7 +582,9 @@ export const presentations = {
                 type: 'pentagon-solution',
                 tutorText: "Let's add them up together: Eight plus eight plus eight plus eight plus eight equals forty.",
                 ContentComponent: PentagonSolution,
-                transitionType: 'auto'
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Continue'
             }
         ]
     }
