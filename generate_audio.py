@@ -44,9 +44,61 @@ VOICE_ID = "tnSpp4vdxKPjI9w0GnoV"  # Hope's voice ID
 AUDIO_DIR = Path("public/audio")
 AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
+def get_variable_values():
+    """
+    Define the possible values for variables in tutor text.
+    Returns a dictionary mapping variable names to their possible values.
+    """
+    return {
+        'currentPerimeter': [
+            '4', '6', '8', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30', '32', '34', '36'
+        ]
+    }
+
+def expand_template_text(template_text, variable_values):
+    """
+    Expand a template text with variables into multiple concrete texts.
+    Returns a list of (expanded_text, unique_id) tuples.
+    """
+    import re
+    
+    # Find all variables in the template
+    variable_pattern = r'\{(\w+)\}'
+    variables = re.findall(variable_pattern, template_text)
+    
+    if not variables:
+        # No variables, return as is
+        text_hash = hashlib.md5(template_text.encode()).hexdigest()[:12]
+        return [(template_text, f"tutor_{text_hash}")]
+    
+    expanded_texts = []
+    
+    # For each variable found, generate all possible combinations
+    def generate_combinations(text, var_index=0):
+        if var_index >= len(variables):
+            # Base case: no more variables to substitute
+            final_text = text
+            text_hash = hashlib.md5(final_text.encode()).hexdigest()[:12]
+            return [(final_text, f"tutor_{text_hash}")]
+        
+        var_name = variables[var_index]
+        if var_name not in variable_values:
+            print(f"Warning: No values defined for variable '{var_name}', skipping")
+            return []
+        
+        results = []
+        for value in variable_values[var_name]:
+            # Replace the first occurrence of this variable
+            new_text = re.sub(r'\{' + var_name + r'\}', value, text, count=1)
+            results.extend(generate_combinations(new_text, var_index + 1))
+        
+        return results
+    
+    return generate_combinations(template_text)
+
 def extract_tutor_texts(content_data_path):
     """
-    Extract all tutor text from contentData.js file.
+    Extract all tutor text from contentData.js file and expand templates.
     Returns a dictionary mapping text to unique identifiers.
     """
     print(f"Reading {content_data_path}...")
@@ -63,17 +115,39 @@ def extract_tutor_texts(content_data_path):
     tutor_text_pattern = r'tutorText:\s*"((?:[^"\\]|\\.)*)"'
     matches = re.findall(tutor_text_pattern, content, re.DOTALL)
     
-    # Clean up matches and create unique mapping
+    # Get variable values for template expansion
+    variable_values = get_variable_values()
+    
+    # Clean up matches and expand templates
     tutor_texts = {}
+    template_count = 0
+    static_count = 0
+    
     for match in matches:
         # Clean up the text - remove extra whitespace and escape sequences
         clean_text = match.replace('\\n', ' ').replace('\\"', '"').strip()
-        if clean_text and clean_text not in tutor_texts:
-            # Create a unique identifier based on content hash
-            text_hash = hashlib.md5(clean_text.encode()).hexdigest()[:12]
-            tutor_texts[clean_text] = f"tutor_{text_hash}"
+        if not clean_text:
+            continue
+            
+        # Check if this text contains variables
+        if '{' in clean_text and '}' in clean_text:
+            # This is a template - expand it
+            expanded_texts = expand_template_text(clean_text, variable_values)
+            template_count += 1
+            
+            for expanded_text, unique_id in expanded_texts:
+                if expanded_text not in tutor_texts:
+                    tutor_texts[expanded_text] = unique_id
+                    
+        else:
+            # Static text - add as is
+            if clean_text not in tutor_texts:
+                text_hash = hashlib.md5(clean_text.encode()).hexdigest()[:12]
+                tutor_texts[clean_text] = f"tutor_{text_hash}"
+                static_count += 1
     
-    print(f"Found {len(tutor_texts)} unique tutor text segments")
+    print(f"Found {static_count} static text segments and {template_count} templates")
+    print(f"Generated {len(tutor_texts)} total unique audio segments")
     return tutor_texts
 
 def generate_audio(text, filename, voice_id=VOICE_ID):
