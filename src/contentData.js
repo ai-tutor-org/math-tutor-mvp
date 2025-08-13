@@ -83,7 +83,7 @@ export const presentations = {
             {
                 id: 'room-question',
                 type: 'room-question',
-                tutorText: "Perfect! Let's start with a simple question. Imagine this is your room. How would you figure out how long it is from one wall to the other?",
+                tutorText: "Let's start with a simple question. Imagine this is your room. How would you figure out how long it is from one wall to the other?",
                 ContentComponent: RoomIllustration,
                 transitionType: 'auto',
             },
@@ -103,7 +103,7 @@ export const presentations = {
                 id: 'footsteps-friend',
                 type: 'footsteps-animation-friend',
                 ContentComponent: RoomIllustration,
-                tutorText: "Okay, so the room is 10 steps long. Simple enough! But wait... here comes your friend, who has bigger feet. He doesn't believe that the room is 10 steps long. He will use his own steps to measure the room. Help him measure the room too - click the button for each of his steps.",
+                tutorText: "Okay, so the room is 10 steps long. \n\nSimple enough! But wait... here comes your friend, who has bigger feet. He doesn't believe that the room is 10 steps long. He will use his own steps to measure the room.\n\n Help him measure the room too - click the button for each of his steps.",
                 contentProps: {
                     totalSteps: 8,
                     footIconColor: '#e24a4a',
@@ -115,7 +115,7 @@ export const presentations = {
             {
                 id: 'conflicting-problem',
                 type: 'conflicting-measurements',
-                tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. But the room didn't change! Who is right? This is confusing, isn't it?",
+                tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. \n\nBut the room didn't change! Who is right? This is confusing, isn't it?",
                 ContentComponent: ConflictingMeasurements,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -144,14 +144,14 @@ export const presentations = {
             {
                 id: 'standard-units-intro',
                 type: 'standard-units-explanation',
-                tutorText: "What if we had a tool that was the same for everyone in this room? And the same for kids in the classroom next door? And the same for kids all over the world? To solve this problem, people all over the world agreed to use standard units.",
+                tutorText: "What if we had a tool that was the same for everyone in this room? \n\nAnd the same for kids in the classroom next door? \n\nAnd the same for kids all over the world? \n\nTo solve this problem, people all over the world agreed to use standard units.",
                 ContentComponent: StandardUnits,
                 transitionType: 'auto',
             },
             {
                 id: 'centimeter-ruler',
                 type: 'ruler-measurement',
-                tutorText: "A standard unit is something which measures the same for everyone. One of the standard units is the centimeter (cm). It's very small, perfect for measuring little things.",
+                tutorText: "A standard unit is something which measures the same for everyone. \n\nOne of the standard units is the centimeter (cm). It's very small, perfect for measuring little things.",
                 ContentComponent: RulerMeasurement,
                 contentProps: { length: 3, unit: 'cm' },
                 transitionType: 'manual',
@@ -161,7 +161,7 @@ export const presentations = {
             {
                 id: 'meter-stick-demo',
                 type: 'meter-measurement',
-                tutorText: "Nice! For bigger things, we use a bigger unit called a meter. A meter is the same as 100 centimeters. See how this meter stick compares to the height of a door?",
+                tutorText: "Nice! For bigger things, we use a bigger unit called a meter. \n\nA meter is the same as 100 centimeters. \n\nSee how this meter stick compares to the height of a door?",
                 ContentComponent: MeterStick,
                 contentProps: {},
                 transitionType: 'manual',
@@ -190,7 +190,7 @@ export const presentations = {
             {
                 id: 'activity-intro',
                 type: 'tutor-monologue',
-                tutorText: "Great job! Now for a real challenge. You'll see a shape with colored sides. Your mission is to figure out the length of each colored side using a special on-screen ruler that you can drag around. Once you measure a side, enter its length in the input box. Let's see what you've got!",
+                tutorText: "Great job! Now for a real challenge. You'll see a shape with colored sides. Your mission is to figure out the length of each colored side using a special on-screen ruler that you can drag around. \n\nOnce you measure a side, enter its length in the input box. Let's see what you've got!",
                 ContentComponent: () => null,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -199,7 +199,7 @@ export const presentations = {
             {
                 id: 'measure-notebook',
                 type: 'tutor-monologue',
-                tutorText: "Here's our first object: a notebook. Use the ruler to measure the length of the highlighted blue edge. Then, type your answer in the box and click 'Check'.",
+                tutorText: "Here's our first object: a notebook. \n\nUse the ruler to measure the length of the highlighted blue edge. \n\nThen, type your answer in the box and click 'Check'.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-notebook',
@@ -268,7 +268,7 @@ export const presentations = {
             {
                 id: 'measurement-conclusion',
                 type: 'tutor-monologue',
-                tutorText: "And that's a wrap! You did a fantastic job measuring those shapes. Using tools like rulers is a very important skill in math and science. You should be proud!",
+                tutorText: "And that's a wrap! You did a fantastic job measuring those shapes. \n\nUsing tools like rulers is a very important skill in math and science. You should be proud!",
                 ContentComponent: () => null,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -305,7 +305,7 @@ export const presentations = {
             {
                 id: 'measurement-reason-explanation',
                 type: 'tutor-monologue',
-                tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
+                tutorText: "Exactly, the size of your feet and your friend's feet are different. \n\nBecause of this, we cannot use our feet to measure the room, because everyone will get a different number.",
                 ContentComponent: RoomIllustration,
                 contentProps: {
                     showBothFootsteps: true,
@@ -327,7 +327,7 @@ export const presentations = {
             {
                 id: 'mission-readiness',
                 type: 'mission-readiness',
-                tutorText: "Fantastic! You're now set with your knowledge of units and shapes. With these tools, we're ready to help someone solve a real problem. Are you up for a mission?",
+                tutorText: "Fantastic! You're now set with your knowledge of units and shapes. \n\nWith these tools, we're ready to help someone solve a real problem. Are you up for a mission?",
                 ContentComponent: MissionReadiness,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -336,14 +336,14 @@ export const presentations = {
             {
                 id: 'meet-farmer',
                 type: 'farmer-intro',
-                tutorText: "Excellent! Let me introduce you to Farmer Giles. He's in a bit of a pickle and needs our help.",
+                tutorText: "Excellent! Let me introduce you to Farmer Giles. \n\nHe's in a bit of a pickle and needs our help.",
                 ContentComponent: FarmerIntro,
                 transitionType: 'auto'
             },
             {
                 id: 'fox-threat',
                 type: 'fox-threat',
-                tutorText: "Farmer Giles loves his sheep, but a sneaky fox has been spotted nearby! He needs to build a fence around his entire farm to keep his flock safe.",
+                tutorText: "Farmer Giles loves his sheep, but a sneaky fox has been spotted nearby! \n\nHe needs to build a fence around his entire farm to keep his flock safe.",
                 ContentComponent: FoxThreat,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -352,14 +352,14 @@ export const presentations = {
             {
                 id: 'farm-map',
                 type: 'farm-map',
-                tutorText: "Fantastic! Here's the plan. This is a map of his farm. It's a perfect rectangle. We need to figure out the total length of the boundary to know how much fencing material to buy.",
+                tutorText: "Fantastic! Here's the plan. \n\nThis is a map of his farm. It's a perfect rectangle. \n\nWe need to figure out the total length of the boundary to know how much fencing material to buy.",
                 ContentComponent: FarmMap,
                 transitionType: 'auto'
             },
             {
                 id: 'perimeter-definition',
                 type: 'perimeter-definition',
-                tutorText: "This total length around the outside edge of a shape has a very important name in mathematics. It's called the Perimeter.",
+                tutorText: "This total length around the outside edge of a shape has a very important name in mathematics. \n\nIt's called the Perimeter.",
                 ContentComponent: PerimeterDefinition,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -372,7 +372,7 @@ export const presentations = {
             {
                 id: 'rectangle-challenge',
                 type: 'perimeter-input',
-                tutorText: "To find the perimeter, we need to add up the lengths of all the sides. Let's give it a try with Farmer Giles' field. What's the total length of the fence he needs?",
+                tutorText: "To find the perimeter, we need to add up the lengths of all the sides. \n\nLet's give it a try with Farmer Giles' field. What's the total length of the fence he needs?",
                 ContentComponent: FarmMap,
                 contentProps: {
                     shape: { type: 'rectangle', width: 30, height: 20, unit: 'meters' },
@@ -401,7 +401,7 @@ export const presentations = {
             {
                 id: 'square-challenge-input',
                 type: 'perimeter-input',
-                tutorText: "Now that you've got the hang of it, let's help some other people with their fencing problems. What's the perimeter of this next field?",
+                tutorText: "Now that you've got the hang of it, let's help some other people with their fencing problems. \n\nWhat's the perimeter of this next field?",
                 ContentComponent: SquareFarmMap,
                 contentProps: {
                     shape: { type: 'square', side: 15, unit: 'meters' },
@@ -421,7 +421,7 @@ export const presentations = {
             {
                 id: 'triangle-challenge',
                 type: 'perimeter-input',
-                tutorText: "You're a real pro at this! Ready for a new challenge?",
+                tutorText: "You're a real pro at this! \n\nReady for a new challenge?",
                 ContentComponent: TriangleFarmMap,
                 contentProps: {
                     shape: { type: 'triangle', sides: [10, 12, 18], unit: 'meters' },
@@ -504,13 +504,13 @@ export const presentations = {
             {
                 id: 'rectangle-hint-1',
                 type: 'tutor-monologue',
-                tutorText: "Not quite. Remember, the perimeter is the total length around the entire outside edge of the farm. Take another look and try again.",
+                tutorText: "Not quite. Remember, the perimeter is the total length around the entire outside edge of the farm. \n\nTake another look and try again.",
                 transitionType: 'auto'
             },
             {
                 id: 'rectangle-solution',
                 type: 'rectangle-solution',
-                tutorText: "Hmm, let's try a different approach. Let's add up the sides together. Thirty plus twenty plus thirty plus twenty equals one hundred.",
+                tutorText: "Hmm, let's try a different approach. Let's add up the sides together. \n\nThirty plus twenty plus thirty plus twenty equals one hundred.",
                 ContentComponent: RectangleSolution,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -531,7 +531,7 @@ export const presentations = {
             {
                 id: 'square-solution',
                 type: 'square-solution',
-                tutorText: "Let's work this one out together. Since all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
+                tutorText: "Let's work this one out together. \n\nSince all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
                 ContentComponent: SquareSolution,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -552,7 +552,7 @@ export const presentations = {
             {
                 id: 'triangle-solution',
                 type: 'triangle-solution',
-                tutorText: "No problem. Let's add them up: Ten plus twelve plus eighteen equals forty.",
+                tutorText: "No problem. Let's add them up: \n\nTen plus twelve plus eighteen equals forty.",
                 ContentComponent: TriangleSolution,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -573,7 +573,7 @@ export const presentations = {
             {
                 id: 'pentagon-solution',
                 type: 'pentagon-solution',
-                tutorText: "Let's add them up together: Eight plus eight plus eight plus eight plus eight equals forty.",
+                tutorText: "Let's add them up together: \n\nEight plus eight plus eight plus eight plus eight equals forty.",
                 ContentComponent: PentagonSolution,
                 transitionType: 'manual',
                 showNextButton: true,

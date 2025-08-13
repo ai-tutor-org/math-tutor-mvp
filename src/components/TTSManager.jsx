@@ -119,14 +119,16 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
         }
 
         // Check if we have a pre-generated audio file for this text
-        const audioFile = audioMapping[textToSpeak.trim()];
+        // Apply same normalization as generate_audio.py (convert newlines to spaces)
+        const normalizedText = textToSpeak.trim().replace(/\n/g, ' ');
+        const audioFile = audioMapping[normalizedText];
 
         if (audioFile) {
             // Use pre-generated audio
             playPreGeneratedAudio(audioFile);
         } else {
             // Fall back to Web Speech API
-            playWithWebSpeechAPI(textToSpeak.trim());
+            playWithWebSpeechAPI(normalizedText);
         }
     }, [audioMapping, playPreGeneratedAudio, playWithWebSpeechAPI]);
 

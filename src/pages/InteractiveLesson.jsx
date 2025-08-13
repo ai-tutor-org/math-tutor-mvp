@@ -600,7 +600,18 @@ const InteractiveLesson = () => {
 
                     {/* Tutor Speech */}
                     <Box sx={{ mb: 3 }}>
-                        <Typography variant="body2" sx={{ color: '#fff', lineHeight: 1.5, fontSize: '1rem' }}>
+                        <Typography 
+                            variant="body2" 
+                            sx={{ 
+                                color: '#fff', 
+                                lineHeight: 1.6,
+                                fontSize: '1rem', 
+                                textAlign: 'left',
+                                maxWidth: '100%',
+                                wordBreak: 'break-word',
+                                whiteSpace: 'pre-line'
+                            }}
+                        >
                             {tutorText}
                         </Typography>
                     </Box>
