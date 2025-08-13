@@ -4,20 +4,17 @@ import './RectangleSolution.css';
 
 const RectangleSolution = ({ onAnswerSubmit }) => {
     const [highlightedSide, setHighlightedSide] = useState(null);
-    const [showLabels, setShowLabels] = useState({});
-
     useEffect(() => {
         const sequence = [
-            { side: 'top', delay: 4000, label: '30m' },
-            { side: 'right', delay: 5000, label: '20m' }, 
-            { side: 'bottom', delay: 6000, label: '30m' },
-            { side: 'left', delay: 7000, label: '20m' }
+            { side: 'top', delay: 4000 },
+            { side: 'right', delay: 5000 }, 
+            { side: 'bottom', delay: 6000 },
+            { side: 'left', delay: 7000 }
         ];
 
-        const timeouts = sequence.map(({ side, delay, label }) => 
+        const timeouts = sequence.map(({ side, delay }) => 
             setTimeout(() => {
                 setHighlightedSide(side);
-                setShowLabels(prev => ({ ...prev, [side]: label }));
             }, delay)
         );
 
@@ -34,15 +31,6 @@ const RectangleSolution = ({ onAnswerSubmit }) => {
         return coords[side];
     };
 
-    const getLabelPosition = (side) => {
-        const positions = {
-            top: { x: '50%', y: '45px', transform: 'translateX(-50%)' },
-            right: { x: 'calc(100% - 60px)', y: '50%', transform: 'translateY(-50%)' },
-            bottom: { x: '50%', y: 'calc(100% - 30px)', transform: 'translateX(-50%)' },
-            left: { x: '60px', y: '50%', transform: 'translateY(-50%)' }
-        };
-        return positions[side];
-    };
 
     return (
         <motion.div
@@ -93,41 +81,17 @@ const RectangleSolution = ({ onAnswerSubmit }) => {
                     })}
                 </svg>
 
-                {/* Side labels */}
-                {Object.entries(showLabels).map(([side, label]) => {
-                    const position = getLabelPosition(side);
-                    return (
-                        <motion.div
-                            key={side}
-                            className={`side-label ${side}-label`}
-                            style={position}
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{ 
-                                opacity: highlightedSide === side ? 1 : 0.7,
-                                scale: highlightedSide === side ? 1.1 : 1
-                            }}
-                            transition={{ duration: 0.5, ease: "backOut" }}
-                        >
-                            <div className="label-content">
-                                <span className="measurement">{label}</span>
-                            </div>
-                        </motion.div>
-                    );
-                })}
-
                 {/* Addition equation that appears at the end */}
-                {Object.keys(showLabels).length === 4 && (
-                    <motion.div
-                        className="equation-display"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1, duration: 0.8 }}
-                    >
-                        <div className="equation">
-                            30 + 20 + 30 + 20 = <strong>100 meters</strong>
-                        </div>
-                    </motion.div>
-                )}
+                <motion.div
+                    className="equation-display"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 8, duration: 0.8 }}
+                >
+                    <div className="equation">
+                        30 + 20 + 30 + 20 = <strong>100 meters</strong>
+                    </div>
+                </motion.div>
             </div>
         </motion.div>
     );
