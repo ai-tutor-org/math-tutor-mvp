@@ -75,7 +75,7 @@ export const presentations = {
             {
                 id: 'welcome',
                 type: 'welcome',
-                tutorText: "Hey there, learner! I'm Vyas, your personal AI tutor. I'm so excited to explore the world of shapes and sizes with you. Ready to start our first adventure?",
+                tutorText: "Hey there!",
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showWelcomeButton: true,
@@ -151,14 +151,14 @@ export const presentations = {
             {
                 id: 'standard-units-intro',
                 type: 'standard-units-explanation',
-                tutorText: "What if we had a tool that was the same for everyone in this room? And the same for kids in the classroom next door? And the same for kids all over the world? To solve this problem, people all over the world agreed to use **standard units**.",
+                tutorText: "What if we had a tool that was the same for everyone in this room? And the same for kids in the classroom next door? And the same for kids all over the world? To solve this problem, people all over the world agreed to use standard units.",
                 ContentComponent: StandardUnits,
                 transitionType: 'auto',
             },
             {
                 id: 'centimeter-ruler',
                 type: 'ruler-measurement',
-                tutorText: "A standard unit is something which measures the same for everyone. One of the standard units is the **centimeter (cm)**. It's very small, perfect for measuring little things.",
+                tutorText: "A standard unit is something which measures the same for everyone. One of the standard units is the centimeter (cm). It's very small, perfect for measuring little things.",
                 ContentComponent: RulerMeasurement,
                 contentProps: { length: 3, unit: 'cm' },
                 transitionType: 'manual',
@@ -366,7 +366,7 @@ export const presentations = {
             {
                 id: 'perimeter-definition',
                 type: 'perimeter-definition',
-                tutorText: "This total length around the outside edge of a shape has a very important name in mathematics. It's called the **Perimeter**.",
+                tutorText: "This total length around the outside edge of a shape has a very important name in mathematics. It's called the Perimeter.",
                 ContentComponent: PerimeterDefinition,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -420,15 +420,6 @@ export const presentations = {
                     }
                 },
                 transitionType: 'manual'
-            },
-            {
-                id: 'square-celebration',
-                type: 'tutor-monologue',
-                tutorText: "Exactly! The perimeter of this square field is 60 meters.",
-                ContentComponent: () => null,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Next'
             }
         ]
     },
@@ -449,15 +440,6 @@ export const presentations = {
                     }
                 },
                 transitionType: 'manual'
-            },
-            {
-                id: 'triangle-celebration',
-                type: 'tutor-monologue',
-                tutorText: "Perfect! The perimeter is 40 meters.",
-                ContentComponent: () => null,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Next'
             }
         ]
     },
