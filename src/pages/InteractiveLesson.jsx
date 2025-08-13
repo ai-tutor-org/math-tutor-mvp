@@ -41,6 +41,7 @@ import FoxThreat from '../components/FoxThreat';
 import FarmMap from '../components/FarmMap';
 import PerimeterDefinition from '../components/PerimeterDefinition';
 import RectangleSolution from '../components/RectangleSolution';
+import ShapeDesigner from '../components/ShapeDesigner';
 
 import './InteractiveLesson.css';
 
@@ -61,7 +62,8 @@ const componentMap = {
     'farm-map': FarmMap,
     'perimeter-definition': PerimeterDefinition,
     'perimeter-input': FarmMap,
-    'rectangle-solution': RectangleSolution
+    'rectangle-solution': RectangleSolution,
+    'shape-designer': ShapeDesigner
 };
 
 const InteractiveLesson = () => {
@@ -84,6 +86,7 @@ const InteractiveLesson = () => {
     const [showNextButton, setShowNextButton] = useState(false);
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
+    const [hasUserInteracted, setHasUserInteracted] = useState(false); // Track user interaction for conditional transitions
 
     // Perimeter Input State
     const [perimeterInput, setPerimeterInput] = useState('');
@@ -91,6 +94,10 @@ const InteractiveLesson = () => {
     const [showPerimeterSolution, setShowPerimeterSolution] = useState(false);
     const [showSideHighlighting, setShowSideHighlighting] = useState(false);
     const [currentEquationStep, setCurrentEquationStep] = useState(0);
+
+    // Shape Design State
+    const [currentPerimeter, setCurrentPerimeter] = useState(0);
+    const [shapeDesignAttempts, setShapeDesignAttempts] = useState(0);
 
     // TTS Ref for direct control
     const ttsRef = React.useRef();
@@ -210,6 +217,7 @@ const InteractiveLesson = () => {
         setDynamicTutorText(null);
         setShowNextButton(interaction.showNextButton ?? false);
         setAnimationTrigger(false);
+        setHasUserInteracted(false);
     }, []);
 
     const handleDevResetLesson = useCallback(() => {
@@ -219,7 +227,21 @@ const InteractiveLesson = () => {
         setDynamicTutorText(null);
         setShowNextButton(false);
         setAnimationTrigger(false);
+        setHasUserInteracted(false);
     }, []);
+
+    // Handle user interaction for conditional transitions
+    const handleUserInteraction = useCallback(() => {
+        setHasUserInteracted(true);
+        
+        // If this is a conditional transition, handle the wait time and button appearance
+        if (interaction?.transitionType === 'conditional' && interaction?.condition === 'hasInteracted') {
+            const waitTime = interaction?.waitTime || 3000; // Default 3 seconds
+            setTimeout(() => {
+                setShowNextButton(true);
+            }, waitTime);
+        }
+    }, [interaction]);
 
     const handleAnswer = (answerData) => {
         console.log('Answer selected:', answerData);
@@ -333,6 +355,47 @@ const InteractiveLesson = () => {
         }
     };
 
+    const handleShapeDesignCheck = () => {
+        const targetPerimeter = interaction?.contentProps?.targetPerimeter;
+        const feedbackIds = interaction?.contentProps?.feedbackIds;
+
+        if (currentPerimeter === targetPerimeter) {
+            // Correct answer
+            const feedbackText = getFeedbackText(feedbackIds?.correct);
+            if (feedbackText) {
+                setDynamicTutorText(feedbackText);
+            }
+            setShowNextButton(true);
+            setShapeDesignAttempts(0); // Reset for next interaction
+        } else {
+            // Incorrect answer
+            const newAttempts = shapeDesignAttempts + 1;
+            setShapeDesignAttempts(newAttempts);
+
+            if (newAttempts === 1) {
+                // First incorrect attempt - show hint
+                const feedbackText = getFeedbackText(feedbackIds?.hint1);
+                if (feedbackText) {
+                    setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
+                }
+            } else if (newAttempts === 2) {
+                // Second incorrect attempt - show second hint
+                const feedbackText = getFeedbackText(feedbackIds?.hint2);
+                if (feedbackText) {
+                    setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
+                }
+            } else if (newAttempts === 3) {
+                // Third incorrect attempt - show solution
+                const feedbackInteraction = getFeedbackInteraction(feedbackIds?.solution);
+                if (feedbackInteraction) {
+                    setDynamicTutorText(feedbackInteraction.tutorText);
+                    setActiveFeedbackInteraction(feedbackInteraction);
+                }
+                setShapeDesignAttempts(0); // Reset for next interaction
+            }
+        }
+    };
+
     const handleAnimationComplete = useCallback(() => {
         // Special handling for demo animation completion
         if (interaction?.id === 'shape-demo-modeling') {
@@ -386,6 +449,10 @@ const InteractiveLesson = () => {
         setShowPerimeterSolution(false);
         setShowSideHighlighting(false);
         setCurrentEquationStep(0);
+
+        // Reset shape design state when interaction changes
+        setCurrentPerimeter(0);
+        setShapeDesignAttempts(0);
     }, [interaction]);
 
     // TTS Callbacks
@@ -490,11 +557,14 @@ const InteractiveLesson = () => {
             key: `${currentPresIndex}-${currentInteractionIndex}`,
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
+            onInteraction: handleUserInteraction,
             // Pass the onAnswer handler to any component that might need it
             onAnswer: handleAnswer,
             // Pass highlighting props for perimeter input interactions
             showSideHighlighting: showSideHighlighting,
             onHighlightComplete: handleHighlightComplete,
+            // Pass perimeter callback for shape design components
+            onPerimeterCalculated: setCurrentPerimeter,
         };
 
         // Special handling for shape-sorting-game component
@@ -774,6 +844,38 @@ const InteractiveLesson = () => {
                         </Box>
                     )}
 
+                    {/* Shape Design Validation Interface */}
+                    {interaction?.type === 'perimeter-design' && !isSpeaking && !showNextButton && (
+                        <Box sx={{ mb: 3, width: '100%' }}>
+                            {/* Show current vs target perimeter */}
+                            <Box sx={{ mb: 2, textAlign: 'center' }}>
+                                <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1 }}>
+                                    Target: {interaction?.contentProps?.targetPerimeter} units
+                                </Typography>
+                            </Box>
+                            
+                            {/* Check button */}
+                            <Button
+                                variant="contained"
+                                onClick={handleShapeDesignCheck}
+                                sx={{
+                                    padding: '8px',
+                                    borderRadius: '12px',
+                                    background: '#4CAF50',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontSize: '1rem',
+                                    minWidth: '140px',
+                                    '&:hover': {
+                                        background: '#45a049'
+                                    }
+                                }}
+                            >
+                                Check My Shape
+                            </Button>
+                        </Box>
+                    )}
+
                     {/* Action Button */}
                     {showNextButton && (
                         <Button
@@ -793,7 +895,9 @@ const InteractiveLesson = () => {
                                 }
                             }}
                         >
-                            {(activeFeedbackInteraction || interaction)?.type === 'welcome' ? "Let's Go!" : ((activeFeedbackInteraction || interaction)?.nextButtonText || "Continue")}
+                            {(activeFeedbackInteraction || interaction)?.type === 'welcome' ? "Let's Go!" : 
+                             (interaction?.transitionType === 'conditional' && interaction?.buttonText ? interaction.buttonText : 
+                             ((activeFeedbackInteraction || interaction)?.nextButtonText || "Continue"))}
                         </Button>
                     )}
                 </Box>
