@@ -381,23 +381,26 @@ const InteractiveLesson = () => {
         setIsSpeaking(false);
         setIsWaving(false);
 
-        // This should ONLY trigger for animations that start immediately after speech.
-        const shouldAutoAnimate = interaction?.type.startsWith('footsteps-') ||
-            interaction?.type === 'meter-measurement' ||
-            interaction?.type === 'ruler-measurement';
+        // Use feedback interaction properties when active, otherwise use main interaction
+        const currentInteraction = activeFeedbackInteraction || interaction;
 
-        if (interaction?.transitionType === 'auto') {
+        // This should ONLY trigger for animations that start immediately after speech.
+        const shouldAutoAnimate = currentInteraction?.type.startsWith('footsteps-') ||
+            currentInteraction?.type === 'meter-measurement' ||
+            currentInteraction?.type === 'ruler-measurement';
+
+        if (currentInteraction?.transitionType === 'auto') {
             setTimeout(advanceToNext, 500);
-        } else if (interaction?.type === 'welcome') {
+        } else if (currentInteraction?.type === 'welcome') {
             setTimeout(() => setShowNextButton(true), 500);
         } else if (shouldAutoAnimate) {
             // Specifically trigger footsteps, meter stick, or ruler animation after speech
             setAnimationTrigger(true);
-        } else if (interaction?.showNextButton) {
+        } else if (currentInteraction?.showNextButton) {
             // For all other manual transitions, just show the button.
             setShowNextButton(true);
         }
-    }, [interaction, advanceToNext]);
+    }, [interaction, activeFeedbackInteraction, advanceToNext]);
 
     const handleTTSStart = useCallback(() => {
         setIsSpeaking(true);
@@ -723,7 +726,7 @@ const InteractiveLesson = () => {
                                 }
                             }}
                         >
-                            {interaction?.type === 'welcome' ? "Let's Go!" : (interaction?.nextButtonText || "Continue")}
+                            {(activeFeedbackInteraction || interaction)?.type === 'welcome' ? "Let's Go!" : ((activeFeedbackInteraction || interaction)?.nextButtonText || "Continue")}
                         </Button>
                     )}
                 </Box>
