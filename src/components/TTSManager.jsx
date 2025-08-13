@@ -34,6 +34,11 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError }, ref) => {
         const audio = new Audio(audioPath);
         audioRef.current = audio;
 
+        // Set playback rate to 1.5x in dev mode
+        if (import.meta.env.DEV) {
+            audio.playbackRate = 1.5;
+        }
+
         audio.onloadstart = () => {
             if (onStart) onStart();
         };
@@ -82,7 +87,7 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError }, ref) => {
         }
 
         // Configuration
-        utterance.rate = 0.9;
+        utterance.rate = import.meta.env.DEV ? 1.35 : 0.9; // 1.5x speed in dev mode
         utterance.pitch = 1.1;
         utterance.volume = 0.8;
 
