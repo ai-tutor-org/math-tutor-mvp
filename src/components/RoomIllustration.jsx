@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaShoePrints, FaQuestion, FaPlus } from 'react-icons/fa';
+import { FaShoePrints, FaPlus } from 'react-icons/fa';
 import './RoomIllustration.css';
 
 const RoomIllustration = ({
@@ -153,15 +153,6 @@ const RoomIllustration = ({
                 </svg>
 
                 {previousResultText && <div className="previous-result-text">{previousResultText}</div>}
-
-                {totalSteps === 0 && !isAnimating && !showBothFootsteps && (
-                    <motion.div className="flashing-question-mark"
-                        animate={{ opacity: [0.2, 1, 0.2] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                    >
-                        <FaQuestion />
-                    </motion.div>
-                )}
 
                 {/* Show persistent first person steps (always visible once completed or when persistentStepsData is provided) */}
                 {(persistentStepsData || firstPersonSteps.length > 0) && (() => {
