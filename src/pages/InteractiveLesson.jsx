@@ -155,6 +155,7 @@ const InteractiveLesson = () => {
         setAnimationTrigger(false); // Reset trigger for the next interaction
         setDynamicTutorText(null); // Clear any lingering feedback text
         setActiveFeedbackInteraction(null); // Clear any feedback component
+        setShowNextButton(false); // Reset button immediately to prevent flash
 
         if (!presentation || !lesson) return;
 
@@ -187,6 +188,7 @@ const InteractiveLesson = () => {
                     setCurrentConditionalPresentation(presId);
                     setCurrentInteractionIndex(interactionIndex);
                     setDynamicTutorText(null);
+                    setShowNextButton(false); // Reset button immediately
                     return;
                 }
 
@@ -198,6 +200,7 @@ const InteractiveLesson = () => {
                     setCurrentPresIndex(lessonSeqIndex);
                     setCurrentInteractionIndex(interactionIndex);
                     setDynamicTutorText(null);
+                    setShowNextButton(false); // Reset button immediately
                     return;
                 }
             }
@@ -220,9 +223,9 @@ const InteractiveLesson = () => {
             setCurrentInteractionIndex(interaction.interactionIndex);
         }
 
-        // Reset UI state
+        // Reset UI state - button reset first to prevent flicker
+        setShowNextButton(false);
         setDynamicTutorText(null);
-        setShowNextButton(interaction.showNextButton ?? false);
         setAnimationTrigger(false);
         setHasUserInteracted(false);
     }, []);
@@ -456,6 +459,9 @@ const InteractiveLesson = () => {
     useEffect(() => {
         // All interactions should start with button hidden and wait for TTS to finish
         setShowNextButton(false);
+        
+        // Reset animation trigger to prevent flicker
+        setAnimationTrigger(false);
 
         // Reset dynamic tutor text when interaction changes
         setDynamicTutorText(null);
