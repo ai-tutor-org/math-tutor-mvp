@@ -226,13 +226,38 @@ export const getShapeForPhase = (shapes, type) => {
 };
 
 /**
- * Get shapes for practice phase (Q6-Q7): rectangle, circle, square
+ * Get shapes for practice phase (Q6-Q7): triangle, circle, square
  */
 export const getPracticePhaseShapes = (shapes) => {
-    const practiceTypes = [SHAPE_TYPES.RECTANGLE, SHAPE_TYPES.CIRCLE, SHAPE_TYPES.SQUARE];
+    const practiceTypes = [SHAPE_TYPES.TRIANGLE, SHAPE_TYPES.CIRCLE, SHAPE_TYPES.SQUARE];
     return practiceTypes
         .map(type => getShapeForPhase(shapes, type))
         .filter(Boolean);
+};
+
+/**
+ * Get shapes for guided phase (Q4): 1 triangle
+ */
+export const getGuidedPhaseShapes = (shapes) => {
+    const triangle = getShapeForPhase(shapes, SHAPE_TYPES.TRIANGLE);
+    return triangle ? [triangle] : [];
+};
+
+/**
+ * Get shapes for challenge phases (Q10-Q11): 8 diverse shapes (2 of each type)
+ */
+export const getChallengePhaseShapes = (shapes) => {
+    const challengeShapes = [];
+    
+    // Get 2 of each shape type for a diverse mix
+    Object.values(SHAPE_TYPES).forEach(type => {
+        const shapesOfType = getShapesByType(shapes, type);
+        // Take first 2 shapes of each type
+        challengeShapes.push(...shapesOfType.slice(0, 2));
+    });
+    
+    // Should return exactly 8 shapes (2 triangles, 2 circles, 2 rectangles, 2 squares)
+    return challengeShapes.slice(0, 8);
 };
 
 /**

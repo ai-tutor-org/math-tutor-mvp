@@ -7,7 +7,10 @@ import {
     SHAPE_TYPES, 
     CONTAINER_DEFINITIONS, 
     getShapeTypeCounts,
-    isValidDrop 
+    isValidDrop,
+    getPracticePhaseShapes,
+    getGuidedPhaseShapes,
+    getChallengePhaseShapes
 } from '../data/shapeDefinitions';
 import { useShapeAnimations } from '../hooks/useShapeAnimations';
 import './ShapeSorterGame.css';
@@ -31,29 +34,53 @@ const GAME_PHASES = {
 
 // Deterministic shape state calculator based on current phase
 const getShapeStatesForPhase = (phase, shapes, targetCount = 12) => {
-    // Interactive phases where user can interact with shapes
+    let selectedShapes;
+    
+    // Select appropriate shapes based on phase
+    switch(phase) {
+        case GAME_PHASES.GUIDED:
+            // Guided phase: 1 triangle
+            selectedShapes = getGuidedPhaseShapes(shapes);
+            break;
+            
+        case GAME_PHASES.PRACTICE:
+        case GAME_PHASES.PRACTICE_SETUP:
+            // Practice phases: triangle, circle, square
+            selectedShapes = getPracticePhaseShapes(shapes);
+            break;
+            
+        case GAME_PHASES.CHALLENGE:
+        case GAME_PHASES.CHALLENGE_SETUP:
+            // Challenge phases: 8 diverse shapes (2 of each type)
+            selectedShapes = getChallengePhaseShapes(shapes);
+            break;
+            
+        default:
+            // All other phases: use first N shapes as before
+            selectedShapes = shapes.slice(0, Math.min(targetCount, 12));
+            break;
+    }
+    
+    // Determine which shapes should be disabled
     const interactivePhases = [GAME_PHASES.GUIDED, GAME_PHASES.PRACTICE, GAME_PHASES.CHALLENGE];
     
     if (interactivePhases.includes(phase)) {
-        // Enable shapes up to target count, disable rest
-        const enabledShapes = shapes.slice(0, targetCount);
+        // Interactive phase: shapes are enabled for interaction
         const disabledShapeIds = shapes
-            .filter(s => !enabledShapes.some(enabled => enabled.id === s.id))
+            .filter(s => !selectedShapes.some(selected => selected.id === s.id))
             .map(s => s.id);
         
         return {
-            activeShapes: enabledShapes,
+            activeShapes: selectedShapes,
             disabledShapes: disabledShapeIds
         };
+    } else {
+        // Non-interactive phase: all shapes are disabled
+        return {
+            activeShapes: selectedShapes,
+            disabledShapes: selectedShapes.map(s => s.id) // All disabled for non-interactive phases
+        };
     }
-    
-    // Non-interactive phases: show only target shapes, all disabled except for demo phases
-    const nonInteractiveShapes = shapes.slice(0, Math.min(targetCount, 12));
-    
-    return {
-        activeShapes: nonInteractiveShapes,
-        disabledShapes: nonInteractiveShapes.map(s => s.id) // All disabled for non-interactive phases
-    };
 };
 
 // Initial game state structure
