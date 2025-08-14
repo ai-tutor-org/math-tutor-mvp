@@ -901,7 +901,6 @@ const InteractiveLesson = () => {
                                     padding: '8px',
                                     borderRadius: '12px',
                                     background: '#4CAF50',
-                                    background: '#484D5C',
                                     color: '#fff',
                                     textTransform: 'none',
                                     fontSize: '1rem',
