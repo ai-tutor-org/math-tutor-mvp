@@ -6,11 +6,9 @@ import {
     FaPaintBrush
 } from 'react-icons/fa';
 import {
-    RoomIllustration,
     RulerMeasurement,
     MeterStick,
     CrayonMeasurementQuestion,
-    ConflictingMeasurements,
     StandardUnits,
     ShapeMeasurement,
     MissionReadiness,
@@ -98,7 +96,6 @@ export const conditionalPresentations = {
                 id: 'measurement-reason-retry',
                 type: 'multiple-choice-question',
                 tutorText: "No, the size of the room is the same. Choose again.",
-                ContentComponent: RoomIllustration,
                 contentProps: {
                     showBothFootsteps: true,
                     yourSteps: 10,
@@ -127,7 +124,6 @@ export const conditionalPresentations = {
                 id: 'measurement-reason-explanation',
                 type: 'tutor-monologue',
                 tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
-                ContentComponent: RoomIllustration,
                 contentProps: {
                     showBothFootsteps: true,
                     yourSteps: 10,
@@ -541,14 +537,12 @@ export const presentations = {
                 id: 'room-question',
                 type: 'room-question',
                 tutorText: "Let's start with a simple question. Imagine this is your room. How would you figure out how long it is from one wall to the other?",
-                ContentComponent: RoomIllustration,
                 transitionType: 'auto',
             },
             {
                 id: 'footsteps-demo',
                 type: 'footsteps-animation',
                 tutorText: "A common way is to use footsteps! Let's try it. Help me walk from one side to the other by clicking the button for each step.",
-                ContentComponent: RoomIllustration,
                 contentProps: {
                     totalSteps: 10,
                     footIconColor: '#4A90E2',
@@ -559,7 +553,6 @@ export const presentations = {
             {
                 id: 'footsteps-friend',
                 type: 'footsteps-animation-friend',
-                ContentComponent: RoomIllustration,
                 tutorText: "Okay, so the room is 10 steps long. \n\nSimple enough! But wait... here comes your friend, who has bigger feet. He doesn't believe that the room is 10 steps long. He will use his own steps to measure the room.\n\n Help him measure the room too - click the button for each of his steps.",
                 contentProps: {
                     totalSteps: 8,
@@ -590,7 +583,6 @@ export const presentations = {
                 id: 'conflicting-problem',
                 type: 'conflicting-measurements',
                 tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. \n\nBut the room didn't change! Who is right? This is confusing, isn't it?",
-                ContentComponent: RoomIllustration,
                 contentProps: {
                     showBothFootsteps: true,
                     yourSteps: 10,
@@ -606,7 +598,6 @@ export const presentations = {
                 id: 'measurement-reason-question',
                 type: 'multiple-choice-question',
                 tutorText: "What do you think is the reason?",
-                ContentComponent: RoomIllustration,
                 contentProps: {
                     showBothFootsteps: true,
                     yourSteps: 10,

@@ -1,416 +1,416 @@
 /* src/components/RoomIllustration.css */
 
 .room-illustration-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    gap: 20px;
-    font-family: 'Poppins', sans-serif;
-    animation: fadeIn 0.5s ease-in-out;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	gap: 20px;
+	font-family: "Poppins", sans-serif;
+	animation: fadeIn 0.5s ease-in-out;
 }
 
 .counters-container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 10px;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	margin-bottom: 10px;
 }
 
 .room-svg-container {
-    position: relative;
-    width: 500px;
-    height: 314px;
+	position: relative;
+	width: 500px;
+	height: 314px;
 }
 
 .room-svg {
-    width: 100%;
-    height: 100%;
+	width: 100%;
+	height: 100%;
 }
 
 .room-inner-wall {
-    position: absolute;
-    top: 33px;
-    left: 33px;
-    width: 434px;
-    height: 134px;
-    background-color: #F6EFE2;
-    border: 1px solid #AA6C47;
+	position: absolute;
+	top: 33px;
+	left: 33px;
+	width: 434px;
+	height: 134px;
+	background-color: #f6efe2;
+	border: 1px solid #aa6c47;
 }
 
 .room-corner-lines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
 }
 
 .corner-line {
-    position: absolute;
-    width: 1.44px;
-    background-color: #AA6C47;
-    transform-origin: top;
+	position: absolute;
+	width: 1.44px;
+	background-color: #aa6c47;
+	transform-origin: top;
 }
 
 .corner-line.top-left {
-    top: 0;
-    left: 0;
-    height: 66px;
-    transform: rotate(45deg);
+	top: 0;
+	left: 0;
+	height: 66px;
+	transform: rotate(45deg);
 }
 
 .corner-line.top-right {
-    top: 0;
-    right: 0;
-    height: 66px;
-    transform: rotate(-45deg);
+	top: 0;
+	right: 0;
+	height: 66px;
+	transform: rotate(-45deg);
 }
 
 .corner-line.bottom-left {
-    bottom: 0;
-    left: 0;
-    height: 66px;
-    transform: rotate(-45deg);
+	bottom: 0;
+	left: 0;
+	height: 66px;
+	transform: rotate(-45deg);
 }
 
 .corner-line.bottom-right {
-    bottom: 0;
-    right: 0;
-    height: 66px;
-    transform: rotate(45deg);
+	bottom: 0;
+	right: 0;
+	height: 66px;
+	transform: rotate(45deg);
 }
 
 .room-door {
-    position: absolute;
-    top: 8px;
-    left: 188px;
-    width: 124px;
-    height: 16px;
-    background-color: white;
-    border-radius: 0 0 2px 2px;
+	position: absolute;
+	top: 8px;
+	left: 188px;
+	width: 124px;
+	height: 16px;
+	background-color: white;
+	border-radius: 0 0 2px 2px;
 }
 
 .room-window {
-    position: absolute;
-    bottom: 8px;
-    left: 230px;
-    width: 40px;
-    height: 32px;
-    background-color: white;
-    border-radius: 2px 2px 0 0;
+	position: absolute;
+	bottom: 8px;
+	left: 230px;
+	width: 40px;
+	height: 32px;
+	background-color: white;
+	border-radius: 2px 2px 0 0;
 }
 
 .room-red-line {
-    position: absolute;
-    top: 50%;
-    left: 42px;
-    right: 42px;
-    height: 2px;
-    background-color: #EB5757;
-    transform: translateY(-50%);
-    z-index: 5;
+	position: absolute;
+	top: 50%;
+	left: 42px;
+	right: 42px;
+	height: 2px;
+	background-color: #eb5757;
+	transform: translateY(-50%);
+	z-index: 5;
 }
 
 .room-measurement-box {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 13px;
-    height: 22px;
-    background-color: #F6EFE2;
-    z-index: 6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-    color: #EB5757;
-    font-weight: bold;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 13px;
+	height: 22px;
+	background-color: #f6efe2;
+	z-index: 6;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 8px;
+	color: #eb5757;
+	font-weight: bold;
 }
 
 .dimension-line {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    height: 2px;
-    background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-    border-radius: 1px;
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	right: 20px;
+	height: 2px;
+	background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+	border-radius: 1px;
 }
 
 .question-mark {
-    font-size: 4rem;
-    color: #ff6b6b;
-    font-weight: bold;
-    animation: pulse 2s infinite;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+	font-size: 4rem;
+	color: #ff6b6b;
+	font-weight: bold;
+	animation: pulse 2s infinite;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .feet-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
 
 .foot {
-    position: absolute;
-    top: 90px;
-    transform: translateY(-50%);
-    z-index: 10;
+	position: absolute;
+	top: 90px;
+	transform: translateY(-50%);
+	z-index: 10;
 }
 
 .foot.friend-foot-regular {
-    top: 220px;
+	top: 190px;
 }
 
 .step-counter {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #fff;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 10px 20px;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+	font-size: 2rem;
+	font-weight: bold;
+	color: #fff;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	padding: 10px 20px;
+	border-radius: 20px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .previous-step-counter {
-    position: absolute;
-    top: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #666;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 5px 15px;
-    border-radius: 15px;
-    border: 2px solid #ddd;
+	position: absolute;
+	top: -40px;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #666;
+	background: rgba(255, 255, 255, 0.9);
+	padding: 5px 15px;
+	border-radius: 15px;
+	border: 2px solid #ddd;
 }
 
 .interactive-controls {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
 }
 
 .step-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: normal;
-    color: white;
-    background: #2C2C2C;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-height: 49px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 12px 20px;
+	font-size: 16px;
+	font-weight: normal;
+	color: white;
+	background: #2c2c2c;
+	border: none;
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	min-height: 49px;
 }
 
 .step-button:hover {
-    background: #3C3C3C;
-    transform: translateY(-2px);
+	background: #3c3c3c;
+	transform: translateY(-2px);
 }
 
 .step-button:active {
-    transform: translateY(0px);
-    background: #1C1C1C;
+	transform: translateY(0px);
+	background: #1c1c1c;
 }
 
 .step-button.completed {
-    background: #4CAF50;
-    animation: completionGlow 0.6s ease-in-out;
+	background: #4caf50;
+	animation: completionGlow 0.6s ease-in-out;
 }
 
 .step-button.completed:hover {
-    background: #45a049;
+	background: #45a049;
 }
 
 .step-button-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: #484D5C;
-    border-radius: 8px;
-    font-size: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	background: #484d5c;
+	border-radius: 8px;
+	font-size: 20px;
 }
 
 .step-button.completed .step-button-icon {
-    background: #2E7D32;
-    color: white;
+	background: #2e7d32;
+	color: white;
 }
 
 .step-counters-container {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	gap: 40px;
+	margin-top: 20px;
 }
 
 .step-counter-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
 }
 
 .step-counter-display {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: normal;
-    background: #2C2C2C;
-    border: none;
-    border-radius: 12px;
-    min-height: 49px;
-    min-width: 143px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 12px 20px;
+	font-size: 16px;
+	font-weight: normal;
+	background: #2c2c2c;
+	border: none;
+	border-radius: 12px;
+	min-height: 49px;
+	min-width: 143px;
 }
 
 .step-counter-display.you {
-    color: #FFF;
+	color: #fff;
 }
 
 .step-counter-display.friend {
-    color: #FFF;
+	color: #fff;
 }
 
 .step-counter-label {
-    font-size: 14px;
-    font-weight: normal;
-    color: #667399;
+	font-size: 14px;
+	font-weight: normal;
+	color: #667399;
 }
 
 .completion-message {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
 }
 
 .completion-text {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #fff;
-    background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
-    padding: 15px 25px;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-    text-align: center;
-    margin: 0;
+	font-size: 1.3rem;
+	font-weight: bold;
+	color: #fff;
+	background: linear-gradient(135deg, #ff6b6b 0%, #ffe66d 100%);
+	padding: 15px 25px;
+	border-radius: 20px;
+	box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+	text-align: center;
+	margin: 0;
 }
 
 .room-label {
-    font-size: 1.1rem;
-    color: #fff;
-    text-align: center;
-    margin: 0;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    margin-top: 15px;
-    font-style: italic;
-    color: #888;
+	font-size: 1.1rem;
+	color: #fff;
+	text-align: center;
+	margin: 0;
+	padding: 10px;
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 10px;
+	margin-top: 15px;
+	font-style: italic;
+	color: #888;
 }
 
 .interaction-controls {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
+	margin-top: 20px;
+	display: flex;
+	justify-content: center;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 @keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
+	0% {
+		transform: scale(1);
+		opacity: 1;
+	}
 
-    50% {
-        transform: scale(1.1);
-        opacity: 0.8;
-    }
+	50% {
+		transform: scale(1.1);
+		opacity: 0.8;
+	}
 
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
 }
 
 @keyframes completionGlow {
-    0% {
-        box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
-    }
+	0% {
+		box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+	}
 
-    50% {
-        box-shadow: 0 0 20px rgba(76, 175, 80, 0.8), 0 0 30px rgba(76, 175, 80, 0.6);
-        transform: translateY(-2px);
-    }
+	50% {
+		box-shadow: 0 0 20px rgba(76, 175, 80, 0.8),
+			0 0 30px rgba(76, 175, 80, 0.6);
+		transform: translateY(-2px);
+	}
 
-    100% {
-        box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
-        transform: translateY(0px);
-    }
+	100% {
+		box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+		transform: translateY(0px);
+	}
 }
 
 .footstep-label {
-    position: absolute;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 5px 10px;
-    border-radius: 8px;
-    z-index: 20;
+	position: absolute;
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #fff;
+	background: rgba(0, 0, 0, 0.7);
+	padding: 5px 10px;
+	border-radius: 8px;
+	z-index: 20;
 }
 
 .your-label {
-    top: 20px;
-    left: 10px;
+	top: 20px;
+	left: 10px;
 }
 
 .friend-label {
-    top: 90px;
-    left: 10px;
+	top: 90px;
+	left: 10px;
 }
 
-
 .footstep-counter {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #fff;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .flashing-question-mark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 4rem;
-    color: #ff6b6b;
-    z-index: 15;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 4rem;
+	color: #ff6b6b;
+	z-index: 15;
 }

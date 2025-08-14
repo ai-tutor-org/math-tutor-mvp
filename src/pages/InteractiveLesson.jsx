@@ -49,12 +49,13 @@ const componentMap = {
     'room-question': RoomIllustration,
     'footsteps-animation': RoomIllustration,
     'footsteps-animation-friend': RoomIllustration,
-    'conflicting-measurements': ConflictingMeasurements,
+    'conflicting-measurements': RoomIllustration,
     'standard-units-explanation': StandardUnits,
     'ruler-measurement': RulerMeasurement,
     'meter-measurement': MeterStick,
     'interactive-question': CrayonMeasurementQuestion,
     'multiple-choice-question': RoomIllustration,
+    'tutor-monologue': RoomIllustration,
     'shape-sorting-game': ShapeSorterGame,
     'mission-readiness': MissionReadiness,
     'farmer-intro': FarmerIntro,
@@ -520,7 +521,12 @@ const InteractiveLesson = () => {
         }
 
         if (interaction?.transitionType === 'auto') {
-            setTimeout(advanceToNext, 500);
+            // Check if there's a specific navigation target
+            if (interaction?.navigateToInteraction) {
+                setTimeout(() => navigateToInteraction(interaction.navigateToInteraction), 500);
+            } else {
+                setTimeout(advanceToNext, 500);
+            }
         } else if (interaction?.transitionType === 'interaction-based') {
             // Wait for component to signal completion - don't auto-advance
             console.log('🎯 Waiting for interaction-based completion');
@@ -597,8 +603,11 @@ const InteractiveLesson = () => {
 
         if (!Component) return null;
 
+        // Generate stable key for same component to prevent unnecessary re-mounting
+        const componentName = Component.name || Component.displayName || 'Component';
+        
         let props = {
-            key: `${currentPresIndex}-${currentInteractionIndex}`,
+            key: `${componentName}-${currentPresIndex}`,
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
             onInteraction: handleUserInteraction,

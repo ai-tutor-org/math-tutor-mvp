@@ -62,6 +62,14 @@ const RoomIllustration = ({
     // --- End of Corrected Logic ---
 
 
+    // Reset state when props change (for component reuse)
+    useEffect(() => {
+        setStepCounter(0);
+        setIsAnimating(false);
+        setShowCompletionFeedback(false);
+        setFirstPersonSteps([]);
+    }, [totalSteps, footIconColor, showBothFootsteps]);
+
     useEffect(() => {
         if (startAnimation) {
             setStepCounter(0); // Reset for new animation
@@ -73,18 +81,20 @@ const RoomIllustration = ({
     useEffect(() => {
         // When all steps are completed, show completion feedback then auto-advance
         if (isAnimating && stepCounter === totalSteps && totalSteps > 0) {
-            // Capture the first person's steps for persistence
-            const steps = Array.from({ length: totalSteps }, (_, i) => ({
-                id: `first-${i}`,
-                position: stepPositions[i],
-                color: footIconColor,
-                size: dynamicFootSize
-            }));
-            setFirstPersonSteps(steps);
-            
+            // Only capture first person's steps for persistence (not friend's steps)
+            if (!persistentStepsData && footIconColor !== '#e24a4a') {
+                const steps = Array.from({ length: totalSteps }, (_, i) => ({
+                    id: `first-${i}`,
+                    position: stepPositions[i],
+                    color: footIconColor,
+                    size: dynamicFootSize
+                }));
+                setFirstPersonSteps(steps);
+            }
+
             // Show completion feedback while keeping UI visible
             setShowCompletionFeedback(true);
-            
+
             // Maintain existing timing but with visual feedback
             setTimeout(() => {
                 setIsAnimating(false);
@@ -94,7 +104,7 @@ const RoomIllustration = ({
                 }
             }, 1500); // Keep existing timing for consistency
         }
-    }, [stepCounter, totalSteps, onAnimationComplete, isAnimating, stepPositions, footIconColor, dynamicFootSize]);
+    }, [stepCounter, totalSteps, onAnimationComplete, isAnimating, stepPositions, footIconColor, dynamicFootSize, persistentStepsData]);
 
 
     const handleStepClick = () => {
@@ -147,17 +157,17 @@ const RoomIllustration = ({
         <div className="room-illustration-container">
             <div className="room-svg-container">
                 <svg width="500" height="314" viewBox="0 0 578 362" fill="none" xmlns="http://www.w3.org/2000/svg" className="room-svg">
-                    <rect x="1" y="1" width="576" height="360" fill="#F39A65"/>
-                    <rect x="47.8001" y="47.8001" width="482.4" height="266.4" fill="#F6EFE2" stroke="#AA6C47" strokeWidth="1.44"/>
-                    <path d="M47.08 47.08L1 1" stroke="#AA6C47" strokeWidth="1.44"/>
-                    <path d="M577 361L530.92 314.92" stroke="#AA6C47" strokeWidth="1.44"/>
-                    <path d="M530.92 47.08L577 1" stroke="#AA6C47" strokeWidth="1.44"/>
-                    <path d="M47.08 314.92L1 361" stroke="#AA6C47" strokeWidth="1.44"/>
-                    <path d="M215.56 12.5195H366.76L352.36 35.5595H228.52L215.56 12.5195Z" fill="white"/>
-                    <path d="M265 356H313L309.757 315H267.595L265 356Z" fill="white"/>
-                    <path d="M48.52 182.44L62.92 190.754V174.127L48.52 182.44ZM530.92 182.44L516.52 174.127V190.754L530.92 182.44ZM61.48 182.44V183.88H517.96V182.44V181H61.48V182.44Z" fill="#EB5757"/>
-                    <rect width="18.72" height="31.68" transform="translate(280.36 165.16)" fill="#F6EFE2"/>
-                    <path d="M287.099 185.041C287.099 183.843 287.249 182.864 287.549 182.103C287.871 181.32 288.286 180.675 288.793 180.168C289.3 179.661 289.83 179.223 290.383 178.855C290.935 178.463 291.454 178.083 291.938 177.714C292.445 177.322 292.859 176.862 293.182 176.332C293.504 175.802 293.666 175.134 293.666 174.327C293.666 173.429 293.297 172.691 292.56 172.115C291.823 171.539 290.935 171.251 289.899 171.251C289.161 171.251 288.47 171.401 287.825 171.701C287.203 172 286.673 172.438 286.235 173.014C285.798 173.567 285.51 174.235 285.371 175.018L284.991 175.088L281.466 174.362C281.696 172.956 282.203 171.735 282.987 170.698C283.793 169.662 284.784 168.867 285.959 168.314C287.157 167.738 288.459 167.45 289.864 167.45C291.408 167.45 292.79 167.749 294.011 168.348C295.232 168.924 296.2 169.731 296.914 170.768C297.629 171.804 297.986 173.002 297.986 174.362C297.986 175.445 297.813 176.355 297.467 177.092C297.145 177.806 296.719 178.417 296.189 178.924C295.659 179.408 295.094 179.845 294.495 180.237C293.919 180.629 293.355 181.032 292.802 181.447C292.272 181.861 291.834 182.357 291.488 182.933C291.166 183.509 291.005 184.211 291.005 185.041H287.099ZM289.069 192.471C288.332 192.471 287.698 192.218 287.168 191.711C286.662 191.204 286.408 190.582 286.408 189.845C286.408 189.13 286.662 188.52 287.168 188.013C287.698 187.506 288.332 187.253 289.069 187.253C289.783 187.253 290.394 187.506 290.901 188.013C291.408 188.52 291.661 189.13 291.661 189.845C291.661 190.582 291.408 191.204 290.901 191.711C290.394 192.218 289.783 192.471 289.069 192.471Z" fill="#EB5757"/>
+                    <rect x="1" y="1" width="576" height="360" fill="#F39A65" />
+                    <rect x="47.8001" y="47.8001" width="482.4" height="266.4" fill="#F6EFE2" stroke="#AA6C47" strokeWidth="1.44" />
+                    <path d="M47.08 47.08L1 1" stroke="#AA6C47" strokeWidth="1.44" />
+                    <path d="M577 361L530.92 314.92" stroke="#AA6C47" strokeWidth="1.44" />
+                    <path d="M530.92 47.08L577 1" stroke="#AA6C47" strokeWidth="1.44" />
+                    <path d="M47.08 314.92L1 361" stroke="#AA6C47" strokeWidth="1.44" />
+                    <path d="M215.56 12.5195H366.76L352.36 35.5595H228.52L215.56 12.5195Z" fill="white" />
+                    <path d="M265 356H313L309.757 315H267.595L265 356Z" fill="white" />
+                    <path d="M48.52 182.44L62.92 190.754V174.127L48.52 182.44ZM530.92 182.44L516.52 174.127V190.754L530.92 182.44ZM61.48 182.44V183.88H517.96V182.44V181H61.48V182.44Z" fill="#EB5757" />
+                    <rect width="18.72" height="31.68" transform="translate(280.36 165.16)" fill="#F6EFE2" />
+                    <path d="M287.099 185.041C287.099 183.843 287.249 182.864 287.549 182.103C287.871 181.32 288.286 180.675 288.793 180.168C289.3 179.661 289.83 179.223 290.383 178.855C290.935 178.463 291.454 178.083 291.938 177.714C292.445 177.322 292.859 176.862 293.182 176.332C293.504 175.802 293.666 175.134 293.666 174.327C293.666 173.429 293.297 172.691 292.56 172.115C291.823 171.539 290.935 171.251 289.899 171.251C289.161 171.251 288.47 171.401 287.825 171.701C287.203 172 286.673 172.438 286.235 173.014C285.798 173.567 285.51 174.235 285.371 175.018L284.991 175.088L281.466 174.362C281.696 172.956 282.203 171.735 282.987 170.698C283.793 169.662 284.784 168.867 285.959 168.314C287.157 167.738 288.459 167.45 289.864 167.45C291.408 167.45 292.79 167.749 294.011 168.348C295.232 168.924 296.2 169.731 296.914 170.768C297.629 171.804 297.986 173.002 297.986 174.362C297.986 175.445 297.813 176.355 297.467 177.092C297.145 177.806 296.719 178.417 296.189 178.924C295.659 179.408 295.094 179.845 294.495 180.237C293.919 180.629 293.355 181.032 292.802 181.447C292.272 181.861 291.834 182.357 291.488 182.933C291.166 183.509 291.005 184.211 291.005 185.041H287.099ZM289.069 192.471C288.332 192.471 287.698 192.218 287.168 191.711C286.662 191.204 286.408 190.582 286.408 189.845C286.408 189.13 286.662 188.52 287.168 188.013C287.698 187.506 288.332 187.253 289.069 187.253C289.783 187.253 290.394 187.506 290.901 188.013C291.408 188.52 291.661 189.13 291.661 189.845C291.661 190.582 291.408 191.204 290.901 191.711C290.394 192.218 289.783 192.471 289.069 192.471Z" fill="#EB5757" />
                 </svg>
 
                 {previousResultText && <div className="previous-result-text">{previousResultText}</div>}
@@ -219,7 +229,7 @@ const RoomIllustration = ({
                                 transition={{ delay: (yourSteps * 0.1) + (i * 0.1) }}
                                 style={{
                                     left: `${xPos}px`,
-                                    top: '220px',
+                                    top: '190px',
                                     fontSize: `${friendFootSize}px`,
                                     color: friendFootColor,
                                     width: `${friendFootSize}px`,
@@ -283,8 +293,8 @@ const RoomIllustration = ({
                         disabled={stepCounter >= totalSteps}
                     >
                         <span>
-                            {showCompletionFeedback 
-                                ? `Complete! ${stepCounter} steps` 
+                            {showCompletionFeedback
+                                ? `Complete! ${stepCounter} steps`
                                 : `${stepCounter} step${stepCounter !== 1 ? 's' : ''}`
                             }
                         </span>
