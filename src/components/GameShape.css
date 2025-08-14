@@ -1,8 +1,8 @@
 /* GameShape Component Styles - B1.3 */
 
 .game-shape {
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
     border-radius: 8px;
     border: 3px solid transparent;
     display: flex;
@@ -115,8 +115,8 @@
 .game-shape.triangle {
     border-radius: 0;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    width: 100px;
-    height: 87px; /* Adjust height for triangle aspect ratio */
+    width: 60px;
+    height: 52px; /* Adjust height for triangle aspect ratio */
 }
 
 .game-shape.triangle.right {
@@ -130,21 +130,21 @@
 /* Circle styling */
 .game-shape.circle {
     border-radius: 50%;
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
 }
 
 /* Rectangle styling */
 .game-shape.rectangle {
-    width: 120px;
-    height: 80px;
+    width: 80px;
+    height: 50px;
     border-radius: 6px;
 }
 
 /* Square styling */  
 .game-shape.square {
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
     border-radius: 4px;
 }
 
@@ -287,4 +287,31 @@
     .game-shape.bouncing {
         animation: none;
     }
+}
+
+/* Recap-Specific Large Size Classes */
+/* These classes are ONLY used for the recap phase shapes */
+.game-shape.recap-size {
+    width: 100px;
+    height: 100px;
+}
+
+.game-shape.recap-size.triangle {
+    width: 100px;
+    height: 87px; /* Maintain triangle aspect ratio */
+}
+
+.game-shape.recap-size.circle {
+    width: 100px;
+    height: 100px;
+}
+
+.game-shape.recap-size.rectangle {
+    width: 120px;
+    height: 80px; /* Maintain rectangle aspect ratio */
+}
+
+.game-shape.recap-size.square {
+    width: 100px;
+    height: 100px;
 }

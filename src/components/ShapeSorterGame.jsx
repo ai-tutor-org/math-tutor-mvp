@@ -1692,6 +1692,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         isDisabled={true}
                                         isHighlighted={contentProps?.highlightedShape === shape.type}
                                         dragConstraints={false}
+                                        className="recap-size"
                                     />
                                 </div>
                             ))}
