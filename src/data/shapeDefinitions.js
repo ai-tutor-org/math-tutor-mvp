@@ -65,7 +65,16 @@ export const generateShapes = () => {
             attempts: 0,
             isHighlighted: false,
             isDisabled: true, // Start disabled, will be enabled per phase
-            isBouncing: false // For return animations
+            
+            // Unified Animation System
+            animation: {
+                type: 'none',
+                target: null,
+                duration: 0,
+                easing: 'easeOut',
+                onComplete: null,
+                startTime: null
+            }
         });
     });
 
@@ -82,7 +91,16 @@ export const generateShapes = () => {
             attempts: 0,
             isHighlighted: false,
             isDisabled: true,
-            isBouncing: false
+            
+            // Unified Animation System
+            animation: {
+                type: 'none',
+                target: null,
+                duration: 0,
+                easing: 'easeOut',
+                onComplete: null,
+                startTime: null
+            }
         });
     }
 
@@ -99,7 +117,16 @@ export const generateShapes = () => {
             attempts: 0,
             isHighlighted: false,
             isDisabled: true,
-            isBouncing: false
+            
+            // Unified Animation System
+            animation: {
+                type: 'none',
+                target: null,
+                duration: 0,
+                easing: 'easeOut',
+                onComplete: null,
+                startTime: null
+            }
         });
     }
 
@@ -116,7 +143,16 @@ export const generateShapes = () => {
             attempts: 0,
             isHighlighted: false,
             isDisabled: true,
-            isBouncing: false
+            
+            // Unified Animation System
+            animation: {
+                type: 'none',
+                target: null,
+                duration: 0,
+                easing: 'easeOut',
+                onComplete: null,
+                startTime: null
+            }
         });
     }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 import { SHAPE_TYPES } from '../data/shapeDefinitions';
 import './GameShape.css';
 
@@ -18,17 +18,46 @@ const GameShape = ({
     isHighlighted = false,
     className = ''
 }) => {
-    // Motion values for better position tracking
+    console.log('🟣 GAMESHAPE RENDER:', {
+        shapeId: shape.id,
+        shapeType: shape.type,
+        position: shape.position,
+        animationType: shape.animation?.type,
+        isDisabled,
+        timestamp: Date.now()
+    });
+    
+    // Motion values for position tracking
+    // IMPORTANT: Motion values are the single source of truth for position during interactions
+    // Redux state is only updated at key moments (drag end, animation complete)
     const x = useMotionValue(shape.position?.x ?? 0);
     const y = useMotionValue(shape.position?.y ?? 0);
     
-    // Update motion values when shape position changes (but not during animations)
+    // Track if this is the first render
+    const isFirstRender = React.useRef(true);
+    
+    // Only sync motion values with Redux position on initial mount
     React.useEffect(() => {
-        if (shape.position && !shape.isAnimating && !shape.isBouncing) {
+        if (isFirstRender.current && shape.position) {
+            console.log('🟢 INITIAL POSITION SETUP:', {
+                shapeId: shape.id,
+                position: shape.position
+            });
             x.set(shape.position.x ?? 0);
             y.set(shape.position.y ?? 0);
+            isFirstRender.current = false;
         }
-    }, [shape.position?.x, shape.position?.y, shape.isAnimating, shape.isBouncing, x, y]);
+    }, []); // Empty deps - only run once
+    
+    // Log position changes for debugging but DON'T sync
+    React.useEffect(() => {
+        console.log('📍 POSITION CHANGE DETECTED (NO SYNC):', {
+            shapeId: shape.id,
+            reduxPosition: shape.position,
+            currentMotionValues: { x: x.get(), y: y.get() },
+            animationType: shape.animation?.type
+        });
+    }, [shape.position?.x, shape.position?.y]);
     // Determine shape-specific CSS classes
     const getShapeClasses = () => {
         const classes = ['game-shape', shape.type];
@@ -54,10 +83,6 @@ const GameShape = ({
             classes.push('demo-active');
         }
         
-        if (shape.isBouncing) {
-            classes.push('bouncing');
-        }
-        
         if (className) {
             classes.push(className);
         }
@@ -67,8 +92,8 @@ const GameShape = ({
 
     // Calculate dynamic styles
     const getDynamicStyles = () => {
-        // Special handling for highlighted shapes during animation (demo mode)
-        if (isHighlighted && shape.isAnimating) {
+        // Special handling for highlighted shapes during unified animation (demo mode)
+        if (isHighlighted && shape.animation && shape.animation.type !== 'none') {
             return {
                 backgroundColor: `${shape.color}CC`, // More opaque during animation
                 borderColor: shape.color,
@@ -107,7 +132,22 @@ const GameShape = ({
 
     // Handle drag end with improved position tracking
     const handleDragEnd = (event, info) => {
-        if (isDisabled) return;
+        console.log('🔴 DRAG END CALLED:', {
+            shapeId: shape.id,
+            shapeType: shape.type,
+            isDisabled,
+            animationType: shape.animation?.type,
+            currentPosition: shape.position,
+            motionValues: { x: x.get(), y: y.get() },
+            eventType: event?.type,
+            source: 'GameShape.handleDragEnd',
+            stackTrace: new Error().stack?.split('\n').slice(1, 4)
+        });
+        
+        if (isDisabled) {
+            console.log('🟡 DRAG END IGNORED: Shape is disabled');
+            return;
+        }
         
         // Get current motion values for accurate position
         const currentX = x.get();
@@ -160,16 +200,14 @@ const GameShape = ({
                 y: y, // Use motion value for y
                 ...getDynamicStyles()
             }}
-            // Animation for demo movement, positioning, and bounce back
-            animate={shape.isAnimating ? {
-                x: shape.animationTarget?.x ?? shape.position?.x ?? 0,
-                y: shape.animationTarget?.y ?? shape.position?.y ?? 0
-            } : shape.isBouncing ? {
-                x: shape.position?.x ?? 0,
-                y: shape.position?.y ?? 0
+            // Unified animation system
+            // Only animate when there's an active animation with a target
+            animate={(shape.animation && shape.animation.type !== 'none' && shape.animation.target) ? {
+                x: shape.animation.target.x,
+                y: shape.animation.target.y
             } : undefined}
             // Framer Motion drag functionality
-            drag={!isDisabled && !shape.isAnimating}
+            drag={!isDisabled && !(shape.animation && shape.animation.type !== 'none')}
             dragConstraints={dragConstraints}
             dragElastic={0} // Remove springy resistance
             dragMomentum={false}
@@ -183,20 +221,30 @@ const GameShape = ({
                 zIndex: 20
             } : {}}
             // Removed layout animation to prevent flicker
-            transition={shape.isAnimating ? {
-                duration: 2.5,
-                ease: "easeInOut",
-                type: "tween"
-            } : {
-                duration: 0.1 // Faster transitions for better drag responsiveness
-            }}
-            // Animation completion callback for demo timing and bounce back
+            transition={
+                // Use unified animation settings if active
+                (shape.animation && shape.animation.type !== 'none') ? {
+                    duration: shape.animation.duration,
+                    ease: shape.animation.easing,
+                    type: "tween"
+                } : {
+                    duration: 0 // No transition when not animating - prevents double bounce
+                }
+            }
+            // Unified animation completion callback
             onAnimationComplete={() => {
-                if (shape.isAnimating && onAnimationComplete) {
-                    onAnimationComplete(shape.id);
-                } else if (shape.isBouncing && onAnimationComplete) {
-                    // Clear bounce flag after bounce animation completes
-                    onAnimationComplete(shape.id, 'bounce');
+                console.log('🎯 ANIMATION COMPLETE IN GAMESHAPE:', {
+                    shapeId: shape.id,
+                    shapeType: shape.type,
+                    animationType: shape.animation?.type,
+                    animationTarget: shape.animation?.target,
+                    currentPosition: shape.position,
+                    motionValues: { x: x.get(), y: y.get() },
+                    timestamp: Date.now()
+                });
+                if (shape.animation && shape.animation.type !== 'none' && onAnimationComplete) {
+                    // Handle unified animation completion
+                    onAnimationComplete(shape.id, 'unified-' + shape.animation.type);
                 }
             }}
         >

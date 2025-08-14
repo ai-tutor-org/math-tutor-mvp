@@ -9,6 +9,7 @@ import {
     getShapeTypeCounts,
     isValidDrop 
 } from '../data/shapeDefinitions';
+import { useShapeAnimations } from '../hooks/useShapeAnimations';
 import './ShapeSorterGame.css';
 
 // Game phases following the 13 interaction sequence
@@ -152,15 +153,18 @@ const gameReducer = (state, action) => {
                 )
             };
 
-        case 'BOUNCE_SHAPE':
+        // Unified Animation System Actions
+        case 'ANIMATE_SHAPE':
             return {
                 ...state,
                 shapes: state.shapes.map(shape =>
                     shape.id === action.shapeId 
                         ? { 
                             ...shape, 
-                            position: action.newPosition,
-                            isBouncing: true // Flag for animation
+                            animation: {
+                                ...action.animation,
+                                startTime: action.animation.startTime || Date.now()
+                            }
                           }
                         : shape
                 ),
@@ -168,27 +172,119 @@ const gameReducer = (state, action) => {
                     shape.id === action.shapeId 
                         ? { 
                             ...shape, 
-                            position: action.newPosition,
-                            isBouncing: true // Flag for animation
+                            animation: {
+                                ...action.animation,
+                                startTime: action.animation.startTime || Date.now()
+                            }
                           }
                         : shape
                 )
             };
 
-        case 'CLEAR_BOUNCE_FLAG':
+        case 'STOP_SHAPE_ANIMATION':
             return {
                 ...state,
                 shapes: state.shapes.map(shape =>
                     shape.id === action.shapeId 
-                        ? { ...shape, isBouncing: false }
+                        ? { 
+                            ...shape, 
+                            animation: {
+                                type: 'none',
+                                target: null,
+                                duration: 0,
+                                easing: 'easeOut',
+                                onComplete: null,
+                                startTime: null
+                            }
+                          }
                         : shape
                 ),
                 activeShapes: state.activeShapes.map(shape =>
                     shape.id === action.shapeId 
-                        ? { ...shape, isBouncing: false }
+                        ? { 
+                            ...shape, 
+                            animation: {
+                                type: 'none',
+                                target: null,
+                                duration: 0,
+                                easing: 'easeOut',
+                                onComplete: null,
+                                startTime: null
+                            }
+                          }
                         : shape
                 )
             };
+
+        case 'COMPLETE_SHAPE_ANIMATION':
+            const animatingShape = [...state.shapes, ...state.activeShapes]
+                .find(s => s.id === action.shapeId);
+            
+            console.log('🔥🔥🔥 COMPLETE_SHAPE_ANIMATION REDUCER:', {
+                shapeId: action.shapeId,
+                animatingShape: {
+                    id: animatingShape?.id,
+                    type: animatingShape?.type,
+                    position: animatingShape?.position,
+                    animationTarget: animatingShape?.animation?.target,
+                    animationType: animatingShape?.animation?.type
+                },
+                timestamp: Date.now()
+            });
+            
+            // Call completion callback if it exists
+            if (animatingShape?.animation?.onComplete) {
+                console.log('🚨 CALLING ANIMATION ONCOMPLETE CALLBACK:', {
+                    shapeId: action.shapeId,
+                    callbackExists: !!animatingShape.animation.onComplete,
+                    animationType: animatingShape.animation.type
+                });
+                // Use setTimeout to avoid calling during reducer
+                setTimeout(() => {
+                    animatingShape.animation.onComplete(action.shapeId);
+                }, 0);
+            } else {
+                console.log('✅ NO ONCOMPLETE CALLBACK for', action.shapeId);
+            }
+            
+            return {
+                ...state,
+                shapes: state.shapes.map(shape =>
+                    shape.id === action.shapeId 
+                        ? { 
+                            ...shape, 
+                            // DON'T update position here - motion values already have correct position
+                            // Only clear the animation state
+                            animation: {
+                                type: 'none',
+                                target: null,
+                                duration: 0,
+                                easing: 'easeOut',
+                                onComplete: null,
+                                startTime: null
+                            }
+                          }
+                        : shape
+                ),
+                activeShapes: state.activeShapes.map(shape =>
+                    shape.id === action.shapeId 
+                        ? { 
+                            ...shape, 
+                            // DON'T update position here - motion values already have correct position
+                            // Only clear the animation state
+                            animation: {
+                                type: 'none',
+                                target: null,
+                                duration: 0,
+                                easing: 'easeOut',
+                                onComplete: null,
+                                startTime: null
+                            }
+                          }
+                        : shape
+                )
+            };
+
 
         case 'SORT_SHAPE':
             const { shapeId: sortShapeId, binType } = action;
@@ -360,21 +456,6 @@ const gameReducer = (state, action) => {
                 )
             };
 
-        case 'START_SHAPE_ANIMATION':
-            return {
-                ...state,
-                shapes: state.shapes.map(shape => 
-                    shape.id === action.shapeId 
-                        ? { ...shape, isAnimating: true, animationTarget: action.targetPosition }
-                        : shape
-                ),
-                activeShapes: state.activeShapes.map(shape => 
-                    shape.id === action.shapeId 
-                        ? { ...shape, isAnimating: true, animationTarget: action.targetPosition }
-                        : shape
-                )
-            };
-
         case 'START_DEMO':
             return {
                 ...state,
@@ -404,6 +485,10 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     }, [contentProps]);
 
     const [state, dispatch] = useReducer(gameReducer, initialGameState);
+    
+    // Initialize unified animation system
+    const shapeAnimations = useShapeAnimations(dispatch);
+    
     const gameAreaRef = useRef(null);
     const gameContentRef = useRef(null); // For drag constraints - proper game boundaries
     const playAreaRef = useRef(null); // For positioning context
@@ -541,12 +626,12 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                         };
                     }
                     
-                    // Start the animation
-                    dispatch({
-                        type: 'START_SHAPE_ANIMATION',
-                        shapeId: squareToDemo.id,
-                        targetPosition: targetPosition
-                    });
+                    // Start the animation using unified system
+                    shapeAnimations.startDemoAnimation(
+                        squareToDemo.id, 
+                        targetPosition
+                        // No callback needed - GameShape handles completion via onAnimationComplete
+                    );
                     
                     // Animation completion is now handled by handleShapeAnimationComplete callback
                 }, 2000); // Increased to match highlighting delay
@@ -652,22 +737,26 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
 
     // Handle shape animation completion for immediate timing
     const handleShapeAnimationComplete = (shapeId, type = 'demo') => {
+        console.log('💥💥💥 handleShapeAnimationComplete CALLED:', {
+            shapeId,
+            type,
+            currentPhase: state.currentPhase,
+            timestamp: Date.now(),
+            stackTrace: new Error().stack?.split('\n').slice(1, 5)
+        });
         
-        // Handle bounce completion
-        if (type === 'bounce') {
-            dispatch({
-                type: 'CLEAR_BOUNCE_FLAG',
-                shapeId
-            });
-            return;
-        }
-        
-        // Immediately trigger SHAPE_DROP for demo square
-        if (state.currentPhase === GAME_PHASES.MODELING) {
-            const animatedShape = state.activeShapes.find(s => s.id === shapeId && s.isAnimating);
+        // Handle demo animation completion specifically
+        if (type === 'unified-demo' && state.currentPhase === GAME_PHASES.MODELING) {
+            const animatedShape = state.activeShapes.find(s => s.id === shapeId);
             if (animatedShape && animatedShape.type === SHAPE_TYPES.SQUARE) {
                 
-                // Immediate SHAPE_DROP without delay
+                // First complete the animation to clear animation state
+                dispatch({
+                    type: 'COMPLETE_SHAPE_ANIMATION',
+                    shapeId
+                });
+                
+                // Then trigger SHAPE_DROP
                 dispatch({
                     type: 'SHAPE_DROP',
                     shapeId: shapeId,
@@ -676,15 +765,28 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     isValidDrop: true
                 });
                 
-                
                 // Trigger parent callback after brief moment for visual feedback
                 setTimeout(() => {
                     if (onAnimationComplete) {
                         onAnimationComplete();
                     }
-                }, 300); // Brief delay just for visual confirmation
+                }, 300);
+                
+                return;
             }
         }
+        
+        // Handle other unified animation completions
+        if (type.startsWith('unified-')) {
+            const animationType = type.replace('unified-', '');
+            console.log('ANIMATION COMPLETE: Dispatching COMPLETE_SHAPE_ANIMATION for', shapeId);
+            dispatch({
+                type: 'COMPLETE_SHAPE_ANIMATION',
+                shapeId
+            });
+            return;
+        }
+        
     };
 
     // Function removed - no longer needed without pile constraints
@@ -697,6 +799,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         if (!shape) {
             return;
         }
+        
         
         const playDimensions = getPlayAreaDimensions();
         const shapeDims = getShapeDimensions(shape.type);
@@ -732,12 +835,14 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         }
         
         
-        // Proper solution: Update position and let Framer Motion handle the transition
-        dispatch({
-            type: 'BOUNCE_SHAPE',
-            shapeId,
-            newPosition: validPosition
+        // Use unified animation system for bounce back
+        const currentShape = state.activeShapes.find(s => s.id === shapeId);
+        console.log('🚀 STARTING BOUNCE:', { 
+            shapeId, 
+            currentPosition: currentShape?.position,
+            bounceTarget: validPosition 
         });
+        shapeAnimations.startBounceAnimation(shapeId, validPosition);
         
         
     };
@@ -839,9 +944,11 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     };
 
     const handleShapeDragEnd = (shape, event, info) => {
+        console.log('⭐ SHAPE DRAG END HANDLER:', { id: shape.id, type: shape.type });
         if (state.disabledShapes.includes(shape.id)) {
             return;
         }
+        
         
         // Get final position from enhanced motion tracking (already in play-area coordinates)
         const finalX = info.point?.x ?? (info.offset.x + (shape.position?.x || 0));
@@ -866,34 +973,23 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 });
             } else {
                 // Invalid drop on wrong container - bounce back to shape area
+                // No need to update position - motion values already have the drop position
                 bounceToRandomPositionInShapeArea(shape.id);
             }
         } else {
-            // Not overlapping any container - check bounds using smart boundary detection
-            if (shouldBounceFromBoundary(finalX, finalY, shape.type)) {
-                // Shape outside hard boundaries - bounce back
-                bounceToRandomPositionInShapeArea(shape.id);
-            } else if (isWithinPlayAreaBounds(finalX, finalY, shape.type)) {
-                // Shape within acceptable bounds - allow drop
-                dispatch({
-                    type: 'UPDATE_SHAPE_POSITION',
-                    shapeId: shape.id,
-                    position: { x: finalX, y: finalY }
-                });
-            } else {
-                // Shape in tolerance zone - gently nudge back to safe area
-                const playDimensions = getPlayAreaDimensions();
-                const shapeDims = getShapeDimensions(shape.type);
-                
-                const clampedX = Math.max(0, Math.min(finalX, playDimensions.width - shapeDims.width));
-                const clampedY = Math.max(0, Math.min(finalY, playDimensions.height - shapeDims.height));
-                
-                dispatch({
-                    type: 'UPDATE_SHAPE_POSITION',
-                    shapeId: shape.id,
-                    position: { x: clampedX, y: clampedY }
-                });
-            }
+            // Not overlapping any container - allow drop anywhere within reasonable bounds
+            const playDimensions = getPlayAreaDimensions();
+            const shapeDims = getShapeDimensions(shape.type);
+            
+            // If shape is way outside bounds, clamp to safe area
+            const clampedX = Math.max(0, Math.min(finalX, playDimensions.width - shapeDims.width));
+            const clampedY = Math.max(0, Math.min(finalY, playDimensions.height - shapeDims.height));
+            
+            dispatch({
+                type: 'UPDATE_SHAPE_POSITION',
+                shapeId: shape.id,
+                position: { x: clampedX, y: clampedY }
+            });
         }
     };
 
@@ -930,7 +1026,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
                                     onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                         </div>
@@ -951,7 +1047,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
                                     onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
@@ -994,7 +1090,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                         onDragStart={handleShapeDragStart}
                                         onDragEnd={handleShapeDragEnd}
                                         onAnimationComplete={handleShapeAnimationComplete}
-                                        dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                        dragConstraints={false}
                                     />
                                 );
                             })}
@@ -1027,7 +1123,8 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     isHighlighted={shape.isHighlighted}
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    onAnimationComplete={handleShapeAnimationComplete}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
@@ -1059,7 +1156,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     isHighlighted={false}
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
@@ -1091,7 +1188,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     isHighlighted={shape.isHighlighted}
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
@@ -1123,7 +1220,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     isHighlighted={shape.isHighlighted}
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
@@ -1155,7 +1252,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     isHighlighted={true} // Highlight shapes during intervention
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
@@ -1187,7 +1284,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     isHighlighted={false}
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
@@ -1219,7 +1316,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     isHighlighted={shape.isHighlighted}
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
@@ -1251,7 +1348,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     isHighlighted={shape.isHighlighted}
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
@@ -1283,7 +1380,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                     isHighlighted={false}
                                     onDragStart={handleShapeDragStart}
                                     onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={gameContentRef || { left: 20, right: 580, top: 20, bottom: 250 }}
+                                    dragConstraints={false}
                                 />
                             ))}
                             {/* Containers positioned at bottom */}
