@@ -362,6 +362,28 @@ const InteractiveLesson = () => {
         }
     };
 
+    // Shape sorting game intervention callbacks
+    const handleShapeHint = useCallback((shapeType) => {
+        const hintText = getFeedbackText(`${shapeType}-hint`);
+        if (hintText) {
+            setDynamicTutorText(hintText);
+        }
+    }, []);
+
+    const handleShapeAutoHelp = useCallback((shapeType) => {
+        const autoHelpText = getFeedbackText(`${shapeType}-auto-help`);
+        if (autoHelpText) {
+            setDynamicTutorText(autoHelpText);
+        }
+    }, []);
+
+    const handleShapeCorrection = useCallback((shapeType) => {
+        const correctionText = getFeedbackText(`${shapeType}-correction`);
+        if (correctionText) {
+            setDynamicTutorText(correctionText);
+        }
+    }, []);
+
     const handleShapeDesignCheck = () => {
         const targetPerimeter = interaction?.contentProps?.targetPerimeter;
         const feedbackIds = interaction?.contentProps?.feedbackIds;
@@ -466,6 +488,23 @@ const InteractiveLesson = () => {
     const handleTTSEnd = useCallback(() => {
         setIsSpeaking(false);
         setIsWaving(false);
+
+        // Check if this might be a post-animation TTS completion during interaction-based flow
+        if (interaction?.transitionType === 'interaction-based' && window.notifyPostAnimationTTSComplete) {
+            console.log('🔥 TTS ENDED during interaction-based, checking for post-animation completion');
+            console.log('🔥 activeFeedbackInteraction:', activeFeedbackInteraction?.id);
+            
+            // Try to notify the component - it will check if it's actually waiting
+            window.notifyPostAnimationTTSComplete();
+            
+            // Clear any feedback state
+            if (activeFeedbackInteraction) {
+                setActiveFeedbackInteraction(null);
+                setDynamicTutorText(null);
+            }
+            
+            return; // Don't advance - let the main interaction control flow
+        }
 
         // Use feedback interaction properties when active, otherwise use main interaction
         const currentInteraction = activeFeedbackInteraction || interaction;
@@ -584,6 +623,10 @@ const InteractiveLesson = () => {
             if (interaction.id === 'shape-demo-modeling') {
                 props.onAnimationComplete = handleAnimationComplete;
             }
+            // Pass intervention callbacks for practice phases
+            props.onShapeHint = handleShapeHint;
+            props.onShapeAutoHelp = handleShapeAutoHelp;
+            props.onShapeCorrection = handleShapeCorrection;
         } else {
             // For other components, spread contentProps directly
             props = { ...props, ...interaction.contentProps };

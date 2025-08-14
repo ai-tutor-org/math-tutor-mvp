@@ -47,10 +47,12 @@ const getShapeStatesForPhase = (phase, shapes, targetCount = 12) => {
         };
     }
     
-    // Non-interactive phases: all shapes disabled
+    // Non-interactive phases: show only target shapes, all disabled except for demo phases
+    const nonInteractiveShapes = shapes.slice(0, Math.min(targetCount, 12));
+    
     return {
-        activeShapes: shapes.slice(0, targetCount), // Still show target shapes
-        disabledShapes: shapes.map(s => s.id)       // But all are disabled
+        activeShapes: nonInteractiveShapes,
+        disabledShapes: nonInteractiveShapes.map(s => s.id) // All disabled for non-interactive phases
     };
 };
 
@@ -86,10 +88,11 @@ const initialState = {
     showInterventionOverlay: false,
     interventionData: null,
     showProgressIndicator: false,
-    helpStarsUsed: 0,
     shapesInitialized: false,
     demoStarted: false, // Flag to prevent multiple demo executions
-    initialActiveCount: 0
+    initialActiveCount: 0,
+    lastFailedShape: null,
+    waitingForPostAnimationTTS: false
 };
 
 // Game state reducer for managing all state transitions
@@ -361,12 +364,6 @@ const gameReducer = (state, action) => {
                 showProgressIndicator: action.show
             };
 
-        case 'USE_HELP_STAR':
-            return {
-                ...state,
-                helpStarsUsed: state.helpStarsUsed + 1,
-                interventionCount: state.interventionCount + 1
-            };
 
         case 'SET_CELEBRATION':
             return { 
@@ -407,17 +404,21 @@ const gameReducer = (state, action) => {
                     }
                 };
             } else {
-                // Handle incorrect drop - increment attempts but don't change shape arrays
+                // Handle incorrect drop - increment attempts and check for interventions
+                const newAttempts = state.shapeAttempts[shapeType] + 1;
+                
                 return {
                     ...state,
                     shapeAttempts: {
                         ...state.shapeAttempts,
-                        [shapeType]: state.shapeAttempts[shapeType] + 1
+                        [shapeType]: newAttempts
                     },
                     gameStats: {
                         ...state.gameStats,
                         totalAttempts: state.gameStats.totalAttempts + 1
-                    }
+                    },
+                    // Store intervention data for useEffect to handle
+                    lastFailedShape: { type: shapeType, attempts: newAttempts, id: dropShapeId }
                 };
             }
 
@@ -462,12 +463,24 @@ const gameReducer = (state, action) => {
                 demoStarted: true
             };
 
+        case 'CLEAR_LAST_FAILED_SHAPE':
+            return {
+                ...state,
+                lastFailedShape: null
+            };
+
+        case 'SET_WAITING_FOR_POST_ANIMATION_TTS':
+            return {
+                ...state,
+                waitingForPostAnimationTTS: action.waiting
+            };
+
         default:
             return state;
     }
 };
 
-const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimationComplete }) => {
+const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimationComplete, onShapeHint, onShapeAutoHelp, onShapeCorrection }) => {
     
     // Calculate initial state based on props (like other components)
     const initialGameState = useMemo(() => {
@@ -639,13 +652,17 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         }
     }, [state.currentPhase, state.activeShapes.length, state.shapesInitialized, state.demoStarted, onAnimationComplete]);
 
-    // Completion detection for GUIDED phase (triangle sorting)
+    // Completion detection for interactive phases (GUIDED, PRACTICE, CHALLENGE)
     useEffect(() => {
-        if (state.currentPhase === GAME_PHASES.GUIDED && 
+        const completablePhases = [GAME_PHASES.GUIDED, GAME_PHASES.PRACTICE, GAME_PHASES.CHALLENGE];
+        
+        if (completablePhases.includes(state.currentPhase) && 
             state.shapesInitialized &&  // Only after shapes are loaded
             state.initialActiveCount > 0 &&  // Had shapes to begin with
-            state.activeShapes.length === 0) {  // Now empty (completed)
+            state.activeShapes.length === 0 &&  // Now empty (completed)
+            !state.waitingForPostAnimationTTS) {  // Not waiting for post-animation TTS
             
+            console.log(`🎯 Phase ${state.currentPhase} completed - all shapes sorted`);
             
             // Signal completion to InteractiveLesson after brief delay
             setTimeout(() => {
@@ -654,7 +671,114 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 }
             }, 1500); // Allow time to see success message
         }
-    }, [state.currentPhase, state.activeShapes.length, state.shapesInitialized, state.initialActiveCount]);
+    }, [state.currentPhase, state.activeShapes.length, state.shapesInitialized, state.initialActiveCount, state.waitingForPostAnimationTTS]);
+
+    // Handle intervention logic for incorrect drops
+    useEffect(() => {
+        if (!state.lastFailedShape || !onShapeHint || !onShapeAutoHelp || !onShapeCorrection) return;
+
+        const { type: shapeType, attempts, id: shapeId } = state.lastFailedShape;
+        
+        // Trigger interventions during guided practice (Q4), practice (Q7), and challenge (Q11)
+        const interventionPhases = [GAME_PHASES.GUIDED, GAME_PHASES.PRACTICE, GAME_PHASES.CHALLENGE];
+        if (!interventionPhases.includes(state.currentPhase)) return;
+
+        if (attempts === 2) {
+            // 2nd wrong attempt: show targeted intervention (hint)
+            onShapeHint(shapeType);
+            
+            // Highlight the correct container
+            dispatch({ 
+                type: 'SET_BIN_GLOW', 
+                binType: shapeType, 
+                isGlowing: true 
+            });
+            
+            // Turn off glow after 3 seconds
+            setTimeout(() => {
+                dispatch({ 
+                    type: 'SET_BIN_GLOW', 
+                    binType: shapeType, 
+                    isGlowing: false 
+                });
+            }, 3000);
+            
+        } else if (attempts === 3) {
+            // 3rd wrong attempt: Show pre-animation help message, then animate, then show post-animation encouragement
+            onShapeAutoHelp(shapeType);
+            
+            // Start auto-placement animation after TTS starts
+            setTimeout(() => {
+                // Use unified coordinate system from cache (same as demo animation)
+                updateContainerPositions(); // Ensure cache is fresh
+                const containerPos = containerPositionsRef.current.get(shapeType);
+                let targetPosition = { x: 200, y: 350 }; // fallback position in play area
+                
+                if (containerPos) {
+                    // Calculate target position using cached container position (already play-area relative)
+                    targetPosition = {
+                        x: containerPos.centerX - 30, // Center of container minus shape half-width
+                        y: containerPos.centerY - 30  // Center of container minus shape half-height
+                    };
+                }
+                
+                // Start the auto-placement animation using unified system
+                shapeAnimations.startDemoAnimation(
+                    shapeId, 
+                    targetPosition
+                    // Animation completion handled by handleShapeAnimationComplete -> will call onShapeCorrection
+                );
+                
+                // Store the shape type for the animation completion handler
+                window.pendingCorrectionShapeType = shapeType;
+            }, 1000); // Delay to allow TTS to start (same as demo timing)
+        }
+
+        // Clear the lastFailedShape to prevent re-triggering
+        dispatch({ type: 'CLEAR_LAST_FAILED_SHAPE' });
+        
+    }, [state.lastFailedShape, state.currentPhase, onShapeHint, onShapeAutoHelp, onShapeCorrection]);
+
+    // Handle post-animation TTS completion notification
+    useEffect(() => {
+        const handlePostAnimationTTSComplete = () => {
+            console.log('🔥 handlePostAnimationTTSComplete called, waitingForPostAnimationTTS:', state.waitingForPostAnimationTTS);
+            if (state.waitingForPostAnimationTTS) {
+                console.log('🔥 Clearing waiting flag and checking completion');
+                dispatch({ type: 'SET_WAITING_FOR_POST_ANIMATION_TTS', waiting: false });
+                
+                // Now check if we should complete the interaction
+                const completablePhases = [GAME_PHASES.GUIDED, GAME_PHASES.PRACTICE, GAME_PHASES.CHALLENGE];
+                if (completablePhases.includes(state.currentPhase) && 
+                    state.shapesInitialized &&
+                    state.initialActiveCount > 0 &&
+                    state.activeShapes.length === 0) {
+                    
+                    console.log('🔥 Conditions met, advancing interaction');
+                    // Brief delay then advance
+                    setTimeout(() => {
+                        if (window.advanceToNextInteraction) {
+                            window.advanceToNextInteraction();
+                        }
+                    }, 100);
+                } else {
+                    console.log('🔥 Conditions not met for advancement:', {
+                        currentPhase: state.currentPhase,
+                        shapesInitialized: state.shapesInitialized,
+                        initialActiveCount: state.initialActiveCount,
+                        activeShapesLength: state.activeShapes.length
+                    });
+                }
+            }
+        };
+
+        // Expose the callback globally
+        window.notifyPostAnimationTTSComplete = handlePostAnimationTTSComplete;
+
+        return () => {
+            delete window.notifyPostAnimationTTSComplete;
+        };
+    }, [state.waitingForPostAnimationTTS, state.currentPhase, state.shapesInitialized, state.initialActiveCount, state.activeShapes.length]);
 
     // Initialize play area dimensions on mount using unified coordinate system
     useLayoutEffect(() => {
@@ -720,6 +844,54 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             
         }
     }, [state.pileArea, state.shapes.length, contentProps]);
+
+    // Handle phase changes from contentProps updates
+    useEffect(() => {
+        const { phaseConfig } = contentProps;
+        const newPhase = phaseConfig?.initialPhase;
+        const newTargetShapes = phaseConfig?.targetShapes;
+        const newMaxInterventions = phaseConfig?.maxInterventions;
+        
+        if (newPhase && newPhase !== state.currentPhase) {
+            // Phase has changed - update phase and recalculate shape states
+            dispatch({ type: 'SET_PHASE', phase: newPhase });
+            
+            // Update containers visibility based on phase
+            const shouldShowContainers = ['tools', 'modeling', 'guided', 'guided_success', 'practice_setup', 'practice', 'intervention', 'correction', 'challenge_setup', 'challenge', 'completion', 'recap'].includes(newPhase);
+            if (shouldShowContainers !== state.showContainers) {
+                dispatch({ type: 'SHOW_CONTAINERS' });
+            }
+            
+            // Update target shapes and max interventions if provided
+            if (newTargetShapes !== undefined && newTargetShapes !== state.targetShapes) {
+                dispatch({ type: 'SET_TARGET_SHAPES', count: newTargetShapes });
+            }
+            if (newMaxInterventions !== undefined && newMaxInterventions !== state.maxInterventions) {
+                dispatch({ type: 'SET_MAX_INTERVENTIONS', count: newMaxInterventions });
+            }
+            
+            // Recalculate shape states based on new phase and target count
+            if (state.shapes.length > 0) {
+                const targetCount = newTargetShapes || state.targetShapes;
+                const shapeStates = getShapeStatesForPhase(newPhase, state.shapes, targetCount);
+                
+                dispatch({
+                    type: 'SET_ACTIVE_SHAPES',
+                    shapes: shapeStates.activeShapes
+                });
+                
+                // Update disabled shapes array
+                const updatedDisabledShapes = state.shapes
+                    .filter(s => !shapeStates.activeShapes.some(active => active.id === s.id))
+                    .map(s => s.id);
+                
+                dispatch({
+                    type: 'ENABLE_SHAPES',
+                    shapeIds: shapeStates.activeShapes.map(s => s.id)
+                });
+            }
+        }
+    }, [contentProps, state.currentPhase, state.targetShapes, state.maxInterventions, state.shapes]);
     
     // Removed reactive shape enabling - now handled deterministically in INITIALIZE_SHAPES
 
@@ -771,6 +943,46 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                         onAnimationComplete();
                     }
                 }, 300);
+                
+                return;
+            }
+        }
+
+        // Handle auto-placement animation completion (intervention 3rd attempt)
+        if (type === 'unified-demo' && 
+            [GAME_PHASES.GUIDED, GAME_PHASES.PRACTICE, GAME_PHASES.CHALLENGE].includes(state.currentPhase)) {
+            
+            const animatedShape = state.activeShapes.find(s => s.id === shapeId);
+            if (animatedShape) {
+                
+                // First complete the animation to clear animation state
+                dispatch({
+                    type: 'COMPLETE_SHAPE_ANIMATION',
+                    shapeId
+                });
+                
+                // Then trigger SHAPE_DROP for auto-placement
+                dispatch({
+                    type: 'SHAPE_DROP',
+                    shapeId: shapeId,
+                    shapeType: animatedShape.type,
+                    targetBin: animatedShape.type,
+                    isValidDrop: true
+                });
+                
+                // Check if this was an auto-placement intervention and trigger post-animation feedback
+                if (window.pendingCorrectionShapeType) {
+                    const shapeType = window.pendingCorrectionShapeType;
+                    delete window.pendingCorrectionShapeType;
+                    
+                    // Set flag to wait for post-animation TTS completion
+                    dispatch({ type: 'SET_WAITING_FOR_POST_ANIMATION_TTS', waiting: true });
+                    
+                    // Immediately trigger post-animation encouragement TTS
+                    if (onShapeCorrection) {
+                        onShapeCorrection(shapeType);
+                    }
+                }
                 
                 return;
             }
@@ -944,7 +1156,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     };
 
     const handleShapeDragEnd = (shape, event, info) => {
-        console.log('⭐ SHAPE DRAG END HANDLER:', { id: shape.id, type: shape.type });
+        console.log('🎯 SHAPE DRAG END HANDLER:', { id: shape.id, type: shape.type });
         if (state.disabledShapes.includes(shape.id)) {
             return;
         }
@@ -972,8 +1184,16 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     isValidDrop: true
                 });
             } else {
-                // Invalid drop on wrong container - bounce back to shape area
-                // No need to update position - motion values already have the drop position
+                // Invalid drop on wrong container - track attempt and bounce back
+                dispatch({
+                    type: 'SHAPE_DROP',
+                    shapeId: shape.id,
+                    shapeType: shape.type,
+                    targetBin: overlappingContainer,
+                    isValidDrop: false
+                });
+                
+                // Bounce back to shape area
                 bounceToRandomPositionInShapeArea(shape.id);
             }
         } else {
