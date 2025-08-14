@@ -8,10 +8,10 @@ const SquareSolution = ({ onAnswerSubmit }) => {
 
     useEffect(() => {
         const sequence = [
-            { side: 'top', delay: 4000, label: '15m' },
-            { side: 'right', delay: 5000, label: '15m' }, 
-            { side: 'bottom', delay: 6000, label: '15m' },
-            { side: 'left', delay: 7000, label: '15m' }
+            { side: 'top', delay: 7000, label: '15m' },
+            { side: 'right', delay: 8000, label: '15m' }, 
+            { side: 'bottom', delay: 9000, label: '15m' },
+            { side: 'left', delay: 10000, label: '15m' }
         ];
 
         const timeouts = sequence.map(({ side, delay, label }) => 

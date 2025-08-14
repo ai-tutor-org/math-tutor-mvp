@@ -253,7 +253,7 @@ export const conditionalPresentations = {
             {
                 id: 'pentagon-solution',
                 type: 'pentagon-solution',
-                tutorText: "Let's add them up together: \n\nEight plus eight plus eight plus eight plus eight equals forty.",
+                tutorText: "Let's add them up together: \n\n Eight... plus eight... plus eight... plus eight... plus eight... equals forty.",
                 ContentComponent: PentagonSolution,
                 transitionType: 'manual',
                 showNextButton: true,

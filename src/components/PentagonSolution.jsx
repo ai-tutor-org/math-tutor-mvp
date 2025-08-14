@@ -7,11 +7,11 @@ const PentagonSolution = () => {
 
     useEffect(() => {
         const sequence = [
-            { side: 'top', delay: 4000 },
-            { side: 'upperRight', delay: 5000 }, 
-            { side: 'lowerRight', delay: 6000 },
-            { side: 'lowerLeft', delay: 7000 },
-            { side: 'upperLeft', delay: 8000 }
+            { side: 'top', delay: 2000 },
+            { side: 'upperRight', delay: 3000 }, 
+            { side: 'lowerRight', delay: 4000 },
+            { side: 'lowerLeft', delay: 5000 },
+            { side: 'upperLeft', delay: 6000 }
         ];
 
         const timeouts = sequence.map(({ side, delay }) => 
