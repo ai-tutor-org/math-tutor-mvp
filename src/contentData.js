@@ -105,10 +105,16 @@ export const conditionalPresentations = {
                     friendSteps: 8,
                     yourFootColor: '#4A90E2',
                     friendFootColor: '#e24a4a',
-                    showQuestion: true,
                     question: "What do you think is the reason?",
                     choices: [
-                        { text: "The size of my feet and my friend's feet are different", isCorrect: true }
+                        {
+                            text: "The size of my feet and my friend's feet are different",
+                            isCorrect: true,
+                            onSelectAction: {
+                                type: 'navigateToConditionalPresentation',
+                                target: 'measurement-reason-correct'
+                            }
+                        }
                     ]
                 },
                 transitionType: 'manual',
@@ -577,7 +583,24 @@ export const presentations = {
                     totalSteps: 8,
                     footIconColor: '#e24a4a',
                     previousResultText: "You: 10 Steps",
-                    buttonText: "Friend's Turn"
+                    buttonText: "Friend's Turn",
+                    persistentStepsData: Array.from({ length: 10 }, (_, i) => {
+                        const svgWidth = 500;
+                        const innerRoomLeft = (47.8 / 578) * svgWidth; // ~41px
+                        const innerRoomWidth = (482.4 / 578) * svgWidth; // ~417px
+                        const availableWidth = innerRoomWidth - 20; // Some padding
+                        const slotWidth = availableWidth / 10;
+                        const footSize = slotWidth * 0.9;
+                        const slotStart = innerRoomLeft + 10 + (i * slotWidth);
+                        const footOffsetInSlot = (slotWidth - footSize) / 2;
+                        const position = slotStart + footOffsetInSlot;
+                        return {
+                            id: `persistent-${i}`,
+                            position: position,
+                            color: '#4A90E2',
+                            size: footSize
+                        };
+                    })
                 },
                 transitionType: 'manual',
             },
@@ -585,7 +608,14 @@ export const presentations = {
                 id: 'conflicting-problem',
                 type: 'conflicting-measurements',
                 tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. \n\nBut the room didn't change! Who is right? This is confusing, isn't it?",
-                ContentComponent: ConflictingMeasurements,
+                ContentComponent: RoomIllustration,
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a',
+                },
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: 'Next',
@@ -601,11 +631,24 @@ export const presentations = {
                     friendSteps: 8,
                     yourFootColor: '#4A90E2',
                     friendFootColor: '#e24a4a',
-                    showQuestion: true,
                     question: "What do you think is the reason?",
                     choices: [
-                        { text: 'The size of the room changed', isCorrect: false },
-                        { text: "The size of my feet and my friend's feet are different", isCorrect: true }
+                        {
+                            text: 'The size of the room changed',
+                            isCorrect: false,
+                            onSelectAction: {
+                                type: 'navigateToConditionalPresentation',
+                                target: 'measurement-reason-incorrect'
+                            }
+                        },
+                        {
+                            text: "The size of my feet and my friend's feet are different",
+                            isCorrect: true,
+                            onSelectAction: {
+                                type: 'navigateToConditionalPresentation',
+                                target: 'measurement-reason-correct'
+                            }
+                        }
                     ]
                 },
                 transitionType: 'manual',

@@ -19,12 +19,117 @@
     margin-bottom: 10px;
 }
 
-.room-rectangle {
-    width: 500px;
-    height: 200px;
-    border: 10px solid #8D6E63;
-    background-color: #F5EFE6;
+.room-svg-container {
     position: relative;
+    width: 500px;
+    height: 314px;
+}
+
+.room-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.room-inner-wall {
+    position: absolute;
+    top: 33px;
+    left: 33px;
+    width: 434px;
+    height: 134px;
+    background-color: #F6EFE2;
+    border: 1px solid #AA6C47;
+}
+
+.room-corner-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.corner-line {
+    position: absolute;
+    width: 1.44px;
+    background-color: #AA6C47;
+    transform-origin: top;
+}
+
+.corner-line.top-left {
+    top: 0;
+    left: 0;
+    height: 66px;
+    transform: rotate(45deg);
+}
+
+.corner-line.top-right {
+    top: 0;
+    right: 0;
+    height: 66px;
+    transform: rotate(-45deg);
+}
+
+.corner-line.bottom-left {
+    bottom: 0;
+    left: 0;
+    height: 66px;
+    transform: rotate(-45deg);
+}
+
+.corner-line.bottom-right {
+    bottom: 0;
+    right: 0;
+    height: 66px;
+    transform: rotate(45deg);
+}
+
+.room-door {
+    position: absolute;
+    top: 8px;
+    left: 188px;
+    width: 124px;
+    height: 16px;
+    background-color: white;
+    border-radius: 0 0 2px 2px;
+}
+
+.room-window {
+    position: absolute;
+    bottom: 8px;
+    left: 230px;
+    width: 40px;
+    height: 32px;
+    background-color: white;
+    border-radius: 2px 2px 0 0;
+}
+
+.room-red-line {
+    position: absolute;
+    top: 50%;
+    left: 42px;
+    right: 42px;
+    height: 2px;
+    background-color: #EB5757;
+    transform: translateY(-50%);
+    z-index: 5;
+}
+
+.room-measurement-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 13px;
+    height: 22px;
+    background-color: #F6EFE2;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    color: #EB5757;
+    font-weight: bold;
 }
 
 .dimension-line {
@@ -55,9 +160,13 @@
 
 .foot {
     position: absolute;
-    top: 50%;
+    top: 90px;
     transform: translateY(-50%);
     z-index: 10;
+}
+
+.foot.friend-foot-regular {
+    top: 220px;
 }
 
 .step-counter {
@@ -92,29 +201,83 @@
 }
 
 .step-button {
-    padding: 15px 30px;
-    font-size: 1.5rem;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: normal;
     color: white;
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    background: #2C2C2C;
     border: none;
-    border-radius: 25px;
+    border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
     transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    min-height: 49px;
 }
 
 .step-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-    background: linear-gradient(135deg, #5CBF60 0%, #4CAF50 100%);
+    background: #3C3C3C;
+    transform: translateY(-2px);
 }
 
 .step-button:active {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    transform: translateY(0px);
+    background: #1C1C1C;
+}
+
+.step-button-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #484D5C;
+    border-radius: 8px;
+    font-size: 20px;
+}
+
+.step-counters-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.step-counter-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-counter-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: normal;
+    background: #2C2C2C;
+    border: none;
+    border-radius: 12px;
+    min-height: 49px;
+    min-width: 143px;
+}
+
+.step-counter-display.you {
+    color: #FFF;
+}
+
+.step-counter-display.friend {
+    color: #FFF;
+}
+
+.step-counter-label {
+    font-size: 14px;
+    font-weight: normal;
+    color: #667399;
 }
 
 .completion-message {
@@ -204,59 +367,6 @@
     left: 10px;
 }
 
-.question-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    margin-top: 20px;
-    width: 100%;
-}
-
-.question-text {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    margin: 0;
-}
-
-.choices-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    max-width: 500px;
-}
-
-.choice-button {
-    padding: 15px 25px;
-    font-size: 1.4rem;
-    font-weight: bold;
-    font-family: 'Poppins', sans-serif;
-    border: 3px solid rgba(255, 255, 255, 0.6);
-    border-radius: 15px;
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-}
-
-.choice-button:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.8);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
-
-.choice-button.selected {
-    background-color: rgba(76, 175, 80, 0.8);
-    border-color: #4CAF50;
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-}
 
 .footstep-counter {
     font-size: 1.2rem;

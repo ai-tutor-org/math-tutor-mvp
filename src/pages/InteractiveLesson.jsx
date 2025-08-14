@@ -255,29 +255,17 @@ const InteractiveLesson = () => {
         console.log('Current interaction ID:', interaction?.id);
         console.log('Answer is correct:', answerData.isCorrect);
 
-        // Handle measurement reason question - branch based on answer
-        if (interaction?.id === 'measurement-reason-question') {
-            if (answerData.isCorrect) {
-                // Correct answer: go directly to correct explanation
-                console.log('Navigating to measurement-reason-correct');
-                setCurrentConditionalPresentation('measurement-reason-correct');
-                setCurrentInteractionIndex(0);
-            } else {
-                // Incorrect answer: go to incorrect feedback and retry
-                console.log('Navigating to measurement-reason-incorrect');
-                setCurrentConditionalPresentation('measurement-reason-incorrect');
+        // Handle multiple choice questions with onSelectAction
+        if (interaction?.type === 'multiple-choice-question' && answerData.onSelectAction) {
+            const action = answerData.onSelectAction;
+            if (action.type === 'navigateToConditionalPresentation') {
+                console.log(`Navigating to ${action.target}`);
+                setCurrentConditionalPresentation(action.target);
                 setCurrentInteractionIndex(0);
             }
             return;
         }
 
-        // Handle retry question - only one correct option now
-        if (interaction?.id === 'measurement-reason-retry') {
-            // Only correct answer available, go to correct explanation
-            setCurrentConditionalPresentation('measurement-reason-correct');
-            setCurrentInteractionIndex(0);
-            return;
-        }
 
         const shapeIds = new Set(['measure-notebook', 'measure-sticky-note', 'measure-coaster', 'measure-house-sign']);
         if (shapeIds.has(answerData.interactionId)) {
@@ -923,6 +911,47 @@ const InteractiveLesson = () => {
                             >
                                 Check My Shape
                             </Button>
+                        </Box>
+                    )}
+
+
+
+                    {/* Multiple Choice Question Interface - General case */}
+                    {interaction?.type === 'multiple-choice-question' && !isSpeaking && !showNextButton && (
+                        <Box sx={{ mb: 3, width: '100%' }}>
+                            <Box sx={{ mb: 3 }}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                    {interaction?.contentProps?.choices?.map((choice, index) => (
+                                        <Button
+                                            key={index}
+                                            variant="outlined"
+                                            onClick={() => handleAnswer({ 
+                                                text: choice.text, 
+                                                isCorrect: choice.isCorrect,
+                                                onSelectAction: choice.onSelectAction
+                                            })}
+                                            sx={{
+                                                padding: '12px 16px',
+                                                borderRadius: '12px',
+                                                border: '1px solid #545E7D',
+                                                background: '#484D5C',
+                                                fontWeight: 'bold',
+                                                color: '#fff',
+                                                textTransform: 'none',
+                                                fontSize: '0.95rem',
+                                                textAlign: 'left',
+                                                justifyContent: 'flex-start',
+                                                '&:hover': {
+                                                    background: '#545E7D',
+                                                    borderColor: '#545E7D'
+                                                }
+                                            }}
+                                        >
+                                            {choice.text}
+                                        </Button>
+                                    ))}
+                                </Box>
+                            </Box>
                         </Box>
                     )}
 
