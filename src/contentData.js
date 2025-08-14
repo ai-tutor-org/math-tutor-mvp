@@ -35,7 +35,7 @@ export const lessons = {
         sequence: [
             {
                 presentationId: 'introduction-to-standard-units',
-                transition: { type: 'manual', buttonText: "Continue" }
+                transition: { type: 'manual', buttonText: "Let's Learn!" }
             },
             {
                 presentationId: 'measurement-practice-activities',
@@ -47,27 +47,27 @@ export const lessons = {
             },
             {
                 presentationId: 'farmer-mission-intro',
-                transition: { type: 'manual', buttonText: "Continue" }
+                transition: { type: 'manual', buttonText: "Start Mission!" }
             },
             {
                 presentationId: 'farmer-rectangle-challenge',
-                transition: { type: 'manual', buttonText: "Continue" }
+                transition: { type: 'manual', buttonText: "Next Farm!" }
             },
             {
                 presentationId: 'square-field-practice',
-                transition: { type: 'manual', buttonText: "Continue" }
+                transition: { type: 'manual', buttonText: "Another Challenge!" }
             },
             {
                 presentationId: 'triangle-field-practice',
-                transition: { type: 'manual', buttonText: "Continue" }
+                transition: { type: 'manual', buttonText: "Final Shape!" }
             },
             {
                 presentationId: 'pentagon-final-challenge',
-                transition: { type: 'manual', buttonText: "Continue" }
+                transition: { type: 'manual', buttonText: "Let's Create!" }
             },
             {
                 presentationId: 'shape-designer-intro',
-                transition: { type: 'manual', buttonText: "Continue" }
+                transition: { type: 'manual', buttonText: "First Challenge!" }
             },
             {
                 presentationId: 'rectangle-design-challenge',
@@ -135,9 +135,7 @@ export const conditionalPresentations = {
                     yourFootColor: '#4A90E2',
                     friendFootColor: '#e24a4a'
                 },
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue',
+                transitionType: 'auto',
                 navigateToInteraction: 'standard-units-intro' // Continue to standard units explanation
             }
         ]
@@ -160,9 +158,7 @@ export const conditionalPresentations = {
                 id: 'shape-correct',
                 type: 'tutor-monologue',
                 tutorText: "Correct! Great job measuring.",
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "Continue"
+                transitionType: 'auto'
             },
             {
                 id: 'shape-incorrect',
@@ -188,9 +184,7 @@ export const conditionalPresentations = {
                 type: 'rectangle-solution',
                 tutorText: "Hmm, let's try a different approach. Let's add up the sides together. \n\nThirty plus twenty plus thirty plus twenty equals one hundred.",
                 ContentComponent: RectangleSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
+                transitionType: 'auto'
             },
             {
                 id: 'square-correct',
@@ -209,9 +203,7 @@ export const conditionalPresentations = {
                 type: 'square-solution',
                 tutorText: "Let's work this one out together. \n\nSince all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
                 ContentComponent: SquareSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
+                transitionType: 'auto'
             },
             {
                 id: 'triangle-correct',
@@ -230,9 +222,7 @@ export const conditionalPresentations = {
                 type: 'triangle-solution',
                 tutorText: "No problem. Let's add them up: \n\nTen plus twelve plus eighteen equals forty.",
                 ContentComponent: TriangleSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
+                transitionType: 'auto'
             },
             {
                 id: 'pentagon-correct',
@@ -251,9 +241,7 @@ export const conditionalPresentations = {
                 type: 'pentagon-solution',
                 tutorText: "Let's add them up together: \n\n Eight... plus eight... plus eight... plus eight... plus eight... equals forty.",
                 ContentComponent: PentagonSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
+                transitionType: 'auto'
             },
             // Design feedback interactions
             {
@@ -322,9 +310,7 @@ export const conditionalPresentations = {
                     solutionWidth: 6,
                     solutionHeight: 4
                 },
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
+                transitionType: 'auto'
             },
             {
                 id: 'rectangle-design-correct-2',
@@ -392,9 +378,7 @@ export const conditionalPresentations = {
                     solutionWidth: 8,
                     solutionHeight: 5
                 },
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
+                transitionType: 'auto'
             },
             {
                 id: 'rectangle-design-correct-3',
@@ -462,9 +446,7 @@ export const conditionalPresentations = {
                     solutionWidth: 2,
                     solutionHeight: 2
                 },
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue'
+                transitionType: 'auto'
             },
             // Shape Sorting Game feedback interactions
             {
@@ -618,7 +600,7 @@ export const presentations = {
                 },
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: 'Next',
+                nextButtonText: 'Interesting!',
             },
             {
                 id: 'measurement-reason-question',
@@ -668,7 +650,7 @@ export const presentations = {
                 contentProps: { length: 3, unit: 'cm' },
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: 'Next',
+                nextButtonText: 'Show Me More!',
             },
             {
                 id: 'meter-stick-demo',
@@ -676,9 +658,7 @@ export const presentations = {
                 tutorText: "Nice! For bigger things, we use a bigger unit called a meter. \n\nA meter is the same as 100 centimeters. \n\nSee how this meter stick compares to the height of a door?",
                 ContentComponent: MeterStick,
                 contentProps: {},
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Continue',
+                transitionType: 'auto',
             }
         ]
     },
@@ -795,7 +775,7 @@ export const presentations = {
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: "Continue",
+                nextButtonText: "Show Me!",
                 phaseConfig: { initialPhase: 'intro' }
             },
             {
@@ -805,7 +785,7 @@ export const presentations = {
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: "Continue",
+                nextButtonText: "Watch Demo!",
                 phaseConfig: { initialPhase: 'tools' }
             },
             {
@@ -825,7 +805,7 @@ export const presentations = {
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: "Continue",
+                nextButtonText: "More Practice!",
                 phaseConfig: { initialPhase: 'guided', targetShapes: 1 }
             },
             {
@@ -871,7 +851,7 @@ export const presentations = {
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: "Continue",
+                nextButtonText: "What's Next?",
                 phaseConfig: { initialPhase: 'completion' }
             },
             {
@@ -972,7 +952,7 @@ export const presentations = {
                 ContentComponent: PerimeterDefinition,
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: 'Next'
+                nextButtonText: 'Got It!'
             }
         ]
     },
@@ -999,9 +979,7 @@ export const presentations = {
                 type: 'tutor-monologue',
                 tutorText: "Great job! Farmer Giles needs 100 meters of fencing.",
                 ContentComponent: FarmerCelebration,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: 'Next'
+                transitionType: 'auto'
             }
         ]
     },
@@ -1070,7 +1048,7 @@ export const presentations = {
                 ContentComponent: () => null,
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: "Go to Next Lesson"
+                nextButtonText: "I'm a Pro!"
             }
         ]
     },
