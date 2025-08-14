@@ -803,9 +803,7 @@ export const presentations = {
                 type: 'shape-sorting-game',
                 tutorText: "Now it's your turn! Try sorting this triangle into the correct container. Drag it to where you think it belongs.",
                 layout: 'full-screen',
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "More Practice!",
+                transitionType: 'interaction-based',
                 phaseConfig: { initialPhase: 'guided', targetShapes: 1 }
             },
             {
@@ -898,14 +896,25 @@ export const presentations = {
             {
                 id: 'shape-recap-square',
                 type: 'shape-sorting-game',
-                tutorText: "Squares have four equal sides. They belong in the squares group. This skill will help you in many areas of math!",
+                tutorText: "Squares have four equal sides. They belong in the squares group.",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'recap' },
+                contentProps: {
+                    highlightedShape: 'square'
+                }
+            },
+            {
+                id: 'shape-recap-final',
+                type: 'shape-sorting-game',
+                tutorText: "Great work! You've learned to identify and sort all these different shapes. This skill will help you in many areas of math!",
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Continue to Next Lesson",
                 phaseConfig: { initialPhase: 'recap' },
                 contentProps: {
-                    highlightedShape: 'square'
+                    highlightedShape: 'all'
                 }
             }
         ]

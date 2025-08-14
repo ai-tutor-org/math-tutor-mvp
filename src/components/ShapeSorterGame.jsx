@@ -1643,19 +1643,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 return (
                     <div className="phase-completion">
                         <div className="play-area" ref={playAreaRef}>
-                            {/* Show remaining shapes if any */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={true}
-                                    isHighlighted={false}
-                                    onDragStart={handleShapeDragStart}
-                                    onDragEnd={handleShapeDragEnd}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                            {/* Containers positioned at bottom */}
+                            {/* Containers positioned at bottom - no shapes shown */}
                             <div className="containers-area">
                                 {Object.values(SHAPE_TYPES).map(shapeType => (
                                     <SortingBin
