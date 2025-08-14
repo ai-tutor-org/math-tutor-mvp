@@ -728,8 +728,8 @@ const InteractiveLesson = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     p: 3,
-                    alignItems: 'center',
-                    textAlign: 'center'
+                    alignItems: 'flex-start',
+                    textAlign: 'left'
                 }}>
                     {/* Audio Controls */}
                     <Box sx={{
@@ -790,7 +790,7 @@ const InteractiveLesson = () => {
                         <Box sx={{ mb: 3, width: '100%' }}>
                             {/* Show solution equation if needed */}
                             {showPerimeterSolution && (
-                                <Box sx={{ mb: 2, textAlign: 'center' }}>
+                                <Box sx={{ mb: 2, textAlign: 'left' }}>
                                     <Typography variant="body2" sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>
                                         {interaction?.contentProps?.shape?.type === 'rectangle' &&
                                             `${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} + ${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} = ${interaction.contentProps.correctAnswer}`
@@ -868,11 +868,12 @@ const InteractiveLesson = () => {
                                         fontSize: '1rem',
                                         minWidth: '120px',
                                         '&:hover': {
-                                            background: '#45a049'
+                                            background: '#545E7D'
                                         },
                                         '&:disabled': {
                                             background: '#2C2C2C',
-                                            color: '#666'
+                                            color: '#666',
+                                            border: '1px solid #2C2C2C'
                                         }
                                     }}
                                 >
@@ -886,7 +887,7 @@ const InteractiveLesson = () => {
                     {interaction?.type === 'perimeter-design' && !isSpeaking && !showNextButton && (
                         <Box sx={{ mb: 3, width: '100%' }}>
                             {/* Show current vs target perimeter */}
-                            <Box sx={{ mb: 2, textAlign: 'center' }}>
+                            <Box sx={{ mb: 2, textAlign: 'left' }}>
                                 <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1 }}>
                                     Target: {interaction?.contentProps?.targetPerimeter} units
                                 </Typography>
@@ -900,12 +901,13 @@ const InteractiveLesson = () => {
                                     padding: '8px',
                                     borderRadius: '12px',
                                     background: '#4CAF50',
+                                    background: '#484D5C',
                                     color: '#fff',
                                     textTransform: 'none',
                                     fontSize: '1rem',
                                     minWidth: '140px',
                                     '&:hover': {
-                                        background: '#45a049'
+                                        background: '#545E7D'
                                     }
                                 }}
                             >
@@ -963,14 +965,14 @@ const InteractiveLesson = () => {
                             sx={{
                                 padding: '8px',
                                 borderRadius: '12px',
-                                background: '#2C2C2C',
+                                background: '#484D5C',
                                 color: '#fff',
                                 textTransform: 'none',
                                 fontSize: '1rem',
                                 minWidth: '140px',
                                 textAlign: 'center',
                                 '&:hover': {
-                                    background: '#3C3C3C'
+                                    background: '#545E7D'
                                 }
                             }}
                         >
