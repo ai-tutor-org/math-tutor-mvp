@@ -95,10 +95,10 @@ const InteractionList = ({
     const interactions = getAllInteractions();
 
     const handleInteractionClick = (interaction) => {
-        if (interaction.isFeedback) {
-            // Don't navigate to feedback interactions
-            return;
-        }
+        // if (interaction.isFeedback) {
+        //     // Don't navigate to feedback interactions
+        //     return;
+        // }
         onInteractionSelect(interaction);
         onClose();
     };
@@ -147,7 +147,7 @@ const InteractionList = ({
                     >
                         <ListItemButton
                             onClick={() => handleInteractionClick(interaction)}
-                            disabled={interaction.isFeedback}
+                            // disabled={interaction.isFeedback}
                             sx={{
                                 py: 2,
                                 px: 2,
