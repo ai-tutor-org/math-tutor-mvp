@@ -18,14 +18,14 @@ const GameShape = ({
     isHighlighted = false,
     className = ''
 }) => {
-    console.log('🟣 GAMESHAPE RENDER:', {
-        shapeId: shape.id,
-        shapeType: shape.type,
-        position: shape.position,
-        animationType: shape.animation?.type,
-        isDisabled,
-        timestamp: Date.now()
-    });
+    // console.log('🟣 GAMESHAPE RENDER:', {
+    //     shapeId: shape.id,
+    //     shapeType: shape.type,
+    //     position: shape.position,
+    //     animationType: shape.animation?.type,
+    //     isDisabled,
+    //     timestamp: Date.now()
+    // });
     
     // Motion values for position tracking
     // IMPORTANT: Motion values are the single source of truth for position during interactions
@@ -39,10 +39,10 @@ const GameShape = ({
     // Only sync motion values with Redux position on initial mount
     React.useEffect(() => {
         if (isFirstRender.current && shape.position) {
-            console.log('🟢 INITIAL POSITION SETUP:', {
-                shapeId: shape.id,
-                position: shape.position
-            });
+            // console.log('🟢 INITIAL POSITION SETUP:', {
+            //     shapeId: shape.id,
+            //     position: shape.position
+            // });
             x.set(shape.position.x ?? 0);
             y.set(shape.position.y ?? 0);
             isFirstRender.current = false;
@@ -50,14 +50,14 @@ const GameShape = ({
     }, []); // Empty deps - only run once
     
     // Log position changes for debugging but DON'T sync
-    React.useEffect(() => {
-        console.log('📍 POSITION CHANGE DETECTED (NO SYNC):', {
-            shapeId: shape.id,
-            reduxPosition: shape.position,
-            currentMotionValues: { x: x.get(), y: y.get() },
-            animationType: shape.animation?.type
-        });
-    }, [shape.position?.x, shape.position?.y]);
+    // React.useEffect(() => {
+    //     console.log('📍 POSITION CHANGE DETECTED (NO SYNC):', {
+    //         shapeId: shape.id,
+    //         reduxPosition: shape.position,
+    //         currentMotionValues: { x: x.get(), y: y.get() },
+    //         animationType: shape.animation?.type
+    //     });
+    // }, [shape.position?.x, shape.position?.y]);
     // Determine shape-specific CSS classes
     const getShapeClasses = () => {
         const classes = ['game-shape', shape.type];

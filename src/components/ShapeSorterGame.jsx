@@ -373,8 +373,10 @@ const gameReducer = (state, action) => {
 
         case 'SHAPE_DROP':
             const { shapeId: dropShapeId, shapeType, targetBin, isValidDrop: isValid } = action;
+            console.log('🔍 SHAPE_DROP REDUCER:', { dropShapeId, shapeType, targetBin, isValid });
             
             if (isValid) {
+                console.log('🔍 Valid drop - incrementing counter from', state.bins[targetBin].count, 'to', state.bins[targetBin].count + 1);
                 // Move shape to correct bin
                 const updatedBins = {
                     ...state.bins,
@@ -470,6 +472,7 @@ const gameReducer = (state, action) => {
             };
 
         case 'SET_WAITING_FOR_POST_ANIMATION_TTS':
+            console.log('🔍 REDUCER: Setting waitingForPostAnimationTTS to', action.waiting);
             return {
                 ...state,
                 waitingForPostAnimationTTS: action.waiting
@@ -722,14 +725,19 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     };
                 }
                 
+                console.log('🔍 Starting auto-placement animation:', { shapeId, targetPosition });
+                
                 // Start the auto-placement animation using unified system
                 shapeAnimations.startDemoAnimation(
                     shapeId, 
                     targetPosition
-                    // Animation completion handled by handleShapeAnimationComplete -> will call onShapeCorrection
+                    // Let GameShape's onAnimationComplete handle completion naturally (like demo animation)
                 );
                 
+                console.log('🔍 Auto-placement animation started');
+                
                 // Store the shape type for the animation completion handler
+                console.log('🔍 Setting pendingCorrectionShapeType to:', shapeType);
                 window.pendingCorrectionShapeType = shapeType;
             }, 1000); // Delay to allow TTS to start (same as demo timing)
         }
@@ -952,13 +960,29 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         if (type === 'unified-demo' && 
             [GAME_PHASES.GUIDED, GAME_PHASES.PRACTICE, GAME_PHASES.CHALLENGE].includes(state.currentPhase)) {
             
+            console.log('🔍 AUTO-PLACEMENT ANIMATION COMPLETE:', {
+                shapeId,
+                currentPhase: state.currentPhase,
+                activeShapes: state.activeShapes.map(s => ({ id: s.id, type: s.type })),
+                pendingCorrectionShapeType: window.pendingCorrectionShapeType
+            });
+            
             const animatedShape = state.activeShapes.find(s => s.id === shapeId);
+            console.log('🔍 Found animated shape:', animatedShape);
+            
             if (animatedShape) {
                 
                 // First complete the animation to clear animation state
                 dispatch({
                     type: 'COMPLETE_SHAPE_ANIMATION',
                     shapeId
+                });
+                
+                console.log('🔍 Dispatching SHAPE_DROP for auto-placement:', {
+                    shapeId: shapeId,
+                    shapeType: animatedShape.type,
+                    targetBin: animatedShape.type,
+                    isValidDrop: true
                 });
                 
                 // Then trigger SHAPE_DROP for auto-placement
@@ -976,6 +1000,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     delete window.pendingCorrectionShapeType;
                     
                     // Set flag to wait for post-animation TTS completion
+                    console.log('🔍 Setting waitingForPostAnimationTTS to TRUE');
                     dispatch({ type: 'SET_WAITING_FOR_POST_ANIMATION_TTS', waiting: true });
                     
                     // Immediately trigger post-animation encouragement TTS

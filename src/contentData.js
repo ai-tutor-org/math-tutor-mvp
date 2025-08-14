@@ -87,16 +87,6 @@ export const lessons = {
             'measurement-reason-incorrect',
             'measurement-reason-correct'
         ]
-    },
-    // Test lesson for Shape Sorting Game (B1.1 Testing)
-    'shape-game-test': {
-        title: "Shape Sorting Game Test",
-        sequence: [
-            {
-                presentationId: 'shape-sorting-game-test',
-                transition: { type: 'manual', buttonText: "Complete" }
-            }
-        ]
     }
 };
 
@@ -753,20 +743,6 @@ export const presentations = {
             }
         ]
     },
-    // Test presentation for Shape Sorting Game (B1.1 Testing)
-    'shape-sorting-game-test': {
-        interactions: [
-            {
-                id: 'shape-game-test',
-                type: 'shape-sorting-game',
-                tutorText: "Welcome to the Shape Factory! Let's test our new sorting game.",
-                layout: 'full-screen',
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "Complete Test"
-            }
-        ]
-    },
     'shape-sorting-factory': {
         interactions: [
             {
@@ -804,18 +780,10 @@ export const presentations = {
                 type: 'shape-sorting-game',
                 tutorText: "Now it's your turn! Try sorting this triangle into the correct container. Drag it to where you think it belongs.",
                 layout: 'full-screen',
-                transitionType: 'interaction-based',
-                phaseConfig: { initialPhase: 'guided', targetShapes: 1 }
-            },
-            {
-                id: 'shape-guided-success',
-                type: 'shape-sorting-game',
-                tutorText: "Excellent work! You correctly identified that triangles belong in the triangles container. You're getting the hang of this!",
-                layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Continue",
-                phaseConfig: { initialPhase: 'guided_success' }
+                phaseConfig: { initialPhase: 'guided', targetShapes: 1 }
             },
             {
                 id: 'shape-practice-setup',
