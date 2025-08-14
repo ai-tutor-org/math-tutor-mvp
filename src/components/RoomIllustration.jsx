@@ -20,6 +20,7 @@ const RoomIllustration = ({
 }) => {
     const [stepCounter, setStepCounter] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [showCompletionFeedback, setShowCompletionFeedback] = useState(false);
     const [firstPersonSteps, setFirstPersonSteps] = useState([]);
 
     // --- Final Corrected Sizing and Positioning Logic ---
@@ -65,11 +66,12 @@ const RoomIllustration = ({
         if (startAnimation) {
             setStepCounter(0); // Reset for new animation
             setIsAnimating(true);
+            setShowCompletionFeedback(false); // Reset completion feedback
         }
     }, [startAnimation]);
 
     useEffect(() => {
-        // When all steps are completed, automatically move to the next interaction
+        // When all steps are completed, show completion feedback then auto-advance
         if (isAnimating && stepCounter === totalSteps && totalSteps > 0) {
             // Capture the first person's steps for persistence
             const steps = Array.from({ length: totalSteps }, (_, i) => ({
@@ -79,12 +81,18 @@ const RoomIllustration = ({
                 size: dynamicFootSize
             }));
             setFirstPersonSteps(steps);
-            setIsAnimating(false);
+            
+            // Show completion feedback while keeping UI visible
+            setShowCompletionFeedback(true);
+            
+            // Maintain existing timing but with visual feedback
             setTimeout(() => {
+                setIsAnimating(false);
+                setShowCompletionFeedback(false);
                 if (onAnimationComplete) {
                     onAnimationComplete();
                 }
-            }, 1000); // Brief pause to show completion
+            }, 1500); // Keep existing timing for consistency
         }
     }, [stepCounter, totalSteps, onAnimationComplete, isAnimating, stepPositions, footIconColor, dynamicFootSize]);
 
@@ -271,12 +279,17 @@ const RoomIllustration = ({
                 <div className="interaction-controls">
                     <button
                         onClick={handleStepClick}
-                        className="step-button"
+                        className={`step-button ${showCompletionFeedback ? 'completed' : ''}`}
                         disabled={stepCounter >= totalSteps}
                     >
-                        <span>{stepCounter} step{stepCounter !== 1 ? 's' : ''}</span>
+                        <span>
+                            {showCompletionFeedback 
+                                ? `Complete! ${stepCounter} steps` 
+                                : `${stepCounter} step${stepCounter !== 1 ? 's' : ''}`
+                            }
+                        </span>
                         <div className="step-button-icon">
-                            <FaPlus />
+                            {showCompletionFeedback ? '✓' : <FaPlus />}
                         </div>
                     </button>
                 </div>
