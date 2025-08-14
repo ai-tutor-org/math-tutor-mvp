@@ -348,3 +348,31 @@
 .phase-container {
     animation: slideIn 0.3s ease-out;
 }
+
+/* Recap Phase Styles - 2x2 Grid Layout for Shapes */
+.phase-recap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.recap-shapes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 80px;
+    width: 500px;
+    height: 500px;
+    align-items: center;
+    justify-items: center;
+}
+
+.recap-shape-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 160px;
+    height: 160px;
+}

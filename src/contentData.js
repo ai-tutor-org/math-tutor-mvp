@@ -875,14 +875,58 @@ export const presentations = {
                 phaseConfig: { initialPhase: 'completion' }
             },
             {
-                id: 'shape-recap',
+                id: 'shape-recap-intro',
                 type: 'shape-sorting-game',
-                tutorText: "Let's recap what you learned: shapes can be sorted by their type - triangles, circles, rectangles, and squares each have their own group. This skill will help you in many areas of math!",
+                tutorText: "Let's recap what you learned: shapes can be sorted by their type.",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'recap' }
+            },
+            {
+                id: 'shape-recap-triangle',
+                type: 'shape-sorting-game',
+                tutorText: "Triangles have three sides and three corners. They go in the triangles group.",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'recap' },
+                contentProps: {
+                    highlightedShape: 'triangle'
+                }
+            },
+            {
+                id: 'shape-recap-circle',
+                type: 'shape-sorting-game',
+                tutorText: "Circles are round with no corners or straight sides. They belong in the circles group.",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'recap' },
+                contentProps: {
+                    highlightedShape: 'circle'
+                }
+            },
+            {
+                id: 'shape-recap-rectangle',
+                type: 'shape-sorting-game',
+                tutorText: "Rectangles have four sides with opposite sides equal. They go in the rectangles group.",
+                layout: 'full-screen',
+                transitionType: 'auto',
+                phaseConfig: { initialPhase: 'recap' },
+                contentProps: {
+                    highlightedShape: 'rectangle'
+                }
+            },
+            {
+                id: 'shape-recap-square',
+                type: 'shape-sorting-game',
+                tutorText: "Squares have four equal sides. They belong in the squares group. This skill will help you in many areas of math!",
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Continue to Next Lesson",
-                phaseConfig: { initialPhase: 'recap' }
+                phaseConfig: { initialPhase: 'recap' },
+                contentProps: {
+                    highlightedShape: 'square'
+                }
             }
         ]
     },

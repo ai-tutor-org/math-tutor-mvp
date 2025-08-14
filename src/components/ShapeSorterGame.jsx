@@ -1645,30 +1645,56 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 );
 
             case GAME_PHASES.RECAP:
+                // Static shapes for recap - one of each type in 2x2 grid
+                const recapShapes = [
+                    {
+                        id: 'recap-triangle',
+                        type: SHAPE_TYPES.TRIANGLE,
+                        color: '#666666', // Muted/inactive color
+                        size: 200, // Much bigger size to fill container
+                        position: { x: 0, y: 0 },
+                        thickness: 'normal',
+                        variant: 'equilateral'
+                    },
+                    {
+                        id: 'recap-circle',
+                        type: SHAPE_TYPES.CIRCLE,
+                        color: '#666666', // Muted/inactive color
+                        size: 200, // Much bigger size to fill container
+                        position: { x: 0, y: 0 },
+                        thickness: 'normal'
+                    },
+                    {
+                        id: 'recap-rectangle',
+                        type: SHAPE_TYPES.RECTANGLE,
+                        color: '#666666', // Muted/inactive color
+                        size: 200, // Much bigger size to fill container
+                        position: { x: 0, y: 0 },
+                        thickness: 'normal'
+                    },
+                    {
+                        id: 'recap-square',
+                        type: SHAPE_TYPES.SQUARE,
+                        color: '#666666', // Muted/inactive color
+                        size: 200, // Much bigger size to fill container
+                        position: { x: 0, y: 0 },
+                        thickness: 'normal'
+                    }
+                ];
+
                 return (
                     <div className="phase-recap">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={false}
-                                        onShapeDrop={handleShapeDrop}
+                        <div className="recap-shapes-grid">
+                            {recapShapes.map((shape) => (
+                                <div key={shape.id} className="recap-shape-container">
+                                    <GameShape
+                                        shape={shape}
+                                        isDisabled={true}
+                                        isHighlighted={contentProps?.highlightedShape === shape.type}
+                                        dragConstraints={false}
                                     />
-                                ))}
-                            </div>
-                            <div className="implementation-status">
-                                <h4>Game Summary:</h4>
-                                <ul>
-                                    <li>Total Attempts: {state.gameStats.totalAttempts}</li>
-                                    <li>Successful Drops: {state.gameStats.successfulDrops || 0}</li>
-                                    <li>Shapes Sorted: {Object.values(state.bins).reduce((sum, bin) => sum + bin.count, 0)}</li>
-                                    <li>Interventions Used: {state.interventionCount}/{state.maxInterventions}</li>
-                                </ul>
-                            </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 );
