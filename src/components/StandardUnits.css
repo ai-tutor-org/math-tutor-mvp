@@ -8,15 +8,10 @@
 }
 
 .standard-units-text {
-    font-size: 5rem;
-    font-weight: 800;
-    color: #fff;
-    text-align: center;
-    text-shadow:
-        0 0 10px #fff,
-        0 0 20px #fff,
-        0 0 30px #00aaff,
-        0 0 40px #00aaff,
-        0 0 50px #00aaff;
-    letter-spacing: 2px;
+    color: #82B0FF;
+    text-shadow: 0 0 10px #26ADEB;
+    font-size: 64px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px;
 }
