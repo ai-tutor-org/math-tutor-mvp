@@ -87,6 +87,9 @@ const InteractiveLesson = () => {
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
     const [hasUserInteracted, setHasUserInteracted] = useState(false); // Track user interaction for conditional transitions
 
+    // Measurement Input State
+    const [measurementInput, setMeasurementInput] = useState('');
+
     // Perimeter Input State
     const [perimeterInput, setPerimeterInput] = useState('');
     const [perimeterAttempts, setPerimeterAttempts] = useState(0);
@@ -266,13 +269,19 @@ const InteractiveLesson = () => {
         }
 
 
-        const shapeIds = new Set(['measure-notebook', 'measure-sticky-note', 'measure-coaster', 'measure-house-sign']);
-        if (shapeIds.has(answerData.interactionId)) {
+        // Handle shape measurement interactions
+        if (interaction?.type === 'shape-measurement') {
             if (answerData.isCorrect) {
-                // For the last measurement, go to conclusion; for others, show Continue feedback
-                if (answerData.interactionId === 'measure-house-sign') {
+                // Check if this is the last measurement interaction in the presentation
+                const nextInteractionIndex = currentInteractionIndex + 1;
+                const isLastMeasurement = nextInteractionIndex >= presentation?.interactions?.length || 
+                                        presentation?.interactions[nextInteractionIndex]?.type !== 'shape-measurement';
+                
+                if (isLastMeasurement) {
+                    // For the last measurement, go to conclusion
                     navigateToInteraction('measurement-conclusion');
                 } else {
+                    // For other measurements, show Continue feedback
                     const feedbackText = getFeedbackText('shape-correct');
                     if (feedbackText) {
                         setDynamicTutorText(feedbackText);
@@ -412,6 +421,19 @@ const InteractiveLesson = () => {
         }
     };
 
+    const handleMeasurementCheck = () => {
+        const userAnswer = parseFloat(measurementInput);
+        const correctAnswer = interaction?.contentProps?.correctAnswer;
+
+        handleAnswer({
+            interactionId: interaction?.contentProps?.interactionId,
+            isCorrect: userAnswer === correctAnswer,
+            answer: userAnswer,
+        });
+
+        setMeasurementInput(''); // Clear input after check
+    };
+
     const handleAnimationComplete = useCallback(() => {
         // Special handling for demo animation completion
         if (interaction?.id === 'shape-demo-modeling') {
@@ -471,6 +493,9 @@ const InteractiveLesson = () => {
         // Reset shape design state when interaction changes
         setCurrentPerimeter(0);
         setShapeDesignAttempts(0);
+
+        // Reset measurement input state when interaction changes
+        setMeasurementInput('');
     }, [interaction]);
 
     // TTS Callbacks
@@ -923,6 +948,71 @@ const InteractiveLesson = () => {
                                 }}
                             >
                                 Check My Shape
+                            </Button>
+                        </Box>
+                    )}
+
+                    {/* Measurement Input Interface */}
+                    {interaction?.type === 'shape-measurement' && !isSpeaking && !showNextButton && (
+                        <Box sx={{ mb: 3, width: '100%' }}>
+                            {/* Input field */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                                <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap' }}>
+                                    Length =
+                                </Typography>
+                                <TextField
+                                    value={measurementInput}
+                                    onChange={(e) => setMeasurementInput(e.target.value)}
+                                    type="number"
+                                    variant="outlined"
+                                    size="small"
+                                    placeholder="e.g., 8"
+                                    sx={{
+                                        flex: 1,
+                                        '& .MuiOutlinedInput-root': {
+                                            color: '#fff',
+                                            backgroundColor: '#2C2C2C',
+                                            '& fieldset': {
+                                                borderColor: '#555',
+                                            },
+                                            '&:hover fieldset': {
+                                                borderColor: '#777',
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#4CAF50',
+                                            }
+                                        }
+                                    }}
+                                />
+                                <Typography variant="body2" sx={{ color: '#fff' }}>
+                                    cm
+                                </Typography>
+                            </Box>
+
+                            {/* Check button */}
+                            <Button
+                                variant="contained"
+                                onClick={handleMeasurementCheck}
+                                disabled={!measurementInput.trim()}
+                                sx={{
+                                    padding: '8px',
+                                    borderRadius: '12px',
+                                    background: '#4CAF50',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontSize: '1rem',
+                                    minWidth: '120px',
+                                    '&:hover': {
+                                        background: '#545E7D'
+                                    },
+                                    '&:disabled': {
+                                        background: '#2C2C2C',
+                                        color: '#666',
+                                        border: '1px solid #2C2C2C'
+                                    }
+                                }}
+                            >
+                                Check
                             </Button>
                         </Box>
                     )}

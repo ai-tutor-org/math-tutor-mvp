@@ -136,17 +136,8 @@ const ShapeVisual = React.forwardRef(({ shape }, ref) => {
     );
 });
 
-const ShapeMeasurement = ({ onAnswer, interactionId, shape, correctAnswer, rulerOrientation }) => {
-    const [answer, setAnswer] = useState('');
+const ShapeMeasurement = ({ shape, rulerOrientation }) => {
     const objectRef = useRef(null);
-
-    const handleCheck = () => {
-        onAnswer({
-            interactionId: interactionId,
-            isCorrect: parseFloat(answer) === correctAnswer,
-            answer: parseFloat(answer),
-        });
-    };
 
     return (
         <div className="shape-measurement-container">
@@ -155,18 +146,6 @@ const ShapeMeasurement = ({ onAnswer, interactionId, shape, correctAnswer, ruler
 
                 {/* Interactive Ruler */}
                 <InteractiveRuler objectRef={objectRef} orientation={rulerOrientation} />
-            </div>
-
-            <div className="controls-area">
-                <label htmlFor="length-input">Length (cm):</label>
-                <input
-                    id="length-input"
-                    type="number"
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    placeholder="e.g., 8"
-                />
-                <button onClick={handleCheck}>Check</button>
             </div>
         </div>
     );

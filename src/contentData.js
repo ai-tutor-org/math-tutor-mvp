@@ -680,7 +680,7 @@ export const presentations = {
             },
             {
                 id: 'measure-notebook',
-                type: 'tutor-monologue',
+                type: 'shape-measurement',
                 tutorText: "Here's our first object: a notebook. \n\nUse the ruler to measure the length of the highlighted blue edge. \n\nThen, type your answer in the box and click 'Check'.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
@@ -698,7 +698,7 @@ export const presentations = {
             },
             {
                 id: 'measure-sticky-note',
-                type: 'tutor-monologue',
+                type: 'shape-measurement',
                 tutorText: "Next, measure this sticky note. It's a perfect square. Measure the highlighted side.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
@@ -716,7 +716,7 @@ export const presentations = {
             },
             {
                 id: 'measure-coaster',
-                type: 'tutor-monologue',
+                type: 'shape-measurement',
                 tutorText: "Try this cube. Measure the highlighted bottom edge.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
@@ -734,7 +734,7 @@ export const presentations = {
             },
             {
                 id: 'measure-house-sign',
-                type: 'tutor-monologue',
+                type: 'shape-measurement',
                 tutorText: "Finally, measure the side of this photo frame.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
