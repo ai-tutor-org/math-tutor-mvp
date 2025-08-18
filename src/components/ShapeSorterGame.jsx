@@ -250,17 +250,6 @@ const gameReducer = (state, action) => {
             const animatingShape = [...state.shapes, ...state.activeShapes]
                 .find(s => s.id === action.shapeId);
             
-            console.log('🔥🔥🔥 COMPLETE_SHAPE_ANIMATION REDUCER:', {
-                shapeId: action.shapeId,
-                animatingShape: {
-                    id: animatingShape?.id,
-                    type: animatingShape?.type,
-                    position: animatingShape?.position,
-                    animationTarget: animatingShape?.animation?.target,
-                    animationType: animatingShape?.animation?.type
-                },
-                timestamp: Date.now()
-            });
             
             // Call completion callback if it exists
             if (animatingShape?.animation?.onComplete) {
@@ -274,7 +263,6 @@ const gameReducer = (state, action) => {
                     animatingShape.animation.onComplete(action.shapeId);
                 }, 0);
             } else {
-                console.log('✅ NO ONCOMPLETE CALLBACK for', action.shapeId);
             }
             
             return {
@@ -400,10 +388,8 @@ const gameReducer = (state, action) => {
 
         case 'SHAPE_DROP':
             const { shapeId: dropShapeId, shapeType, targetBin, isValidDrop: isValid } = action;
-            console.log('🔍 SHAPE_DROP REDUCER:', { dropShapeId, shapeType, targetBin, isValid });
             
             if (isValid) {
-                console.log('🔍 Valid drop - incrementing counter from', state.bins[targetBin].count, 'to', state.bins[targetBin].count + 1);
                 // Move shape to correct bin
                 const updatedBins = {
                     ...state.bins,
@@ -777,9 +763,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     // Handle post-animation TTS completion notification
     useEffect(() => {
         const handlePostAnimationTTSComplete = () => {
-            console.log('🔥 handlePostAnimationTTSComplete called, waitingForPostAnimationTTS:', state.waitingForPostAnimationTTS);
             if (state.waitingForPostAnimationTTS) {
-                console.log('🔥 Clearing waiting flag and checking completion');
                 dispatch({ type: 'SET_WAITING_FOR_POST_ANIMATION_TTS', waiting: false });
                 
                 // Now check if we should complete the interaction
@@ -789,20 +773,12 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     state.initialActiveCount > 0 &&
                     state.activeShapes.length === 0) {
                     
-                    console.log('🔥 Conditions met, advancing interaction');
                     // Brief delay then advance
                     setTimeout(() => {
                         if (window.advanceToNextInteraction) {
                             window.advanceToNextInteraction();
                         }
                     }, 100);
-                } else {
-                    console.log('🔥 Conditions not met for advancement:', {
-                        currentPhase: state.currentPhase,
-                        shapesInitialized: state.shapesInitialized,
-                        initialActiveCount: state.initialActiveCount,
-                        activeShapesLength: state.activeShapes.length
-                    });
                 }
             }
         };
@@ -944,13 +920,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
 
     // Handle shape animation completion for immediate timing
     const handleShapeAnimationComplete = (shapeId, type = 'demo') => {
-        console.log('💥💥💥 handleShapeAnimationComplete CALLED:', {
-            shapeId,
-            type,
-            currentPhase: state.currentPhase,
-            timestamp: Date.now(),
-            stackTrace: new Error().stack?.split('\n').slice(1, 5)
-        });
         
         // Handle demo animation completion specifically
         if (type === 'unified-demo' && state.currentPhase === GAME_PHASES.MODELING) {
@@ -1043,7 +1012,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         // Handle other unified animation completions
         if (type.startsWith('unified-')) {
             const animationType = type.replace('unified-', '');
-            console.log('ANIMATION COMPLETE: Dispatching COMPLETE_SHAPE_ANIMATION for', shapeId);
             dispatch({
                 type: 'COMPLETE_SHAPE_ANIMATION',
                 shapeId
@@ -1101,11 +1069,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         
         // Use unified animation system for bounce back
         const currentShape = state.activeShapes.find(s => s.id === shapeId);
-        console.log('🚀 STARTING BOUNCE:', { 
-            shapeId, 
-            currentPosition: currentShape?.position,
-            bounceTarget: validPosition 
-        });
         shapeAnimations.startBounceAnimation(shapeId, validPosition);
         
         
@@ -1208,7 +1171,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     };
 
     const handleShapeDragEnd = (shape, event, info) => {
-        console.log('🎯 SHAPE DRAG END HANDLER:', { id: shape.id, type: shape.type });
         if (state.disabledShapes.includes(shape.id)) {
             return;
         }

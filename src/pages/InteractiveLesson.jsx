@@ -424,7 +424,6 @@ const InteractiveLesson = () => {
     const handleAnimationComplete = useCallback(() => {
         // Special handling for demo animation completion
         if (interaction?.id === 'shape-demo-modeling') {
-            console.log('🎯 Demo animation completed, showing button');
             setShowNextButton(true); // Show button instead of auto-advance
             return;
         }
@@ -490,8 +489,6 @@ const InteractiveLesson = () => {
 
         // Check if this might be a post-animation TTS completion during interaction-based flow
         if (interaction?.transitionType === 'interaction-based' && window.notifyPostAnimationTTSComplete) {
-            console.log('🔥 TTS ENDED during interaction-based, checking for post-animation completion');
-            console.log('🔥 activeFeedbackInteraction:', activeFeedbackInteraction?.id);
             
             // Try to notify the component - it will check if it's actually waiting
             window.notifyPostAnimationTTSComplete();

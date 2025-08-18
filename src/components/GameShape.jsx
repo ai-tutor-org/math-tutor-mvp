@@ -132,17 +132,6 @@ const GameShape = ({
 
     // Handle drag end with improved position tracking
     const handleDragEnd = (event, info) => {
-        console.log('🔴 DRAG END CALLED:', {
-            shapeId: shape.id,
-            shapeType: shape.type,
-            isDisabled,
-            animationType: shape.animation?.type,
-            currentPosition: shape.position,
-            motionValues: { x: x.get(), y: y.get() },
-            eventType: event?.type,
-            source: 'GameShape.handleDragEnd',
-            stackTrace: new Error().stack?.split('\n').slice(1, 4)
-        });
         
         if (isDisabled) {
             console.log('🟡 DRAG END IGNORED: Shape is disabled');
@@ -233,15 +222,6 @@ const GameShape = ({
             }
             // Unified animation completion callback
             onAnimationComplete={() => {
-                console.log('🎯 ANIMATION COMPLETE IN GAMESHAPE:', {
-                    shapeId: shape.id,
-                    shapeType: shape.type,
-                    animationType: shape.animation?.type,
-                    animationTarget: shape.animation?.target,
-                    currentPosition: shape.position,
-                    motionValues: { x: x.get(), y: y.get() },
-                    timestamp: Date.now()
-                });
                 if (shape.animation && shape.animation.type !== 'none' && onAnimationComplete) {
                     // Handle unified animation completion
                     onAnimationComplete(shape.id, 'unified-' + shape.animation.type);
