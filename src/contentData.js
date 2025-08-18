@@ -8,7 +8,7 @@ import {
 import {
     RulerMeasurement,
     MeterStick,
-    CrayonMeasurementQuestion,
+    Crayon,
     StandardUnits,
     ShapeMeasurement,
     MissionReadiness,
@@ -647,15 +647,22 @@ export const presentations = {
         interactions: [
             {
                 id: 'crayon-question',
-                type: 'interactive-question',
+                type: 'multiple-choice-question',
                 tutorText: "Time for a quick check! If you wanted to measure a crayon, which unit would you use? Click on the best choice.",
-                ContentComponent: CrayonMeasurementQuestion,
+                ContentComponent: Crayon,
                 contentProps: {
                     question: "If you wanted to measure a crayon, which unit would you use?",
-                    useIcon: true,
                     choices: [
-                        { text: 'cm', isCorrect: true },
-                        { text: 'm', isCorrect: false }
+                        {
+                            text: 'cm',
+                            isCorrect: true,
+                            feedbackId: 'crayon-correct'
+                        },
+                        {
+                            text: 'm',
+                            isCorrect: false,
+                            feedbackId: 'crayon-incorrect'
+                        }
                     ]
                 },
                 transitionType: 'manual',

@@ -1,6 +1,6 @@
 export { default as ChapterCard } from './ChapterCard';
 export { default as ConflictingMeasurements } from './ConflictingMeasurements';
-export { default as CrayonMeasurementQuestion } from './CrayonMeasurementQuestion';
+export { default as Crayon } from './Crayon';
 export { default as FarmMap } from './FarmMap';
 export { default as FarmerIntro } from './FarmerIntro';
 export { default as FarmerCelebration } from './FarmerCelebration';

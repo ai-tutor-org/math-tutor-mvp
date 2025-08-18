@@ -33,7 +33,6 @@ import ConflictingMeasurements from '../components/ConflictingMeasurements';
 import StandardUnits from '../components/StandardUnits';
 import RulerMeasurement from '../components/RulerMeasurement';
 import MeterStick from '../components/MeterStick';
-import CrayonMeasurementQuestion from '../components/CrayonMeasurementQuestion';
 import ShapeSorterGame from '../components/ShapeSorterGame';
 import MissionReadiness from '../components/MissionReadiness';
 import FarmerIntro from '../components/FarmerIntro';
@@ -53,7 +52,6 @@ const componentMap = {
     'standard-units-explanation': StandardUnits,
     'ruler-measurement': RulerMeasurement,
     'meter-measurement': MeterStick,
-    'interactive-question': CrayonMeasurementQuestion,
     'multiple-choice-question': RoomIllustration,
     'tutor-monologue': RoomIllustration,
     'shape-sorting-game': ShapeSorterGame,

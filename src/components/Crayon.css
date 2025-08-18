@@ -1,0 +1,11 @@
+.crayon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.crayon-icon {
+    font-size: 4rem;
+    color: #4A90E2;
+}
