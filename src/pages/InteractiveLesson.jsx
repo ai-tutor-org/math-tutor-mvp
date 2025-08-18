@@ -646,7 +646,16 @@ const InteractiveLesson = () => {
         // Special case: ShapeSorterGame needs unique keys per interaction for phase changes
         // All other components benefit from stable keys to prevent flickering
         const componentKey = componentName === 'ShapeSorterGame' 
-            ? `${componentName}-${currentPresIndex}-${currentInteractionIndex}`
+            ? (() => {
+                // Special handling for recap sequences to prevent unnecessary remounting
+                // All recap interactions use the same phase but different highlighting props
+                if (presentationId === 'shape-sorting-factory' && 
+                    interaction.id.startsWith('shape-recap')) {
+                    return `${componentName}-${currentPresIndex}-recap`;
+                }
+                // Default behavior for all other ShapeSorterGame interactions
+                return `${componentName}-${currentPresIndex}-${currentInteractionIndex}`;
+            })()
             : `${componentName}-${currentPresIndex}`;
 
         let props = {
