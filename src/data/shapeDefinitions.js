@@ -30,12 +30,12 @@ export const TRIANGLE_VARIANTS = {
     ISOSCELES: 'isosceles'       // Isosceles triangle (longer base)
 };
 
-// Base colors for each shape type (matching container theme)
+// Base colors for each shape type - consistent greyish theme for all shapes
 export const SHAPE_COLORS = {
-    [SHAPE_TYPES.TRIANGLE]: '#E74C3C',   // Red (matches triangles container)
-    [SHAPE_TYPES.CIRCLE]: '#3498DB',     // Blue (matches circles container)
-    [SHAPE_TYPES.RECTANGLE]: '#2ECC71',  // Green (matches rectangles container)
-    [SHAPE_TYPES.SQUARE]: '#F39C12'      // Orange (matches squares container)
+    [SHAPE_TYPES.TRIANGLE]: '#8A9BA8',   // Vibrant bluish-grey
+    [SHAPE_TYPES.CIRCLE]: '#8A9BA8',     // Vibrant bluish-grey
+    [SHAPE_TYPES.RECTANGLE]: '#8A9BA8',  // Vibrant bluish-grey
+    [SHAPE_TYPES.SQUARE]: '#8A9BA8'      // Vibrant bluish-grey
 };
 
 // Shape generation utilities

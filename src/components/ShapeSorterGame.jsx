@@ -1634,7 +1634,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     {
                         id: 'recap-triangle',
                         type: SHAPE_TYPES.TRIANGLE,
-                        color: '#666666', // Muted/inactive color
+                        color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
                         size: 200, // Much bigger size to fill container
                         position: { x: 0, y: 0 },
                         thickness: 'normal',
@@ -1643,7 +1643,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     {
                         id: 'recap-circle',
                         type: SHAPE_TYPES.CIRCLE,
-                        color: '#666666', // Muted/inactive color
+                        color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
                         size: 200, // Much bigger size to fill container
                         position: { x: 0, y: 0 },
                         thickness: 'normal'
@@ -1651,7 +1651,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     {
                         id: 'recap-rectangle',
                         type: SHAPE_TYPES.RECTANGLE,
-                        color: '#666666', // Muted/inactive color
+                        color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
                         size: 200, // Much bigger size to fill container
                         position: { x: 0, y: 0 },
                         thickness: 'normal'
@@ -1659,7 +1659,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     {
                         id: 'recap-square',
                         type: SHAPE_TYPES.SQUARE,
-                        color: '#666666', // Muted/inactive color
+                        color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
                         size: 200, // Much bigger size to fill container
                         position: { x: 0, y: 0 },
                         thickness: 'normal'
