@@ -71,32 +71,32 @@
   <use href="#grass" transform="translate(250, 300)"/>
   
   <!-- Measurement labels: one per edge (all 8 m) -->
-  <!-- Edge v1-v2 (top slanted) -->
-  <g transform="translate(258, 96) rotate(32)">
+  <!-- Edge v1-v2 (top-right edge: 200,80 to 315,170) -->
+  <g transform="translate(275, 110) rotate(38)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
   </g>
   
-  <!-- Edge v2-v3 (right slanted) -->
-  <g transform="translate(318, 240) rotate(100)">
+  <!-- Edge v2-v3 (right edge: 315,170 to 272,310) -->
+  <g transform="translate(320, 240) rotate(107)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
   </g>
   
-  <!-- Edge v3-v4 (bottom horizontal) -->
-  <g transform="translate(200, 344)">
+  <!-- Edge v3-v4 (bottom edge: 272,310 to 128,310) -->
+  <g transform="translate(200, 330)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
   </g>
   
-  <!-- Edge v4-v5 (left slanted) -->
-  <g transform="translate(82, 240) rotate(-100)">
+  <!-- Edge v4-v5 (left edge: 128,310 to 85,170) -->
+  <g transform="translate(80, 240) rotate(-107)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
   </g>
   
-  <!-- Edge v5-v1 (upper-left slanted) -->
-  <g transform="translate(142, 96) rotate(-32)">
+  <!-- Edge v5-v1 (top-left edge: 85,170 to 200,80) -->
+  <g transform="translate(125, 110) rotate(-38)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">8 m</text>
   </g>

@@ -77,25 +77,25 @@
   
   <!-- Measurement labels -->
   <!-- Top -->
-  <g transform="translate(200, 40)">
+  <g transform="translate(200, 25)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">15 m</text>
   </g>
   
   <!-- Right -->
-  <g transform="translate(360, 200) rotate(90)">
+  <g transform="translate(375, 200) rotate(90)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">15 m</text>
   </g>
   
   <!-- Bottom -->
-  <g transform="translate(200, 360)">
+  <g transform="translate(200, 375)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">15 m</text>
   </g>
   
   <!-- Left -->
-  <g transform="translate(40, 200) rotate(-90)">
+  <g transform="translate(25, 200) rotate(-90)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">15 m</text>
   </g>

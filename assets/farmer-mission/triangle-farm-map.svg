@@ -74,19 +74,19 @@
   
   <!-- Measurement labels -->
   <!-- Left side (18 meters) -->
-  <g transform="translate(120, 180) rotate(-60)">
+  <g transform="translate(105, 180) rotate(-60)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">18 m</text>
   </g>
   
   <!-- Right side (12 meters) -->
-  <g transform="translate(280, 180) rotate(60)">
+  <g transform="translate(295, 180) rotate(60)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">12 m</text>
   </g>
   
   <!-- Bottom side (10 meters) -->
-  <g transform="translate(200, 320)">
+  <g transform="translate(200, 330)">
     <rect x="-25" y="-10" width="50" height="20" fill="white" stroke="#666" stroke-width="1" rx="10"/>
     <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">10 m</text>
   </g>
