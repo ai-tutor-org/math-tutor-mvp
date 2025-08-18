@@ -649,7 +649,9 @@ export const presentations = {
                 tutorText: "Nice! For bigger things, we use a bigger unit called a meter. \n\nA meter is the same as 100 centimeters. \n\nSee how this meter stick compares to the height of a door?",
                 ContentComponent: MeterStick,
                 contentProps: {},
-                transitionType: 'auto',
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: 'Next',
             }
         ]
     },

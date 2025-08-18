@@ -511,7 +511,6 @@ const InteractiveLesson = () => {
         // This should ONLY trigger for animations that start immediately after speech.
         const shouldAutoAnimate = interaction?.type.startsWith('footsteps-') ||
             interaction?.type === 'meter-measurement' ||
-            interaction?.type === 'ruler-measurement' ||
             (interaction?.type === 'shape-sorting-game' && interaction?.id === 'shape-demo-modeling');
 
         // Special handling for demo animation - don't trigger here, let component handle internally
