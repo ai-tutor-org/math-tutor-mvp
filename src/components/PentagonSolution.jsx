@@ -89,6 +89,17 @@ const PentagonSolution = () => {
                     })}
                 </svg>
 
+                {/* Addition equation that appears at the end */}
+                <motion.div
+                    className="equation-display"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 7, duration: 0.8 }}
+                >
+                    <div className="equation">
+                        8 + 8 + 8 + 8 + 8 = <strong>40 meters</strong>
+                    </div>
+                </motion.div>
             </div>
         </motion.div>
     );

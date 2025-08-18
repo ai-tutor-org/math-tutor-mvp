@@ -137,7 +137,9 @@ export const conditionalPresentations = {
                 type: 'rectangle-solution',
                 tutorText: "Hmm, let's try a different approach. Let's add up the sides together. \n\nThirty plus twenty plus thirty plus twenty equals one hundred.",
                 ContentComponent: RectangleSolution,
-                transitionType: 'auto'
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
             },
             {
                 id: 'square-correct',
@@ -156,7 +158,9 @@ export const conditionalPresentations = {
                 type: 'square-solution',
                 tutorText: "Let's work this one out together. \n\nSince all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
                 ContentComponent: SquareSolution,
-                transitionType: 'auto'
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
             },
             {
                 id: 'triangle-correct',
@@ -175,7 +179,9 @@ export const conditionalPresentations = {
                 type: 'triangle-solution',
                 tutorText: "No problem. Let's add them up: \n\nTen plus twelve plus eighteen equals forty.",
                 ContentComponent: TriangleSolution,
-                transitionType: 'auto'
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
             },
             {
                 id: 'pentagon-correct',
@@ -194,7 +200,9 @@ export const conditionalPresentations = {
                 type: 'pentagon-solution',
                 tutorText: "Let's add them up together: \n\n Eight... plus eight... plus eight... plus eight... plus eight... equals forty.",
                 ContentComponent: PentagonSolution,
-                transitionType: 'auto'
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
             },
             // Design feedback interactions
             {
