@@ -158,6 +158,7 @@ const InteractiveLesson = () => {
         setDynamicTutorText(null); // Clear any lingering feedback text
         setActiveFeedbackInteraction(null); // Clear any feedback component
         setShowNextButton(false); // Reset button immediately to prevent flash
+        setIsSpeaking(true);
 
         if (!presentation || !lesson) return;
 
@@ -194,6 +195,7 @@ const InteractiveLesson = () => {
                     setCurrentInteractionIndex(interactionIndex);
                     setDynamicTutorText(null);
                     setShowNextButton(false); // Reset button immediately
+                    setIsSpeaking(true);
                     return;
                 }
             }
