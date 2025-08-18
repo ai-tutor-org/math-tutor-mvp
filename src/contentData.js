@@ -687,12 +687,12 @@ export const presentations = {
                     interactionId: 'measure-notebook',
                     shape: {
                         type: 'rectangle',
-                        width: 240, // 8cm * 30px/cm
-                        height: 120,
-                        imageSrc: '/assets/notebook.svg',
-                        highlight: 'top',
+                        width: 242,
+                        height: 400,
+                        imageSrc: '/assets/measurement-activities/book.svg',
                     },
-                    correctAnswer: 8
+                    correctAnswer: 8,
+                    rulerOrientation: 'horizontal',
                 },
                 transitionType: 'manual'
             },
@@ -705,45 +705,48 @@ export const presentations = {
                     interactionId: 'measure-sticky-note',
                     shape: {
                         type: 'square',
-                        width: 150, // 5cm
+                        width: 150,
                         height: 150,
-                        highlight: 'right',
+                        imageSrc: '/assets/measurement-activities/sticky-note.svg',
                     },
-                    correctAnswer: 5
+                    correctAnswer: 5,
+                    rulerOrientation: 'horizontal',
                 },
                 transitionType: 'manual'
             },
             {
                 id: 'measure-coaster',
                 type: 'tutor-monologue',
-                tutorText: "Try this coaster, also square but a bit larger. Measure the highlighted bottom edge.",
+                tutorText: "Try this cube. Measure the highlighted bottom edge.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-coaster',
                     shape: {
-                        type: 'square',
-                        width: 180, // 6cm
-                        height: 180,
-                        highlight: 'bottom',
+                        type: 'rectangle',
+                        width: 182,
+                        height: 154,
+                        imageSrc: '/assets/measurement-activities/cube.svg',
                     },
-                    correctAnswer: 6
+                    correctAnswer: 6,
+                    rulerOrientation: 'horizontal',
                 },
                 transitionType: 'manual'
             },
             {
                 id: 'measure-house-sign',
                 type: 'tutor-monologue',
-                tutorText: "Finally, measure the base of this little house sign (a pentagon).",
+                tutorText: "Finally, measure the side of this photo frame.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-house-sign',
                     shape: {
-                        type: 'pentagon',
-                        width: 210, // 7cm base width
-                        height: 180,
-                        highlight: 'bottom',
+                        type: 'rectangle',
+                        width: 274,
+                        height: 214,
+                        imageSrc: '/assets/measurement-activities/photo-frame.svg',
                     },
-                    correctAnswer: 7
+                    correctAnswer: 7,   
+                    rulerOrientation: 'vertical',
                 },
                 transitionType: 'manual'
             },

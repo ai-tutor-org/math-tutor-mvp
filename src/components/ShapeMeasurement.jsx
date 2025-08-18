@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue } from 'framer-motion';
 import './ShapeMeasurement.css';
 
@@ -9,32 +9,33 @@ const MAX_CM = 30;
 const SNAP_ANGLE_DEG = 7; // snap to 0, 90, 180, 270 within this threshold
 const SNAP_DISTANCE_PX = 12; // snap to edges/corners within this threshold
 
-const InteractiveRuler = ({ objectRef }) => {
-    const [lengthPx, setLengthPx] = useState(10 * PX_PER_CM);
-    const [angleDeg, setAngleDeg] = useState(0);
+const InteractiveRuler = ({ objectRef, orientation = 'horizontal' }) => {
+    const lengthPx = 12 * PX_PER_CM; // Fixed to 12cm
+    const [angleDeg, setAngleDeg] = useState(orientation === 'vertical' ? 90 : 0);
+    
     const rulerRef = useRef(null);
     const rotateHandleRef = useRef(null);
 
     // Controlled drag position
     const x = useMotionValue(0);
     const y = useMotionValue(0);
+    const rotate = useMotionValue(orientation === 'vertical' ? 90 : 0);
+    
+    // Update angle when orientation prop changes
+    useEffect(() => {
+        const newAngle = orientation === 'vertical' ? 90 : 0;
+        setAngleDeg(newAngle);
+        rotate.set(newAngle);
+    }, [orientation, rotate]);
+    
+    // Update rotate motion value when angle changes
+    useEffect(() => {
+        rotate.set(angleDeg);
+    }, [angleDeg, rotate]);
 
     // Rotation offset so clicking the handle does not snap to opposite side
     const rotateOffsetRef = useRef(0);
 
-    const handleResizeDrag = (event, info) => {
-        const dx = info.delta?.x || 0;
-        const dy = info.delta?.y || 0;
-        const theta = (angleDeg * Math.PI) / 180;
-        // Project pointer delta onto the ruler's local x-axis
-        const alongAxis = dx * Math.cos(theta) + dy * Math.sin(theta);
-        setLengthPx((prev) => {
-            const next = prev + alongAxis;
-            const minPx = MIN_CM * PX_PER_CM;
-            const maxPx = MAX_CM * PX_PER_CM;
-            return Math.max(minPx, Math.min(maxPx, next));
-        });
-    };
 
     const computePointerAngle = (point) => {
         if (!rulerRef.current) return angleDeg;
@@ -56,65 +57,10 @@ const InteractiveRuler = ({ objectRef }) => {
         return rawAngleDeg;
     };
 
-    const handleRotateStart = (event, info) => {
-        const pointerAngle = computePointerAngle(info.point);
-        rotateOffsetRef.current = angleDeg - pointerAngle;
-    };
 
-    const handleRotateDrag = (event, info) => {
-        const pointerAngle = computePointerAngle(info.point);
-        const raw = pointerAngle + rotateOffsetRef.current;
-        setAngleDeg(snapAngle(raw));
-    };
-
-    // Snap position of the ruler based on rotate handle proximity to object edges/corners
+    // Snap position disabled since handles are removed
     const snapDragPosition = () => {
-        if (!objectRef?.current || !rotateHandleRef.current) return;
-        const objRect = objectRef.current.getBoundingClientRect();
-        const handleRect = rotateHandleRef.current.getBoundingClientRect();
-        const handleCenter = {
-            x: handleRect.left + handleRect.width / 2,
-            y: handleRect.top + handleRect.height / 2,
-        };
-
-        const targets = [];
-        // Corners
-        const corners = [
-            { x: objRect.left, y: objRect.top },
-            { x: objRect.right, y: objRect.top },
-            { x: objRect.left, y: objRect.bottom },
-            { x: objRect.right, y: objRect.bottom },
-        ];
-        for (const c of corners) {
-            const dx = c.x - handleCenter.x;
-            const dy = c.y - handleCenter.y;
-            const dist = Math.hypot(dx, dy);
-            targets.push({ dx, dy, dist });
-        }
-        // Edges: top/bottom align Y, left/right align X
-        const yTargets = [objRect.top, objRect.bottom];
-        for (const ty of yTargets) {
-            const dy = ty - handleCenter.y;
-            targets.push({ dx: 0, dy, dist: Math.abs(dy) });
-        }
-        const xTargets = [objRect.left, objRect.right];
-        for (const tx of xTargets) {
-            const dx = tx - handleCenter.x;
-            targets.push({ dx, dy: 0, dist: Math.abs(dx) });
-        }
-
-        // Find the closest within threshold
-        let best = null;
-        for (const t of targets) {
-            if (t.dist <= SNAP_DISTANCE_PX && (!best || t.dist < best.dist)) {
-                best = t;
-            }
-        }
-        if (!best) return;
-
-        // Apply snap by adjusting motion values
-        x.set(x.get() + best.dx);
-        y.set(y.get() + best.dy);
+        // No-op since we removed the handles
     };
 
     const numWholeCm = Math.floor(lengthPx / PX_PER_CM);
@@ -124,14 +70,14 @@ const InteractiveRuler = ({ objectRef }) => {
         <motion.div
             ref={rulerRef}
             className="interactive-ruler"
-            style={{ width: lengthPx, x, y }}
+            style={{ width: lengthPx, x, y, rotate }}
             drag
             onDrag={snapDragPosition}
             dragConstraints={{ top: -250, left: -450, right: 450, bottom: 250 }}
             dragMomentum={false}
         >
-            {/* Rotating layer: body + ticks */}
-            <div className="interactive-ruler-rotating" style={{ transform: `rotate(${angleDeg}deg)` }}>
+            {/* Body + ticks - rotation now applied to outer div */}
+            <div className="interactive-ruler-rotating">
                 <div className="interactive-ruler-body">
                     {/* Whole cm ticks with numbers */}
                     {[...Array(numWholeCm + 1)].map((_, i) => (
@@ -156,24 +102,6 @@ const InteractiveRuler = ({ objectRef }) => {
                         );
                     })}
 
-                    {/* Handles inside the body so they rotate and stay attached */}
-                    <motion.div
-                        ref={rotateHandleRef}
-                        className="interactive-rotate-handle"
-                        drag
-                        onDragStart={handleRotateStart}
-                        onDrag={handleRotateDrag}
-                        dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
-                        dragElastic={0}
-                    />
-
-                    <motion.div
-                        className="interactive-resize-handle"
-                        drag="x"
-                        onDrag={handleResizeDrag}
-                        dragConstraints={{ left: 0, right: 0 }}
-                        dragElastic={0}
-                    />
                 </div>
             </div>
         </motion.div>
@@ -208,7 +136,7 @@ const ShapeVisual = React.forwardRef(({ shape }, ref) => {
     );
 });
 
-const ShapeMeasurement = ({ onAnswer, interactionId, shape, correctAnswer }) => {
+const ShapeMeasurement = ({ onAnswer, interactionId, shape, correctAnswer, rulerOrientation }) => {
     const [answer, setAnswer] = useState('');
     const objectRef = useRef(null);
 
@@ -226,7 +154,7 @@ const ShapeMeasurement = ({ onAnswer, interactionId, shape, correctAnswer }) => 
                 <ShapeVisual ref={objectRef} shape={shape?.type ? shape : { ...shape, type: 'rectangle', imageSrc: '/assets/notebook.svg', highlight: shape?.highlight || 'top' }} />
 
                 {/* Interactive Ruler */}
-                <InteractiveRuler objectRef={objectRef} />
+                <InteractiveRuler objectRef={objectRef} orientation={rulerOrientation} />
             </div>
 
             <div className="controls-area">

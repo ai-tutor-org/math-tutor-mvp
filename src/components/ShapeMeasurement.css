@@ -9,23 +9,20 @@
     position: relative;
     background: transparent;
     color: white;
+    transform: translateY(-100px);
 }
 
 .shape-area {
     width: 90%;
     height: 70%;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
 }
 
 .rectangle {
     position: relative;
-    border: 2px solid #333;
 }
 
 .rect-object {
@@ -33,77 +30,11 @@
     display: inline-block;
 }
 
-/* Generic shape container */
-.shape-obj {
-    position: relative;
-    display: inline-block;
-    background: #f4f4f4;
-    border: 2px solid #333;
-    border-radius: 8px;
-}
-
-.shape-rectangle {
-    background: linear-gradient(180deg, #e2f0ff 0%, #cfe6ff 100%);
-}
-
-.shape-square {
-    background: linear-gradient(180deg, #fff7b3 0%, #ffe97a 100%);
-    /* sticky note look */
-}
-
-.shape-pentagon {
-    background: linear-gradient(180deg, #ffd9c2 0%, #ffb48a 100%);
-    /* House-like pentagon with full-width base */
-    clip-path: polygon(0% 60%, 50% 0%, 100% 60%, 100% 100%, 0% 100%);
-}
-
 .rect-object-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 8px;
-}
-
-/* Highlighted side orientations */
-.highlighted-side {
-    position: absolute;
-    background-color: rgba(52, 152, 219, 0.9);
-}
-
-.highlighted-side.top {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 10px;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-
-.highlighted-side.bottom {
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 10px;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-.highlighted-side.left {
-    top: 0;
-    left: 0;
-    width: 10px;
-    height: 100%;
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
-
-.highlighted-side.right {
-    top: 0;
-    right: 0;
-    width: 10px;
-    height: 100%;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
 }
 
 .controls-area {
@@ -147,7 +78,6 @@
 /* Ruler Styles */
 .interactive-ruler {
     position: absolute;
-    width: 300px;
     height: 75px;
     /* 1.5x thickness */
     cursor: grab;
@@ -178,6 +108,7 @@
     border: 2px solid #5b4636;
     border-radius: 6px;
     position: relative;
+    box-sizing: border-box;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
