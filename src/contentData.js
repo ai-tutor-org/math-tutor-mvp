@@ -103,7 +103,9 @@ export const conditionalPresentations = {
                 id: 'crayon-incorrect',
                 type: 'tutor-monologue',
                 tutorText: "Good try, but a meter is way too big for a crayon! Centimeters are the better choice here.",
-                transitionType: 'auto'
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
             },
             {
                 id: 'shape-correct',

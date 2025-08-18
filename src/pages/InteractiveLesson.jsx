@@ -262,9 +262,8 @@ const InteractiveLesson = () => {
                 if (feedbackInteraction.type === 'multiple-choice-question') {
                     // For retry questions, don't show next button - let user answer again
                     return;
-                } else {
-                    setShowNextButton(true);
                 }
+                // Let TTS completion handle showing the next button
             }
             return;
         }
