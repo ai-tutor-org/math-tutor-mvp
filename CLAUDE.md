@@ -68,6 +68,7 @@ If you want to add new presentations or interactions, follow best practices from
 - Except for conditional transitions, in all the other manual transitions, the CTA should come on the left column, not the right.
 - After all the interactions of a presentation are made, connect them with each other
 - **TTS Rule**: Never call `triggerTTS()` manually - TTSManager automatically triggers TTS when `dynamicTutorText` changes, so only use `setDynamicTutorText()`
+- When changing anything in an interaction, see if there is some corresponding code custom written for this interaction in `InteractiveLesson.jsx`
 
 **Content Guidelines**
 - Try to keep most text content on left hand side (which the tutor will speak) along with the CTAs to move to next, or an input box as required for the transition
