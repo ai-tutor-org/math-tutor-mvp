@@ -688,7 +688,7 @@ export const presentations = {
                     shape: {
                         type: 'rectangle',
                         width: 242,
-                        height: 400,
+                        height: 310,
                         imageSrc: '/assets/measurement-activities/book.svg',
                     },
                     correctAnswer: 8,
