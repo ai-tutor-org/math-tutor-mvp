@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, forwardRef, useImperativeHandle } from 'react';
 import { motion } from 'framer-motion';
 import { SHAPE_TYPES, CONTAINER_DEFINITIONS } from '../data/shapeDefinitions';
 import './SortingBin.css';
@@ -7,15 +7,15 @@ import './SortingBin.css';
  * SortingBin Component - B1.4
  * Drop zone container component using PNG assets with counters and hover effects
  * Supports 1.1x hover scaling with aspect-ratio preservation and glowing effects
+ * Now uses Framer Motion collision detection instead of HTML5 drag/drop
  */
-const SortingBin = ({
+const SortingBin = forwardRef(({
     type,
     count = 0,
     isGlowing = false,
-    onShapeDrop,
+    isDraggedOver = false,  // Now controlled by parent via collision detection
     className = ''
-}) => {
-    const [isDragOver, setIsDragOver] = useState(false);
+}, ref) => {
     const binRef = useRef(null);
 
     // Get container definition for this shape type
@@ -26,41 +26,25 @@ const SortingBin = ({
         return null;
     }
 
-    // Handle drag over events
-    const handleDragOver = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setIsDragOver(true);
-    };
-
-    // Handle drag leave events
-    const handleDragLeave = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        // Only trigger if leaving the container entirely
-        if (!binRef.current?.contains(event.relatedTarget)) {
-            setIsDragOver(false);
-        }
-    };
-
-    // Handle drop events
-    const handleDrop = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setIsDragOver(false);
-        
-        // Extract shape data from drag event (will be set by GameShape)
-        const shapeData = event.dataTransfer?.getData('application/json');
-        if (shapeData) {
-            try {
-                const shape = JSON.parse(shapeData);
-                const isValidDrop = containerDef.acceptedTypes.includes(shape.type);
-                onShapeDrop?.(shape.id, shape.type, type, isValidDrop);
-            } catch (error) {
-                console.error('Error parsing dropped shape data:', error);
-            }
-        }
-    };
+    // Expose container bounds to parent for collision detection
+    useImperativeHandle(ref, () => ({
+        getBounds: () => {
+            if (!binRef.current) return null;
+            const rect = binRef.current.getBoundingClientRect();
+            return {
+                left: rect.left,
+                right: rect.right,
+                top: rect.top,
+                bottom: rect.bottom,
+                width: rect.width,
+                height: rect.height,
+                centerX: rect.left + rect.width / 2,
+                centerY: rect.top + rect.height / 2
+            };
+        },
+        getElement: () => binRef.current,
+        type: type
+    }));
 
     // Removed mouse event handlers - using Framer Motion for hover
 
@@ -72,7 +56,7 @@ const SortingBin = ({
             classes.push('glowing');
         }
         
-        if (isDragOver) {
+        if (isDraggedOver) {
             classes.push('drag-over');
         }
         
@@ -98,9 +82,6 @@ const SortingBin = ({
             ref={binRef}
             className={getBinClasses()}
             data-container-type={type}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
             // Framer Motion hover effects with 1.1x scaling and aspect-ratio preservation
             whileHover={{
                 scale: 1.1,
@@ -154,6 +135,8 @@ const SortingBin = ({
             {/* Debug info removed for clean interface */}
         </motion.div>
     );
-};
+});
+
+SortingBin.displayName = 'SortingBin';
 
 export default SortingBin;

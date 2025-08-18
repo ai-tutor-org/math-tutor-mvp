@@ -11,6 +11,7 @@ import './GameShape.css';
 const GameShape = ({ 
     shape, 
     onDragStart, 
+    onDrag,
     onDragEnd,
     onAnimationComplete,
     dragConstraints = false,
@@ -18,14 +19,6 @@ const GameShape = ({
     isHighlighted = false,
     className = ''
 }) => {
-    // console.log('🟣 GAMESHAPE RENDER:', {
-    //     shapeId: shape.id,
-    //     shapeType: shape.type,
-    //     position: shape.position,
-    //     animationType: shape.animation?.type,
-    //     isDisabled,
-    //     timestamp: Date.now()
-    // });
     
     // Motion values for position tracking
     // IMPORTANT: Motion values are the single source of truth for position during interactions
@@ -39,25 +32,12 @@ const GameShape = ({
     // Only sync motion values with Redux position on initial mount
     React.useEffect(() => {
         if (isFirstRender.current && shape.position) {
-            // console.log('🟢 INITIAL POSITION SETUP:', {
-            //     shapeId: shape.id,
-            //     position: shape.position
-            // });
             x.set(shape.position.x ?? 0);
             y.set(shape.position.y ?? 0);
             isFirstRender.current = false;
         }
     }, []); // Empty deps - only run once
     
-    // Log position changes for debugging but DON'T sync
-    // React.useEffect(() => {
-    //     console.log('📍 POSITION CHANGE DETECTED (NO SYNC):', {
-    //         shapeId: shape.id,
-    //         reduxPosition: shape.position,
-    //         currentMotionValues: { x: x.get(), y: y.get() },
-    //         animationType: shape.animation?.type
-    //     });
-    // }, [shape.position?.x, shape.position?.y]);
     // Determine shape-specific CSS classes
     const getShapeClasses = () => {
         const classes = ['game-shape', shape.type];
@@ -134,7 +114,6 @@ const GameShape = ({
     const handleDragEnd = (event, info) => {
         
         if (isDisabled) {
-            console.log('🟡 DRAG END IGNORED: Shape is disabled');
             return;
         }
         
@@ -152,31 +131,26 @@ const GameShape = ({
         onDragEnd?.(shape, event, enhancedInfo);
     };
 
-    // Combined drag handler for both Framer Motion and HTML5 
-    const handleCombinedDragStart = (event, info) => {
+    // Framer Motion drag handler
+    const handleFramerDragStart = (event, info) => {
         if (isDisabled) return false;
         
         // Handle Framer Motion drag
         onDragStart?.(shape, event, info);
-        
-        // Handle HTML5 drag for SortingBin compatibility
-        if (event.dataTransfer) {
-            event.dataTransfer.setData('application/json', JSON.stringify({
-                id: shape.id,
-                type: shape.type,
-                variant: shape.variant
-            }));
-            event.dataTransfer.effectAllowed = 'move';
-        }
-        
     };
 
-    const handleCombinedDragEnd = (event, info) => {
+    const handleFramerDragEnd = (event, info) => {
         if (isDisabled) return;
         
         // Handle Framer Motion drag end with enhanced position tracking
         handleDragEnd(event, info);
+    };
+    
+    // Handle drag during movement
+    const handleFramerDrag = (event, info) => {
+        if (isDisabled) return;
         
+        onDrag?.(shape, event, info);
     };
 
 
@@ -201,10 +175,9 @@ const GameShape = ({
             dragElastic={0} // Remove springy resistance
             dragMomentum={false}
             dragTransition={{ power: 0, timeConstant: 0 }} // Instant response
-            onDragStart={handleCombinedDragStart}
-            onDragEnd={handleCombinedDragEnd}
-            // HTML5 drag and drop support for SortingBin compatibility
-            draggable={!isDisabled}
+            onDragStart={handleFramerDragStart}
+            onDrag={handleFramerDrag}
+            onDragEnd={handleFramerDragEnd}
             // Simplified drag feedback for performance
             whileDrag={!isDisabled ? { 
                 zIndex: 20
@@ -222,9 +195,16 @@ const GameShape = ({
             }
             // Unified animation completion callback
             onAnimationComplete={() => {
-                if (shape.animation && shape.animation.type !== 'none' && onAnimationComplete) {
-                    // Handle unified animation completion
-                    onAnimationComplete(shape.id, 'unified-' + shape.animation.type);
+                if (shape.animation && shape.animation.type !== 'none') {
+                    // First call the external completion handler if provided
+                    if (onAnimationComplete) {
+                        onAnimationComplete(shape.id, 'unified-' + shape.animation.type);
+                    }
+                    
+                    // Then call the animation's own onComplete callback if it exists
+                    if (shape.animation.onComplete) {
+                        shape.animation.onComplete();
+                    }
                 }
             }}
         >
