@@ -205,6 +205,37 @@ const InteractiveLesson = () => {
     const handleDevInteractionSelect = useCallback((interaction) => {
         console.log('Dev navigation to:', interaction);
 
+        // Stop any running TTS immediately
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        
+        // Stop the current TTS manager instance
+        if (ttsRef.current && ttsRef.current.stopTTS) {
+            ttsRef.current.stopTTS();
+        }
+
+        // Clear all interaction state immediately
+        setIsSpeaking(false);
+        setIsWaving(false);
+        setShowNextButton(false);
+        setDynamicTutorText(null);
+        setAnimationTrigger(false);
+        setHasUserInteracted(false);
+        setActiveFeedbackInteraction(null);
+        
+        // Reset measurement and perimeter input states
+        setMeasurementInput('');
+        setPerimeterInput('');
+        setPerimeterAttempts(0);
+        setShowPerimeterSolution(false);
+        setShowSideHighlighting(false);
+        setCurrentEquationStep(0);
+        
+        // Reset shape design state
+        setCurrentPerimeter(0);
+        setShapeDesignAttempts(0);
+
         if (interaction.isConditional) {
             // Navigate to conditional presentation
             setCurrentConditionalPresentation(interaction.presentationId);
@@ -215,12 +246,6 @@ const InteractiveLesson = () => {
             setCurrentPresIndex(interaction.presIndex);
             setCurrentInteractionIndex(interaction.interactionIndex);
         }
-
-        // Reset UI state - button reset first to prevent flicker
-        setShowNextButton(false);
-        setDynamicTutorText(null);
-        setAnimationTrigger(false);
-        setHasUserInteracted(false);
     }, []);
 
     const handleDevResetLesson = useCallback(() => {
