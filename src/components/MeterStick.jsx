@@ -9,11 +9,12 @@ const MeterStick = ({ startAnimation, onAnimationComplete }) => {
     }, [startAnimation, onAnimationComplete]);
 
     const markings = Array.from({ length: 11 }, (_, i) => {
-        const position = i * 10;
+        const cmValue = i * 20;
+        const position = i * 40 + 1; // 400px height / 10 intervals = 40px per interval + 1px offset
         return (
-            <div key={i} className="meter-mark-container" style={{ bottom: `${position}%` }}>
+            <div key={i} className="meter-mark-container" style={{ bottom: `${position}px` }}>
                 <div className="meter-mark-line"></div>
-                <span className="meter-mark-number">{position}</span>
+                <span className="meter-mark-number">{cmValue}</span>
             </div>
         );
     });
@@ -32,7 +33,7 @@ const MeterStick = ({ startAnimation, onAnimationComplete }) => {
                 </div>
             </div>
             <div className="measurement-label-container">
-                <span className="measurement-label-meter-stick">1m = 100cm</span>
+                <span className="measurement-label-meter-stick">2m = 200cm</span>
             </div>
         </div>
     );
