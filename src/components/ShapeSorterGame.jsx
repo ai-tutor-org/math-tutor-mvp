@@ -669,16 +669,20 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     }, [state.currentPhase, state.activeShapes.length, state.shapesInitialized, state.demoStarted, onAnimationComplete]);
 
     // Completion detection for interactive phases (GUIDED, PRACTICE, CHALLENGE)
+    const completionTriggeredRef = useRef(false);
+    
     useEffect(() => {
         const completablePhases = [GAME_PHASES.GUIDED, GAME_PHASES.PRACTICE, GAME_PHASES.CHALLENGE];
         
+        // Only trigger completion for actual completable phases and prevent duplicate triggers
         if (completablePhases.includes(state.currentPhase) && 
             state.shapesInitialized &&  // Only after shapes are loaded
             state.initialActiveCount > 0 &&  // Had shapes to begin with
             state.activeShapes.length === 0 &&  // Now empty (completed)
-            !state.waitingForPostAnimationTTS) {  // Not waiting for post-animation TTS
+            !state.waitingForPostAnimationTTS &&  // Not waiting for post-animation TTS
+            !completionTriggeredRef.current) {  // Haven't already triggered completion
             
-            console.log(`🎯 Phase ${state.currentPhase} completed - all shapes sorted`);
+            completionTriggeredRef.current = true; // Prevent duplicate triggers
             
             // Signal completion to InteractiveLesson after brief delay
             setTimeout(() => {
@@ -688,6 +692,11 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             }, 1500); // Allow time to see success message
         }
     }, [state.currentPhase, state.activeShapes.length, state.shapesInitialized, state.initialActiveCount, state.waitingForPostAnimationTTS]);
+    
+    // Reset completion flag when phase changes
+    useEffect(() => {
+        completionTriggeredRef.current = false;
+    }, [state.currentPhase]);
 
     // Handle intervention logic for incorrect drops
     useEffect(() => {
@@ -771,14 +780,21 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 if (completablePhases.includes(state.currentPhase) && 
                     state.shapesInitialized &&
                     state.initialActiveCount > 0 &&
-                    state.activeShapes.length === 0) {
+                    state.activeShapes.length === 0 &&
+                    !completionTriggeredRef.current) { // Use same flag to prevent duplicate triggers
+                    
+                    completionTriggeredRef.current = true; // Prevent duplicate triggers
                     
                     // Brief delay then advance
-                    setTimeout(() => {
+                    const timeoutId = setTimeout(() => {
                         if (window.advanceToNextInteraction) {
                             window.advanceToNextInteraction();
                         }
                     }, 100);
+                    
+                    // Store timeout ID for cleanup
+                    if (!window.shapeSorterTimeouts) window.shapeSorterTimeouts = [];
+                    window.shapeSorterTimeouts.push(timeoutId);
                 }
             }
         };
@@ -790,6 +806,20 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             delete window.notifyPostAnimationTTSComplete;
         };
     }, [state.waitingForPostAnimationTTS, state.currentPhase, state.shapesInitialized, state.initialActiveCount, state.activeShapes.length]);
+
+    // Cleanup global state on component unmount
+    useEffect(() => {
+        return () => {
+            // Clean up any pending global state to prevent race conditions
+            delete window.pendingCorrectionShapeType;
+            
+            // Cancel any pending timeouts to prevent stale closures from firing
+            if (window.shapeSorterTimeouts) {
+                window.shapeSorterTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+                delete window.shapeSorterTimeouts;
+            }
+        };
+    }, []);
 
     // Initialize play area dimensions on mount using unified coordinate system
     useLayoutEffect(() => {
