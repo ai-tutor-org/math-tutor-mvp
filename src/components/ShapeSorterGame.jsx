@@ -104,10 +104,6 @@ const initialState = {
         [SHAPE_TYPES.RECTANGLE]: 0,
         [SHAPE_TYPES.SQUARE]: 0
     },
-    gameStats: { 
-        perfectScore: true, 
-        totalAttempts: 0 
-    },
     showContainers: false,
     activeShapes: [],
     disabledShapes: [],
@@ -319,11 +315,6 @@ const gameReducer = (state, action) => {
                 shapeAttempts: {
                     ...state.shapeAttempts,
                     [action.shapeType]: state.shapeAttempts[action.shapeType] + 1
-                },
-                gameStats: {
-                    ...state.gameStats,
-                    totalAttempts: state.gameStats.totalAttempts + 1,
-                    perfectScore: false
                 }
             };
 
@@ -402,12 +393,7 @@ const gameReducer = (state, action) => {
                     bins: updatedBins,
                     shapes: updatedShapes,
                     activeShapes: updatedActiveShapes,
-                    disabledShapes: updatedDisabledShapes, // Critical fix: clean up disabled array
-                    gameStats: {
-                        ...state.gameStats,
-                        totalAttempts: state.gameStats.totalAttempts + 1,
-                        successfulDrops: (state.gameStats.successfulDrops || 0) + 1
-                    }
+                    disabledShapes: updatedDisabledShapes // Critical fix: clean up disabled array
                 };
             } else {
                 // Handle incorrect drop - increment attempts and check for interventions
@@ -421,10 +407,6 @@ const gameReducer = (state, action) => {
                     shapeAttempts: {
                         ...state.shapeAttempts,
                         [shapeType]: newAttempts
-                    },
-                    gameStats: {
-                        ...state.gameStats,
-                        totalAttempts: state.gameStats.totalAttempts + 1
                     },
                     // Explicitly ensure shape remains enabled after invalid drop
                     disabledShapes: cleanDisabledShapes,
@@ -513,7 +495,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     // Initialize unified animation system
     const shapeAnimations = useShapeAnimations(dispatch);
     
-    const gameAreaRef = useRef(null);
     const gameContentRef = useRef(null); // For drag constraints - proper game boundaries
     const playAreaRef = useRef(null); // For positioning context
     
@@ -544,18 +525,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                (y + shapeDims.height) <= (playDimensions.height + tolerance);
     };
     
-    const shouldBounceFromBoundary = (x, y, shapeType) => {
-        const playDimensions = getPlayAreaDimensions();
-        const shapeDims = getShapeDimensions(shapeType);
-        
-        // Hard boundary check - shape is significantly outside play area
-        const hardBoundaryViolation = x < -BOUNDARY_TOLERANCE || 
-                                     (x + shapeDims.width) > (playDimensions.width + BOUNDARY_TOLERANCE) ||
-                                     y < -BOUNDARY_TOLERANCE || 
-                                     (y + shapeDims.height) > (playDimensions.height + BOUNDARY_TOLERANCE);
-        
-        return hardBoundaryViolation;
-    };
     
     // Helper function to update container positions cache (play-area relative)
     const updateContainerPositions = () => {
@@ -832,14 +801,10 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     useEffect(() => {
         if (!playAreaRef.current) return;
 
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                const { width, height } = entry.contentRect;
-                // Play area resized - may need to reposition shapes
-                
-                // Future: Recalculate shape positions if pile moves within play-area
-                // For now, drag constraints will handle boundaries automatically
-            }
+        const resizeObserver = new ResizeObserver(() => {
+            // Play area resized - may need to reposition shapes
+            // Future: Recalculate shape positions if pile moves within play-area
+            // For now, drag constraints will handle boundaries automatically
         });
         
         resizeObserver.observe(playAreaRef.current);
@@ -913,10 +878,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                     shapes: shapeStates.activeShapes
                 });
                 
-                // Update disabled shapes array
-                const updatedDisabledShapes = state.shapes
-                    .filter(s => !shapeStates.activeShapes.some(active => active.id === s.id))
-                    .map(s => s.id);
                 
                 dispatch({
                     type: 'ENABLE_SHAPES',
@@ -928,17 +889,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     
     // Removed reactive shape enabling - now handled deterministically in INITIALIZE_SHAPES
 
-    // Help button should advance to next interaction, not manually change phases
-    const handleHelpButtonClick = () => {
-        // Let the parent component handle interaction advancement
-        // This will properly follow the contentData flow
-        if (window.advanceToNextInteraction) {
-            window.advanceToNextInteraction();
-        } else {
-            // Fallback: dispatch a custom event that InteractiveLesson can listen to
-            window.dispatchEvent(new CustomEvent('advanceInteraction'));
-        }
-    };
 
     // Handle shape animation completion for immediate timing
     const handleShapeAnimationComplete = (shapeId, type = 'demo') => {
@@ -1744,7 +1694,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                 <li>Shapes loaded: {state.shapes.length}</li>
                                 <li>Containers visible: {state.showContainers ? 'Yes' : 'No'}</li>
                                 <li>Active shapes: {state.activeShapes.length}</li>
-                                <li>Total attempts: {state.gameStats.totalAttempts}</li>
                             </ul>
                         </div>
                     </div>
@@ -1753,31 +1702,19 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     };
 
     return (
-        <div className="shape-sorter-game" ref={gameAreaRef}>
-            <div className="game-header">
-                <h3 className="game-title">Shape Factory Sorting</h3>
-                <div className="game-stats">
-                    <span className="current-phase">Phase: {state.currentPhase}</span>
-                    <span className="attempt-counter">Attempts: {state.gameStats.totalAttempts}</span>
-                </div>
-            </div>
-            
-            <div className="game-content" ref={gameContentRef}>
-                <AnimatePresence mode="wait">
-                    <motion.div 
-                        key={state.currentPhase}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="phase-container"
-                    >
-                        {renderPhaseContent()}
-                    </motion.div>
-                </AnimatePresence>
-            </div>
-
-            {/* Debug panel removed for clean interface */}
+        <div className="game-content" ref={gameContentRef}>
+            <AnimatePresence mode="wait">
+                <motion.div 
+                    key={state.currentPhase}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="phase-container"
+                >
+                    {renderPhaseContent()}
+                </motion.div>
+            </AnimatePresence>
         </div>
     );
 };
