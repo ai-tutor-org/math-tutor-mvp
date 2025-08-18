@@ -17,7 +17,7 @@ const FoxThreat = ({ onAnswerSubmit }) => {
                 muted
                 playsInline
             >
-                <source src="/math-tutor-mvp/assets/farmer-mission/fox-animation.mp4" type="video/mp4" />
+                <source src="/assets/farmer-mission/fox-animation.mp4" type="video/mp4" />
                 <div className="video-fallback">
                     <div className="threat-fallback">
                         <div className="fox-section">

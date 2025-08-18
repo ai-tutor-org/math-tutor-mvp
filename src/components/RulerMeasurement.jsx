@@ -10,7 +10,7 @@ const RulerMeasurement = ({
         <motion.div className="ruler-measurement-container">
             <div className="ruler-zoom-container">
                 <div className="ruler-container">
-                    <img src="/math-tutor-mvp/images/ruler.svg" alt="Ruler" className="ruler-svg" />
+                    <img src="/images/ruler.svg" alt="Ruler" className="ruler-svg" />
                     <div className="paperclip-container">
                         <svg className="paperclip-icon" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none">
                             <g clipPath="url(#clip0_6108_36821)">

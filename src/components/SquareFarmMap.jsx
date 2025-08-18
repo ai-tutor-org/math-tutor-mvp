@@ -12,7 +12,7 @@ const SquareFarmMap = () => {
             transition={{ duration: 0.5, ease: 'easeInOut' }}
         >
             <img
-                src="/math-tutor-mvp/assets/farmer-mission/square-farm-map.svg"
+                src="/assets/farmer-mission/square-farm-map.svg"
                 alt="Square farm field"
                 className="farm-map-image"
                 onError={(e) => {

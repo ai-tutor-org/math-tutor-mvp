@@ -2,7 +2,7 @@
     "name": "tutorp",
     "private": true,
     "version": "0.0.0",
-    "homepage": "https://iamujj15.github.io/math-tutor-mvp/",
+    "homepage": "https://ai-math-tutor.com/",
     "type": "module",
     "scripts": {
         "dev": "vite",

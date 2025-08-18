@@ -18,7 +18,7 @@ const FarmerCelebration = () => {
                 muted
                 playsInline
             >
-                <source src="/math-tutor-mvp/assets/farmer-mission/celebration-scene.mp4" type="video/mp4" />
+                <source src="/assets/farmer-mission/celebration-scene.mp4" type="video/mp4" />
                 <div className="video-fallback">
                     <div className="celebration-fallback">
                         <span className="celebration-emoji">🎉</span>

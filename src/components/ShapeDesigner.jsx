@@ -262,7 +262,7 @@ const ShapeDesigner = ({
             />
             {/* Drag icon */}
             <image
-              href="/math-tutor-mvp/assets/shape-designer/drag-icon.svg"
+              href="/assets/shape-designer/drag-icon.svg"
               x="-17"
               y="-17"
               width="34"

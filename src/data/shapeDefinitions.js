@@ -166,25 +166,25 @@ export const generateShapes = () => {
  */
 export const CONTAINER_DEFINITIONS = {
     [SHAPE_TYPES.TRIANGLE]: {
-        image: '/math-tutor-mvp/images/triangles_container.png',
+        image: '/images/triangles_container.png',
         label: 'Triangles',
         acceptedTypes: [SHAPE_TYPES.TRIANGLE],
         color: SHAPE_COLORS[SHAPE_TYPES.TRIANGLE]
     },
     [SHAPE_TYPES.CIRCLE]: {
-        image: '/math-tutor-mvp/images/circles_container.png',
+        image: '/images/circles_container.png',
         label: 'Circles', 
         acceptedTypes: [SHAPE_TYPES.CIRCLE],
         color: SHAPE_COLORS[SHAPE_TYPES.CIRCLE]
     },
     [SHAPE_TYPES.RECTANGLE]: {
-        image: '/math-tutor-mvp/images/rectangles_container.png',
+        image: '/images/rectangles_container.png',
         label: 'Rectangles',
         acceptedTypes: [SHAPE_TYPES.RECTANGLE],
         color: SHAPE_COLORS[SHAPE_TYPES.RECTANGLE]
     },
     [SHAPE_TYPES.SQUARE]: {
-        image: '/math-tutor-mvp/images/squares_container.png',
+        image: '/images/squares_container.png',
         label: 'Squares',
         acceptedTypes: [SHAPE_TYPES.SQUARE],
         color: SHAPE_COLORS[SHAPE_TYPES.SQUARE]

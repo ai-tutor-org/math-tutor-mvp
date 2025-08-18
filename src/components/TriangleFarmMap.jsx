@@ -12,7 +12,7 @@ const TriangleFarmMap = () => {
             transition={{ duration: 0.5, ease: 'easeInOut' }}
         >
             <img
-                src="/math-tutor-mvp/assets/farmer-mission/triangle-farm-map.svg"
+                src="/assets/farmer-mission/triangle-farm-map.svg"
                 alt="Triangle farm field"
                 className="farm-map-image"
                 onError={(e) => {

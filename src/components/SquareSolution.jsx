@@ -45,7 +45,7 @@ const SquareSolution = ({ onAnswerSubmit }) => {
         >
             <div className="farm-image-container">
                 <img
-                    src="/math-tutor-mvp/assets/farmer-mission/square-farm-map.svg"
+                    src="/assets/farmer-mission/square-farm-map.svg"
                     alt="Square farm field"
                     className="farm-map-solution"
                 />

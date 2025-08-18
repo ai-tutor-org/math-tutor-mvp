@@ -5,7 +5,7 @@ import InteractiveLesson from './pages/InteractiveLesson'
 
 function App() {
     return (
-        <Router basename="/math-tutor-mvp/">
+        <Router basename="/">
             <div className="App">
                 <Routes>
                     <Route path="/" element={<Home />} />

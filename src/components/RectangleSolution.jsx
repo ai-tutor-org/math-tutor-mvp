@@ -42,7 +42,7 @@ const RectangleSolution = ({ onAnswerSubmit }) => {
         >
             <div className="farm-image-container">
                 <img
-                    src="/math-tutor-mvp/assets/farmer-mission/farm-map.png"
+                    src="/assets/farmer-mission/farm-map.png"
                     alt="Farmer Giles' rectangular farm"
                     className="farm-map-solution"
                 />

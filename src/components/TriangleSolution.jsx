@@ -43,7 +43,7 @@ const TriangleSolution = ({ onAnswerSubmit }) => {
         >
             <div className="farm-image-container">
                 <img
-                    src="/math-tutor-mvp/assets/farmer-mission/triangle-farm-map.svg"
+                    src="/assets/farmer-mission/triangle-farm-map.svg"
                     alt="Triangle farm field"
                     className="farm-map-solution"
                 />

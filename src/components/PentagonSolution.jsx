@@ -46,7 +46,7 @@ const PentagonSolution = () => {
         >
             <div className="farm-image-container">
                 <img
-                    src="/math-tutor-mvp/assets/farmer-mission/pentagon-farm-map.svg"
+                    src="/assets/farmer-mission/pentagon-farm-map.svg"
                     alt="Pentagon farm field"
                     className="farm-map-solution"
                 />

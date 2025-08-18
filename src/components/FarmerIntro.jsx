@@ -18,7 +18,7 @@ const FarmerIntro = () => {
                 muted
                 playsInline
             >
-                <source src="/math-tutor-mvp/assets/farmer-mission/farmer-giles.mp4" type="video/mp4" />
+                <source src="/assets/farmer-mission/farmer-giles.mp4" type="video/mp4" />
                 <div className="video-fallback">
                     <div className="farmer-fallback">
                         <span className="farmer-emoji">👨‍🌾</span>

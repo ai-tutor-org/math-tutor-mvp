@@ -22,10 +22,10 @@ const MeterStick = ({ startAnimation, onAnimationComplete }) => {
         <div className="meter-stick-container">
             <div className="visuals-container">
                 <div className="door-container">
-                    <img src="/math-tutor-mvp/images/door.svg" alt="Door" className="door-icon" />
+                    <img src="/images/door.svg" alt="Door" className="door-icon" />
                 </div>
                 <div className="meter-stick-visuals">
-                    <img src="/math-tutor-mvp/images/meter-ruler.svg" alt="Meter Ruler" className="meter-ruler" />
+                    <img src="/images/meter-ruler.svg" alt="Meter Ruler" className="meter-ruler" />
                     <div className="meter-stick">
                         {markings}
                     </div>
