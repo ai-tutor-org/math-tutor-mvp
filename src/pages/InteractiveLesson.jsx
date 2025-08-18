@@ -312,7 +312,6 @@ const InteractiveLesson = () => {
                     const feedbackText = getFeedbackText('shape-correct');
                     if (feedbackText) {
                         setDynamicTutorText(feedbackText);
-                        ttsRef.current?.triggerTTS(feedbackText);
                     }
                     setShowNextButton(true);
                 }
@@ -320,7 +319,6 @@ const InteractiveLesson = () => {
                 const incorrectFeedback = getFeedbackText('shape-incorrect');
                 if (incorrectFeedback) {
                     setDynamicTutorText(incorrectFeedback);
-                    ttsRef.current?.triggerTTS(incorrectFeedback);
                 }
             }
             return;
@@ -330,7 +328,6 @@ const InteractiveLesson = () => {
             const feedbackText = getFeedbackText(feedbackId);
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
-                ttsRef.current?.triggerTTS(feedbackText);
                 setShowNextButton(true); // Show continue button after feedback
             }
         } else {

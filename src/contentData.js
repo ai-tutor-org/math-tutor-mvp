@@ -730,7 +730,7 @@ export const presentations = {
             {
                 id: 'measure-coaster',
                 type: 'shape-measurement',
-                tutorText: "Try this cube. Measure the highlighted bottom edge.",
+                tutorText: "Try this box. Measure the highlighted bottom edge.",
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-coaster',
@@ -766,7 +766,7 @@ export const presentations = {
             {
                 id: 'measurement-conclusion',
                 type: 'tutor-monologue',
-                tutorText: "And that's a wrap! You did a fantastic job measuring those shapes. Using tools like rulers is a very important skill in math and science. You should be proud! Now let's move on to something fun...",
+                tutorText: "And that's a wrap! You did a fantastic job measuring those shapes. \n\nUsing tools like rulers is a very important skill in math and science. You should be proud! \n\nNow let's move on to something fun...",
                 ContentComponent: () => null,
                 transitionType: 'auto'
             }
@@ -777,7 +777,7 @@ export const presentations = {
             {
                 id: 'shape-factory-intro',
                 type: 'shape-sorting-game',
-                tutorText: "Now that you've mastered measuring with standard units, let's apply what you've learned! Welcome to the Shape Factory - where we sort shapes by type. I'll guide you through this step by step.",
+                tutorText: "Now that you've mastered measuring with standard units, let's apply what you've learned! \n\nWelcome to the Shape Factory - where we sort shapes by type. I'll guide you through this step by step.",
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
