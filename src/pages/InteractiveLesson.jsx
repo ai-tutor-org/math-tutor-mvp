@@ -606,8 +606,14 @@ const InteractiveLesson = () => {
         // Generate stable key for same component to prevent unnecessary re-mounting
         const componentName = Component.name || Component.displayName || 'Component';
         
+        // Special case: ShapeSorterGame needs unique keys per interaction for phase changes
+        // All other components benefit from stable keys to prevent flickering
+        const componentKey = componentName === 'ShapeSorterGame' 
+            ? `${componentName}-${currentPresIndex}-${currentInteractionIndex}`
+            : `${componentName}-${currentPresIndex}`;
+
         let props = {
-            key: `${componentName}-${currentPresIndex}`,
+            key: componentKey,
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
             onInteraction: handleUserInteraction,
