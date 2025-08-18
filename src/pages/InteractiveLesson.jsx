@@ -78,7 +78,7 @@ const InteractiveLesson = () => {
     // Lesson State
     const [currentPresIndex, setCurrentPresIndex] = useState(0);
     const [currentInteractionIndex, setCurrentInteractionIndex] = useState(0);
-    const [currentConditionalPresentation, setCurrentConditionalPresentation] = useState(null); // For 5B, 5C
+    const [currentConditionalPresentation, setCurrentConditionalPresentation] = useState(null); // For conditional presentations
 
     // UI State
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -184,16 +184,6 @@ const InteractiveLesson = () => {
             const interactionIndex = pres.interactions.findIndex(int => int.id === interactionId);
             console.log(`Found interaction at index: ${interactionIndex}`);
             if (interactionIndex !== -1) {
-                // For conditional presentations (5B, 5C), set them using conditional presentation state
-                if (presId === 'measurement-reason-incorrect' || presId === 'measurement-reason-correct') {
-                    console.log(`Navigating to conditional presentation: ${presId}`);
-                    setCurrentConditionalPresentation(presId);
-                    setCurrentInteractionIndex(interactionIndex);
-                    setDynamicTutorText(null);
-                    setShowNextButton(false); // Reset button immediately
-                    setIsSpeaking(true); // Set speaking immediately to prevent button flicker
-                    return;
-                }
 
                 // For normal presentations in the lesson sequence
                 const lessonSeqIndex = lesson.sequence.findIndex(seq => seq.presentationId === presId);
@@ -263,13 +253,20 @@ const InteractiveLesson = () => {
         console.log('Current interaction ID:', interaction?.id);
         console.log('Answer is correct:', answerData.isCorrect);
 
-        // Handle multiple choice questions with onSelectAction
-        if (interaction?.type === 'multiple-choice-question' && answerData.onSelectAction) {
-            const action = answerData.onSelectAction;
-            if (action.type === 'navigateToConditionalPresentation') {
-                console.log(`Navigating to ${action.target}`);
-                setCurrentConditionalPresentation(action.target);
-                setCurrentInteractionIndex(0);
+
+        // Handle multiple choice questions with feedbackId
+        if (interaction?.type === 'multiple-choice-question' && answerData.feedbackId) {
+            const feedbackInteraction = getFeedbackInteraction(answerData.feedbackId);
+            if (feedbackInteraction) {
+                setDynamicTutorText(feedbackInteraction.tutorText);
+                setActiveFeedbackInteraction(feedbackInteraction);
+                
+                if (feedbackInteraction.type === 'multiple-choice-question') {
+                    // For retry questions, don't show next button - let user answer again
+                    return;
+                } else {
+                    setShowNextButton(true);
+                }
             }
             return;
         }
@@ -516,10 +513,10 @@ const InteractiveLesson = () => {
             return; // Don't trigger animation here - component will handle it internally
         }
 
-        if (interaction?.transitionType === 'auto') {
+        if (currentInteraction?.transitionType === 'auto') {
             // Check if there's a specific navigation target
-            if (interaction?.navigateToInteraction) {
-                setTimeout(() => navigateToInteraction(interaction.navigateToInteraction), 500);
+            if (currentInteraction?.navigateToInteraction) {
+                setTimeout(() => navigateToInteraction(currentInteraction.navigateToInteraction), 500);
             } else {
                 setTimeout(advanceToNext, 500);
             }
@@ -938,8 +935,47 @@ const InteractiveLesson = () => {
 
 
 
+                    {/* Multiple Choice Question Interface - Feedback interactions */}
+                    {activeFeedbackInteraction?.type === 'multiple-choice-question' && !isSpeaking && !showNextButton && (
+                        <Box sx={{ mb: 3, width: '100%' }}>
+                            <Box sx={{ mb: 3 }}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                    {activeFeedbackInteraction?.contentProps?.choices?.map((choice, index) => (
+                                        <Button
+                                            key={index}
+                                            variant="outlined"
+                                            onClick={() => handleAnswer({ 
+                                                text: choice.text, 
+                                                isCorrect: choice.isCorrect,
+                                                feedbackId: choice.feedbackId
+                                            })}
+                                            sx={{
+                                                padding: '12px 16px',
+                                                borderRadius: '12px',
+                                                border: '1px solid #545E7D',
+                                                background: '#484D5C',
+                                                fontWeight: 'bold',
+                                                color: '#fff',
+                                                textTransform: 'none',
+                                                fontSize: '0.95rem',
+                                                textAlign: 'left',
+                                                justifyContent: 'flex-start',
+                                                '&:hover': {
+                                                    background: '#545E7D',
+                                                    borderColor: '#545E7D'
+                                                }
+                                            }}
+                                        >
+                                            {choice.text}
+                                        </Button>
+                                    ))}
+                                </Box>
+                            </Box>
+                        </Box>
+                    )}
+
                     {/* Multiple Choice Question Interface - General case */}
-                    {interaction?.type === 'multiple-choice-question' && !isSpeaking && !showNextButton && (
+                    {interaction?.type === 'multiple-choice-question' && !activeFeedbackInteraction && !isSpeaking && !showNextButton && (
                         <Box sx={{ mb: 3, width: '100%' }}>
                             <Box sx={{ mb: 3 }}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -950,7 +986,7 @@ const InteractiveLesson = () => {
                                             onClick={() => handleAnswer({ 
                                                 text: choice.text, 
                                                 isCorrect: choice.isCorrect,
-                                                onSelectAction: choice.onSelectAction
+                                                feedbackId: choice.feedbackId
                                             })}
                                             sx={{
                                                 padding: '12px 16px',

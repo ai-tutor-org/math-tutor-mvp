@@ -32,7 +32,11 @@ export const lessons = {
         title: "Introduction to Perimeter",
         sequence: [
             {
-                presentationId: 'introduction-to-standard-units',
+                presentationId: 'standard-units-pre-intro',
+                transition: { type: 'manual', buttonText: "Let's Learn!" }
+            },
+            {
+                presentationId: 'intro-to-standard-units',
                 transition: { type: 'manual', buttonText: "Let's Learn!" }
             },
             {
@@ -81,61 +85,12 @@ export const lessons = {
             }
         ],
         // These presentations are not in the main sequence - they are navigated to conditionally
-        conditionalPresentations: [
-            'measurement-reason-incorrect',
-            'measurement-reason-correct'
-        ]
+        conditionalPresentations: []
     }
 };
 
 // Conditional/feedback presentations - triggered conditionally, not part of main sequence
 export const conditionalPresentations = {
-    'measurement-reason-incorrect': {
-        interactions: [
-            {
-                id: 'measurement-reason-retry',
-                type: 'multiple-choice-question',
-                tutorText: "No, the size of the room is the same. Choose again.",
-                contentProps: {
-                    showBothFootsteps: true,
-                    yourSteps: 10,
-                    friendSteps: 8,
-                    yourFootColor: '#4A90E2',
-                    friendFootColor: '#e24a4a',
-                    question: "What do you think is the reason?",
-                    choices: [
-                        {
-                            text: "The size of my feet and my friend's feet are different",
-                            isCorrect: true,
-                            onSelectAction: {
-                                type: 'navigateToConditionalPresentation',
-                                target: 'measurement-reason-correct'
-                            }
-                        }
-                    ]
-                },
-                transitionType: 'manual',
-            }
-        ]
-    },
-    'measurement-reason-correct': {
-        interactions: [
-            {
-                id: 'measurement-reason-explanation',
-                type: 'tutor-monologue',
-                tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
-                contentProps: {
-                    showBothFootsteps: true,
-                    yourSteps: 10,
-                    friendSteps: 8,
-                    yourFootColor: '#4A90E2',
-                    friendFootColor: '#e24a4a'
-                },
-                transitionType: 'auto',
-                navigateToInteraction: 'standard-units-intro' // Continue to standard units explanation
-            }
-        ]
-    },
     'feedback-interactions': {
         interactions: [
             {
@@ -444,6 +399,41 @@ export const conditionalPresentations = {
                 },
                 transitionType: 'auto'
             },
+            // Measurement reason feedback interactions
+            {
+                id: 'measurement-reason-retry',
+                type: 'multiple-choice-question',
+                tutorText: "No, the size of the room is the same. Choose again.",
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a',
+                    question: "What do you think is the reason?",
+                    choices: [
+                        {
+                            text: "The size of my feet and my friend's feet are different",
+                            isCorrect: true,
+                            feedbackId: 'measurement-reason-explanation'
+                        }
+                    ]
+                },
+                transitionType: 'manual'
+            },
+            {
+                id: 'measurement-reason-explanation',
+                type: 'tutor-monologue',
+                tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a'
+                },
+                transitionType: 'auto',
+            },
             // Shape Sorting Game feedback interactions
             {
                 id: 'triangle-hint',
@@ -523,7 +513,7 @@ export const conditionalPresentations = {
 
 // Main sequential presentations - the primary lesson flow
 export const presentations = {
-    'introduction-to-standard-units': {
+    'standard-units-pre-intro': {
         interactions: [
             {
                 id: 'welcome',
@@ -609,23 +599,21 @@ export const presentations = {
                         {
                             text: 'The size of the room changed',
                             isCorrect: false,
-                            onSelectAction: {
-                                type: 'navigateToConditionalPresentation',
-                                target: 'measurement-reason-incorrect'
-                            }
+                            feedbackId: 'measurement-reason-retry'
                         },
                         {
                             text: "The size of my feet and my friend's feet are different",
                             isCorrect: true,
-                            onSelectAction: {
-                                type: 'navigateToConditionalPresentation',
-                                target: 'measurement-reason-correct'
-                            }
+                            feedbackId: 'measurement-reason-explanation'
                         }
                     ]
                 },
                 transitionType: 'manual',
             },
+        ],
+    },
+    'intro-to-standard-units': {
+        interactions: [
             {
                 id: 'standard-units-intro',
                 type: 'standard-units-explanation',
