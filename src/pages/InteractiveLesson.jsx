@@ -819,20 +819,12 @@ const InteractiveLesson = () => {
 
                     {/* Tutor Avatar */}
                     <Box sx={{ mb: 3 }}>
-                        <video
-                            src="/math-tutor-mvp/tutor/hello.webm"
-                            autoPlay
-                            muted
-                            onLoadedData={(e) => {
-                                setTimeout(() => {
-                                    e.target.pause();
-                                }, 3000);
-                            }}
+                        <img
+                            src="/math-tutor-mvp/images/tutor_avatar.png"
+                            alt="AI Tutor"
                             style={{
                                 width: '100px',
-                                height: '100px',
-                                objectFit: 'cover',
-                                borderRadius: '8px'
+                                height: '100px'
                             }}
                         />
                     </Box>
