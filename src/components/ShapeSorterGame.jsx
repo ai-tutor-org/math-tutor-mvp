@@ -76,10 +76,11 @@ const getShapeStatesForPhase = (phase, shapes, targetCount = 12) => {
         };
     } else {
         // Non-interactive phase: all shapes are disabled
-        return {
+        const result = {
             activeShapes: selectedShapes,
             disabledShapes: selectedShapes.map(s => s.id) // All disabled for non-interactive phases
         };
+        return result;
     }
 };
 
@@ -435,6 +436,11 @@ const gameReducer = (state, action) => {
                 activeShapes: action.shapes
             };
 
+        case 'SET_DISABLED_SHAPES':
+            return {
+                ...state,
+                disabledShapes: action.shapeIds
+            };
         case 'UPDATE_SHAPE_HIGHLIGHT':
             return {
                 ...state,
@@ -812,9 +818,9 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         return () => resizeObserver.disconnect();
     }, []);
 
-    // Initialize shapes after play area is set
+    // Initialize shapes after play area is set AND phase is properly set from contentProps
     useEffect(() => {
-        if (state.pileArea.width > 0 && state.shapes.length === 0) {
+        if (state.pileArea.width > 0 && state.shapes.length === 0 && contentProps.phaseConfig) {
             
             // Generate the 12 shapes
             const generatedShapes = generateShapes();
@@ -873,15 +879,16 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 const targetCount = newTargetShapes || state.targetShapes;
                 const shapeStates = getShapeStatesForPhase(newPhase, state.shapes, targetCount);
                 
+                // Update both active and disabled shapes properly
                 dispatch({
                     type: 'SET_ACTIVE_SHAPES',
                     shapes: shapeStates.activeShapes
                 });
                 
-                
+                // Update disabled shapes directly instead of using ENABLE_SHAPES
                 dispatch({
-                    type: 'ENABLE_SHAPES',
-                    shapeIds: shapeStates.activeShapes.map(s => s.id)
+                    type: 'SET_DISABLED_SHAPES',
+                    shapeIds: shapeStates.disabledShapes
                 });
             }
         }
