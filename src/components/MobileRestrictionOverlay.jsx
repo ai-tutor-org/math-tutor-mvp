@@ -21,16 +21,18 @@ const MobileRestrictionOverlay = () => {
         <div style={{
           backgroundColor: 'white',
           borderRadius: '15px',
-          padding: '40px 30px',
-          maxWidth: '400px',
+          padding: 'clamp(15px, 3vh, 40px) clamp(20px, 4vw, 30px)',
+          width: 'clamp(280px, 85vw, 400px)',
+          maxHeight: '90vh',
+          overflowY: 'auto',
           textAlign: 'center',
           boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
         }}>
-          <div style={{ fontSize: '4rem', marginBottom: '20px' }}>💻</div>
+          <div style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', marginBottom: 'clamp(10px, 2vh, 20px)' }}>💻</div>
           <h2 style={{ 
             color: '#333', 
-            marginBottom: '15px',
-            fontSize: '1.5rem',
+            marginBottom: 'clamp(8px, 1.5vh, 15px)',
+            fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
             fontWeight: 'bold'
           }}>
             Desktop Required
@@ -38,15 +40,15 @@ const MobileRestrictionOverlay = () => {
           <p style={{ 
             color: '#666', 
             lineHeight: '1.5',
-            fontSize: '1rem',
-            margin: '0 0 15px 0'
+            fontSize: 'clamp(0.85rem, 2.5vw, 1rem)',
+            margin: '0 0 clamp(8px, 1.5vh, 15px) 0'
           }}>
             This interactive lesson is designed for desktop/laptop screens and is not optimized for mobile devices.
           </p>
           <p style={{ 
             color: '#666', 
             lineHeight: '1.5',
-            fontSize: '0.9rem',
+            fontSize: 'clamp(0.75rem, 2vw, 0.9rem)',
             margin: '0',
             fontStyle: 'italic'
           }}>
