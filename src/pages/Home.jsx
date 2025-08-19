@@ -105,8 +105,7 @@ function Home() {
                             fontSize: { xs: '24px', sm: '32px' },
                             fontWeight: '800',
                             color: 'white',
-                            marginBottom: '16px',
-                            margin: 0
+                            marginBottom: '8px'
                         }}>
                             Area and Perimeter
                         </Typography>
