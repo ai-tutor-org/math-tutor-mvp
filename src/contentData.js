@@ -102,12 +102,14 @@ export const conditionalPresentations = {
                 id: 'crayon-correct',
                 type: 'tutor-monologue',
                 tutorText: "Exactly! Centimeters are perfect for that.",
+                tutorAnimation: 'happy-applauding',
                 transitionType: 'auto'
             },
             {
                 id: 'crayon-incorrect',
                 type: 'tutor-monologue',
                 tutorText: "Good try, but a meter is way too big for a crayon! Centimeters are the better choice here.",
+                tutorAnimation: 'explaining',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Got it!"
@@ -116,12 +118,14 @@ export const conditionalPresentations = {
                 id: 'shape-correct',
                 type: 'tutor-monologue',
                 tutorText: "Correct! Great job measuring.",
+                tutorAnimation: 'happy-applauding',
                 transitionType: 'auto'
             },
             {
                 id: 'shape-incorrect',
                 type: 'tutor-monologue',
                 tutorText: "Not quite. Try adjusting the ruler and measuring again.",
+                tutorAnimation: 'normal-talking',
                 transitionType: 'auto'
             },
             // Perimeter feedback interactions
@@ -129,6 +133,7 @@ export const conditionalPresentations = {
                 id: 'rectangle-correct',
                 type: 'tutor-monologue',
                 tutorText: "That's exactly right! The perimeter is 100 meters.",
+                tutorAnimation: 'happy-applauding',
                 transitionType: 'auto'
             },
             {
@@ -419,6 +424,7 @@ export const conditionalPresentations = {
                 id: 'measurement-reason-retry',
                 type: 'multiple-choice-question',
                 tutorText: "No, the size of the room is the same. Choose again.",
+                tutorAnimation: 'thinking-curious-question',
                 contentProps: {
                     showBothFootsteps: true,
                     yourSteps: 10,
@@ -440,6 +446,7 @@ export const conditionalPresentations = {
                 id: 'measurement-reason-explanation',
                 type: 'tutor-monologue',
                 tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
+                tutorAnimation: 'explaining',
                 contentProps: {
                     showBothFootsteps: true,
                     yourSteps: 10,
@@ -534,6 +541,7 @@ export const presentations = {
                 id: 'welcome',
                 type: 'welcome',
                 tutorText: "Hey there! \n\nI'm Mathy, your personal tutor. 😊 I'm so excited to explore the world of shapes and sizes with you. \n\nReady to start our first adventure?",
+                tutorAnimation: 'waving',
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showWelcomeButton: true,
@@ -542,12 +550,14 @@ export const presentations = {
                 id: 'room-question',
                 type: 'room-question',
                 tutorText: "Let's start with a simple question. Imagine this is your room. How would you figure out how long it is from one wall to the other?",
+                tutorAnimation: 'thinking-curious-question',
                 transitionType: 'auto',
             },
             {
                 id: 'footsteps-demo',
                 type: 'footsteps-animation',
                 tutorText: "A common way is to use footsteps! Let's try it. Help me walk from one side to the other by clicking the button for each step.",
+                tutorAnimation: 'explaining',
                 contentProps: {
                     totalSteps: 10,
                     footIconColor: '#4A90E2',
@@ -559,6 +569,7 @@ export const presentations = {
                 id: 'footsteps-friend',
                 type: 'footsteps-animation-friend',
                 tutorText: "Okay, so the room is 10 steps long. \n\nSimple enough! But wait... here comes your friend, who has bigger feet. He doesn't believe that the room is 10 steps long. He will use his own steps to measure the room.\n\n Help him measure the room too - click the button for each of his steps.",
+                tutorAnimation: 'explaining',
                 contentProps: {
                     totalSteps: 8,
                     footIconColor: '#e24a4a',
@@ -588,6 +599,7 @@ export const presentations = {
                 id: 'conflicting-problem',
                 type: 'conflicting-measurements',
                 tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. \n\nBut the room didn't change! Who is right? This is confusing, isn't it?",
+                tutorAnimation: 'thinking-curious-question',
                 contentProps: {
                     showBothFootsteps: true,
                     yourSteps: 10,
@@ -603,6 +615,7 @@ export const presentations = {
                 id: 'measurement-reason-question',
                 type: 'multiple-choice-question',
                 tutorText: "What do you think is the reason?",
+                tutorAnimation: 'thinking-curious-question',
                 contentProps: {
                     showBothFootsteps: true,
                     yourSteps: 10,
@@ -633,6 +646,7 @@ export const presentations = {
                 id: 'standard-units-intro',
                 type: 'standard-units-explanation',
                 tutorText: "What if we had a tool that was the same for everyone in this room? \n\nAnd the same for kids in the classroom next door? \n\nAnd the same for kids all over the world? \n\nTo solve this problem, people all over the world agreed to use standard units.",
+                tutorAnimation: 'explaining',
                 ContentComponent: StandardUnits,
                 transitionType: 'auto',
             },
@@ -640,6 +654,7 @@ export const presentations = {
                 id: 'centimeter-ruler',
                 type: 'ruler-measurement',
                 tutorText: "A standard unit is something which measures the same for everyone. \n\nOne of the standard units is the centimeter (cm). It's very small, perfect for measuring little things.",
+                tutorAnimation: 'explaining',
                 ContentComponent: RulerMeasurement,
                 contentProps: { length: 3, unit: 'cm' },
                 transitionType: 'manual',
@@ -650,6 +665,7 @@ export const presentations = {
                 id: 'meter-stick-demo',
                 type: 'meter-measurement',
                 tutorText: "Nice! For bigger things, we use a bigger unit called a meter. \n\nA meter is the same as 100 centimeters. \n\nSee how this meter stick compares to the height of a door?",
+                tutorAnimation: 'explaining',
                 ContentComponent: MeterStick,
                 contentProps: {},
                 transitionType: 'manual',
@@ -664,6 +680,7 @@ export const presentations = {
                 id: 'crayon-question',
                 type: 'multiple-choice-question',
                 tutorText: "Time for a quick check! If you wanted to measure a crayon, which unit would you use? Click on the best choice.",
+                tutorAnimation: 'thinking-curious-question',
                 ContentComponent: Crayon,
                 contentProps: {
                     question: "If you wanted to measure a crayon, which unit would you use?",
@@ -686,6 +703,7 @@ export const presentations = {
                 id: 'activity-intro',
                 type: 'tutor-monologue',
                 tutorText: "Great job! Now for a real challenge. You'll see a shape with colored sides. Your mission is to figure out the length of each colored side using a special on-screen ruler that you can drag around. \n\nOnce you measure a side, enter its length in the input box. Let's see what you've got!",
+                tutorAnimation: 'explaining',
                 ContentComponent: () => null,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -695,6 +713,7 @@ export const presentations = {
                 id: 'measure-notebook',
                 type: 'shape-measurement',
                 tutorText: "Here's our first object: a notebook. \n\nUse the ruler to measure the length of the highlighted blue edge. \n\nThen, type your answer in the box and click 'Check'.",
+                tutorAnimation: 'explaining',
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-notebook',
@@ -713,6 +732,7 @@ export const presentations = {
                 id: 'measure-sticky-note',
                 type: 'shape-measurement',
                 tutorText: "Next, measure this sticky note. It's a perfect square. Measure the highlighted side.",
+                tutorAnimation: 'normal-talking',
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-sticky-note',
@@ -731,6 +751,7 @@ export const presentations = {
                 id: 'measure-coaster',
                 type: 'shape-measurement',
                 tutorText: "Try this box. Measure the highlighted bottom edge.",
+                tutorAnimation: 'normal-talking',
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-coaster',
@@ -749,6 +770,7 @@ export const presentations = {
                 id: 'measure-house-sign',
                 type: 'shape-measurement',
                 tutorText: "Finally, measure the side of this photo frame.",
+                tutorAnimation: 'normal-talking',
                 ContentComponent: ShapeMeasurement,
                 contentProps: {
                     interactionId: 'measure-house-sign',
@@ -767,6 +789,7 @@ export const presentations = {
                 id: 'measurement-conclusion',
                 type: 'tutor-monologue',
                 tutorText: "And that's a wrap! You did a fantastic job measuring those shapes. \n\nUsing tools like rulers is a very important skill in math and science. You should be proud! \n\nNow let's move on to something fun...",
+                tutorAnimation: 'happy-applauding',
                 ContentComponent: () => null,
                 transitionType: 'auto'
             }
@@ -778,6 +801,7 @@ export const presentations = {
                 id: 'shape-factory-intro',
                 type: 'shape-sorting-game',
                 tutorText: "Now that you've mastered measuring with standard units, let's apply what you've learned! \n\nWelcome to the Shape Factory - where we sort shapes by type. I'll guide you through this step by step.",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
@@ -788,6 +812,7 @@ export const presentations = {
                 id: 'shape-tools-reveal',
                 type: 'shape-sorting-game',
                 tutorText: "Perfect! Let me show you your sorting tools - these special containers will help organize our shapes.",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
@@ -798,6 +823,7 @@ export const presentations = {
                 id: 'shape-demo-modeling',
                 type: 'shape-sorting-game',
                 tutorText: "Watch carefully! I'll demonstrate by sorting one square into its matching container. See how the square goes to the squares container?",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'interaction',
                 showNextButton: true,
@@ -808,6 +834,7 @@ export const presentations = {
                 id: 'shape-guided-practice',
                 type: 'shape-sorting-game',
                 tutorText: "Now it's your turn! Try sorting this triangle into the correct container. Drag it to where you think it belongs.",
+                tutorAnimation: 'normal-talking',
                 layout: 'full-screen',
                 transitionType: 'interaction-based',
                 phaseConfig: { initialPhase: 'guided', targetShapes: 1 }
@@ -816,6 +843,7 @@ export const presentations = {
                 id: 'shape-practice-setup',
                 type: 'shape-sorting-game',
                 tutorText: "Ready for more? This time you'll sort 3 different shapes. Remember - triangles with triangles, circles with circles, and so on. I'll help if you need it!",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
@@ -826,6 +854,7 @@ export const presentations = {
                 id: 'shape-practice-main',
                 type: 'shape-sorting-game',
                 tutorText: "Go ahead and sort these 3 shapes! Take your time and think about which container each shape belongs in.",
+                tutorAnimation: 'normal-talking',
                 layout: 'full-screen',
                 transitionType: 'interaction-based',
                 phaseConfig: { initialPhase: 'practice', targetShapes: 3, maxInterventions: 2 }
@@ -834,6 +863,7 @@ export const presentations = {
                 id: 'shape-challenge-setup',
                 type: 'shape-sorting-game',
                 tutorText: "Great progress! Now for the final challenge - you'll sort 8 shapes with minimal help. This will show how well you understand shape sorting!",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
@@ -844,6 +874,7 @@ export const presentations = {
                 id: 'shape-final-challenge',
                 type: 'shape-sorting-game',
                 tutorText: "Here we go! Sort all 8 shapes into their correct containers. You've got this!",
+                tutorAnimation: 'normal-talking',
                 layout: 'full-screen',
                 transitionType: 'interaction-based',
                 phaseConfig: { initialPhase: 'challenge', targetShapes: 8, maxInterventions: 1 }
@@ -852,6 +883,7 @@ export const presentations = {
                 id: 'shape-completion',
                 type: 'shape-sorting-game',
                 tutorText: "Outstanding work! You've successfully completed the Shape Factory challenge. You've shown you can identify and sort shapes accurately!",
+                tutorAnimation: 'happy-applauding',
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
@@ -862,6 +894,7 @@ export const presentations = {
                 id: 'shape-recap-intro',
                 type: 'shape-sorting-game',
                 tutorText: "Let's recap what you learned: shapes can be sorted by their type.",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'auto',
                 phaseConfig: { initialPhase: 'recap' }
@@ -870,6 +903,7 @@ export const presentations = {
                 id: 'shape-recap-triangle',
                 type: 'shape-sorting-game',
                 tutorText: "Triangles have three sides and three corners. They go in the triangles group.",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'auto',
                 phaseConfig: { initialPhase: 'recap' },
@@ -881,6 +915,7 @@ export const presentations = {
                 id: 'shape-recap-circle',
                 type: 'shape-sorting-game',
                 tutorText: "Circles are round with no corners or straight sides. They belong in the circles group.",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'auto',
                 phaseConfig: { initialPhase: 'recap' },
@@ -892,6 +927,7 @@ export const presentations = {
                 id: 'shape-recap-rectangle',
                 type: 'shape-sorting-game',
                 tutorText: "Rectangles have four sides with opposite sides equal. They go in the rectangles group.",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'auto',
                 phaseConfig: { initialPhase: 'recap' },
@@ -903,6 +939,7 @@ export const presentations = {
                 id: 'shape-recap-square',
                 type: 'shape-sorting-game',
                 tutorText: "Squares have four equal sides. They belong in the squares group.",
+                tutorAnimation: 'explaining',
                 layout: 'full-screen',
                 transitionType: 'auto',
                 phaseConfig: { initialPhase: 'recap' },
@@ -914,6 +951,7 @@ export const presentations = {
                 id: 'shape-recap-final',
                 type: 'shape-sorting-game',
                 tutorText: "Great work! You've learned to identify and sort all these different shapes. This skill will help you in many areas of math!",
+                tutorAnimation: 'happy-applauding',
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
@@ -932,6 +970,7 @@ export const presentations = {
                 id: 'mission-readiness',
                 type: 'mission-readiness',
                 tutorText: "Fantastic! You're now set with your knowledge of units and shapes. \n\nWith these tools, we're ready to help someone solve a real problem. Are you up for a mission?",
+                tutorAnimation: 'thinking-curious-question',
                 ContentComponent: MissionReadiness,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -941,6 +980,7 @@ export const presentations = {
                 id: 'meet-farmer',
                 type: 'farmer-intro',
                 tutorText: "Excellent! Let me introduce you to Farmer Giles. \n\nHe's in a bit of a pickle and needs our help.",
+                tutorAnimation: 'explaining',
                 ContentComponent: FarmerIntro,
                 transitionType: 'auto'
             },
@@ -948,6 +988,7 @@ export const presentations = {
                 id: 'fox-threat',
                 type: 'fox-threat',
                 tutorText: "Farmer Giles loves his sheep, but a sneaky fox has been spotted nearby! \n\nHe needs to build a fence around his entire farm to keep his flock safe.",
+                tutorAnimation: 'explaining',
                 ContentComponent: FoxThreat,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -957,6 +998,7 @@ export const presentations = {
                 id: 'farm-map',
                 type: 'farm-map',
                 tutorText: "Fantastic! Here's the plan. \n\nThis is a map of his farm. It's a perfect rectangle. \n\nWe need to figure out the total length of the boundary to know how much fencing material to buy.",
+                tutorAnimation: 'explaining',
                 ContentComponent: FarmMap,
                 transitionType: 'auto'
             },
@@ -964,6 +1006,7 @@ export const presentations = {
                 id: 'perimeter-definition',
                 type: 'perimeter-definition',
                 tutorText: "This total length around the outside edge of a shape has a very important name in mathematics. \n\nIt's called the Perimeter.",
+                tutorAnimation: 'explaining',
                 ContentComponent: PerimeterDefinition,
                 transitionType: 'manual',
                 showNextButton: true,
@@ -977,6 +1020,7 @@ export const presentations = {
                 id: 'rectangle-challenge',
                 type: 'perimeter-input',
                 tutorText: "To find the perimeter, we need to add up the lengths of all the sides. \n\nLet's give it a try with Farmer Giles' field. What's the total length of the fence he needs?",
+                tutorAnimation: 'explaining',
                 ContentComponent: FarmMap,
                 contentProps: {
                     shape: { type: 'rectangle', width: 30, height: 20, unit: 'meters' },
@@ -993,6 +1037,7 @@ export const presentations = {
                 id: 'farmer-celebration',
                 type: 'tutor-monologue',
                 tutorText: "Great job! Farmer Giles needs 100 meters of fencing.",
+                tutorAnimation: 'happy-applauding',
                 ContentComponent: FarmerCelebration,
                 transitionType: 'auto'
             }
@@ -1004,6 +1049,7 @@ export const presentations = {
                 id: 'square-challenge-input',
                 type: 'perimeter-input',
                 tutorText: "Now that you've got the hang of it, let's help some other people with their fencing problems. \n\nWhat's the perimeter of this next field?",
+                tutorAnimation: 'normal-talking',
                 ContentComponent: SquareFarmMap,
                 contentProps: {
                     shape: { type: 'square', side: 15, unit: 'meters' },
@@ -1024,6 +1070,7 @@ export const presentations = {
                 id: 'triangle-challenge',
                 type: 'perimeter-input',
                 tutorText: "You're a real pro at this! \n\nReady for a new challenge?",
+                tutorAnimation: 'thinking-curious-question',
                 ContentComponent: TriangleFarmMap,
                 contentProps: {
                     shape: { type: 'triangle', sides: [10, 12, 18], unit: 'meters' },
@@ -1044,6 +1091,7 @@ export const presentations = {
                 id: 'pentagon-challenge',
                 type: 'perimeter-input',
                 tutorText: "Great job! Just one more to go!",
+                tutorAnimation: 'normal-talking',
                 ContentComponent: PentagonFarmMap,
                 contentProps: {
                     shape: { type: 'pentagon', sides: [8, 8, 8, 8, 8], unit: 'meters' },
@@ -1060,6 +1108,7 @@ export const presentations = {
                 id: 'mission-complete',
                 type: 'tutor-monologue',
                 tutorText: "You did it! You've successfully helped Farmer Giles and so many others. You're a perimeter pro!",
+                tutorAnimation: 'on-completion-confetti-happy',
                 ContentComponent: () => null,
                 transitionType: 'manual',
                 showNextButton: true,

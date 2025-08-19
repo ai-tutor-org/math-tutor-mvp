@@ -108,6 +108,19 @@ const InteractiveLesson = () => {
 
     // TTS Ref for direct control
     const ttsRef = React.useRef();
+    
+    // Video Ref for animation control
+    const videoRef = React.useRef();
+
+    // Define which animations should loop vs play once
+    const shouldAnimationLoop = (animationName) => {
+        const oneTimeAnimations = [
+            'waving',
+            'happy-applauding', 
+            'on-completion-confetti-happy'
+        ];
+        return !oneTimeAnimations.includes(animationName);
+    };
 
     // Data from contentData.js
     const lesson = useMemo(() => lessons[lessonId], [lessonId]);
@@ -515,12 +528,22 @@ const InteractiveLesson = () => {
 
         // Reset measurement input state when interaction changes
         setMeasurementInput('');
+
+        // Reset video loop state for new interactions
+        if (videoRef.current && interaction?.tutorAnimation && shouldAnimationLoop(interaction.tutorAnimation)) {
+            videoRef.current.loop = true;
+        }
     }, [interaction]);
 
     // TTS Callbacks
     const handleTTSEnd = useCallback(() => {
         setIsSpeaking(false);
         setIsWaving(false);
+
+        // Stop looping animations when TTS ends (but allow one-time animations to complete)
+        if (videoRef.current && interaction?.tutorAnimation && shouldAnimationLoop(interaction.tutorAnimation)) {
+            videoRef.current.loop = false;
+        }
 
         // Check if this might be a post-animation TTS completion during interaction-based flow
         if (interaction?.transitionType === 'interaction-based' && window.notifyPostAnimationTTSComplete) {
@@ -825,14 +848,29 @@ const InteractiveLesson = () => {
 
                     {/* Tutor Avatar */}
                     <Box sx={{ mb: 3 }}>
-                        <img
-                            src="/images/tutor_avatar.png"
-                            alt="AI Tutor"
-                            style={{
-                                width: '100px',
-                                height: '100px'
-                            }}
-                        />
+                        {interaction?.tutorAnimation ? (
+                            <video
+                                ref={videoRef}
+                                src={`/animations/${interaction.tutorAnimation}.webm`}
+                                autoPlay
+                                loop={shouldAnimationLoop(interaction.tutorAnimation)}
+                                muted
+                                style={{
+                                    width: '100px',
+                                    height: '100px',
+                                    objectFit: 'cover'
+                                }}
+                            />
+                        ) : (
+                            <img
+                                src="/images/tutor.svg"
+                                alt="AI Tutor"
+                                style={{
+                                    width: '100px',
+                                    height: '100px'
+                                }}
+                            />
+                        )}
                     </Box>
 
                     {/* Tutor Speech */}
