@@ -22,18 +22,6 @@ function LessonCard({
         }
     }
 
-    const getLevelColor = () => {
-        switch(level?.toLowerCase()) {
-            case 'beginner':
-                return '#4CAF50'
-            case 'intermediate':
-                return '#FF9800'
-            case 'advanced':
-                return '#F44336'
-            default:
-                return '#9E9E9E'
-        }
-    }
 
     return (
         <div
