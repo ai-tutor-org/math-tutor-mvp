@@ -26,6 +26,8 @@ import { lessons, presentations, conditionalPresentations } from '../contentData
 import TTSManager from '../components/TTSManager';
 import DeveloperMenu from '../components/DeveloperMenu';
 import { useIsDevMode, useDevModeNavigate } from '../utils/devMode';
+import { useMobileDetection } from '../hooks/useMobileDetection';
+import MobileRestrictionOverlay from '../components/MobileRestrictionOverlay';
 
 // Import all possible content components
 import RoomIllustration from '../components/RoomIllustration';
@@ -72,6 +74,9 @@ const InteractiveLesson = () => {
 
     // Developer mode detection
     const isDevMode = useIsDevMode();
+    
+    // Mobile detection
+    const isMobile = useMobileDetection();
 
     // Lesson State
     const [currentPresIndex, setCurrentPresIndex] = useState(0);
@@ -684,13 +689,16 @@ const InteractiveLesson = () => {
     }
 
     return (
-        <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#000' }}>
+        <div>
+            <div className="lesson-content">
+                <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#000' }}>
             <TTSManager
                 ref={ttsRef}
                 text={tutorText}
                 onStart={handleTTSStart}
                 onEnd={handleTTSEnd}
                 isDevMode={isDevMode}
+                isMobile={isMobile}
             />
 
             {/* Top Menu Bar */}
@@ -1175,7 +1183,10 @@ const InteractiveLesson = () => {
                     </Paper>
                 </Box>
             </Box>
-        </Box>
+                </Box>
+            </div>
+            {isMobile && <MobileRestrictionOverlay />}
+        </div>
     );
 };
 

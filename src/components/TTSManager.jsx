@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
 
-const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = false }, ref) => {
+const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = false, isMobile = false }, ref) => {
     const [audioMapping, setAudioMapping] = useState(null);
     const audioRef = useRef(null);
 
@@ -135,14 +135,18 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
     // Expose triggerTTS method to parent components
     useImperativeHandle(ref, () => ({
         triggerTTS: (textToSpeak) => {
-            speakText(textToSpeak);
+            if (!isMobile) {
+                speakText(textToSpeak);
+            }
         }
-    }), [speakText]);
+    }), [speakText, isMobile]);
 
     // Effect to handle audio playback when text changes
     useEffect(() => {
-        speakText(text);
-    }, [text, speakText]);
+        if (!isMobile) {
+            speakText(text);
+        }
+    }, [text, speakText, isMobile]);
 
     // Cleanup on unmount
     useEffect(() => {
