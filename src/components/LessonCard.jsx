@@ -58,6 +58,7 @@ function LessonCard({
                 position: 'relative',
                 overflow: 'hidden'
             }}
+            className="lesson-card"
         >
             {/* Main Container - Horizontal on desktop, vertical on mobile */}
             <div style={{
@@ -83,6 +84,7 @@ function LessonCard({
                                 height: '80px',
                                 objectFit: 'contain'
                             }}
+                            className="lesson-tutor-image"
                         />
                     </div>
                 )}
@@ -113,7 +115,8 @@ function LessonCard({
                         margin: 0,
                         marginBottom: '8px',
                         lineHeight: '1.3'
-                    }}>
+                    }}
+                        className="lesson-title">
                         {title}
                     </h3>
 
@@ -124,7 +127,8 @@ function LessonCard({
                         color: '#3F2A0B',
                         margin: 0,
                         lineHeight: '1.5'
-                    }}>
+                    }}
+                        className="lesson-description">
                         {description}
                     </p>
                 </div>
@@ -137,9 +141,10 @@ function LessonCard({
                     <button
                         style={{
                             display: 'flex',
-                            width: '154px',
+                            minWidth: '154px',
+                            width: 'auto',
                             height: '52px',
-                            padding: '10px',
+                            padding: '10px 20px',
                             justifyContent: 'center',
                             alignItems: 'center',
                             gap: '4px',
@@ -158,8 +163,12 @@ function LessonCard({
                                 : '0 2px 4px rgba(0, 0, 0, 0.1)',
                             whiteSpace: 'nowrap'
                         }}
+                        className="lesson-button"
                         disabled={disabled}
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleClick()
+                        }}
                     >
                         {!disabled && (
                             <PlayArrow style={{
@@ -188,11 +197,48 @@ function LessonCard({
             {/* Responsive styles */}
             <style>{`
                 @media (max-width: 768px) {
+                    .lesson-card {
+                        padding: 20px !important;
+                    }
+                    
                     .card-content-container {
                         flex-direction: column !important;
                         align-items: center !important;
                         gap: 20px !important;
                         text-align: center !important;
+                    }
+                    
+                    .lesson-tutor-image {
+                        width: 60px !important;
+                        height: 60px !important;
+                    }
+                    
+                    .lesson-title {
+                        font-size: 20px !important;
+                    }
+                    
+                    .lesson-description {
+                        font-size: 14px !important;
+                    }
+                    
+                    .lesson-button {
+                        width: 100% !important;
+                        max-width: 200px !important;
+                        min-height: 44px !important;
+                    }
+                }
+                
+                @media (max-width: 480px) {
+                    .lesson-card {
+                        padding: 16px !important;
+                    }
+                    
+                    .lesson-title {
+                        font-size: 18px !important;
+                    }
+                    
+                    .lesson-description {
+                        font-size: 13px !important;
                     }
                 }
             `}</style>

@@ -28,20 +28,25 @@ function Home() {
                 <Toolbar sx={{
                     justifyContent: 'space-between',
                     minHeight: '60px !important',
-                    px: '32px',
+                    px: { xs: '16px', sm: '32px' },
                     py: '16px'
                 }}>
                     {/* Left Side - Welcome Message with Avatar */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <img
-                            src="/images/tutor_avatar.png"
-                            alt="Tutor Avatar"
-                            style={{
-                                width: '50px',
-                                height: '50px',
-                                objectFit: 'contain'
-                            }}
-                        />
+                        <Box sx={{
+                            width: { xs: '40px', sm: '50px' },
+                            height: { xs: '40px', sm: '50px' }
+                        }}>
+                            <img
+                                src="/images/tutor_avatar.png"
+                                alt="Tutor Avatar"
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'contain'
+                                }}
+                            />
+                        </Box>
                         <Box>
                             <Typography variant="caption" sx={{
                                 color: '#999',
@@ -52,7 +57,7 @@ function Home() {
                             </Typography>
                             <Typography variant="h6" sx={{
                                 color: '#fff',
-                                fontSize: '20px',
+                                fontSize: { xs: '16px', sm: '20px' },
                                 fontWeight: '700'
                             }}>
                                 Hi there
@@ -76,56 +81,58 @@ function Home() {
             </AppBar>
 
             {/* Main Content */}
-            <div style={{
+            <Box sx={{
                 flex: 1,
                 display: 'flex',
                 justifyContent: 'center',
-                padding: '40px 20px',
+                padding: { xs: '20px 16px', sm: '40px 20px' },
                 boxSizing: 'border-box'
             }}>
-                {/* Content Container - 75% width */}
-                <div style={{
-                    width: '75%',
+                {/* Content Container - Responsive width */}
+                <Box sx={{
+                    width: { xs: '100%', sm: '90%', md: '75%' },
                     maxWidth: '1200px',
                     display: 'flex',
                     flexDirection: 'column'
                 }}>
                     {/* Header Section - Left Aligned */}
-                    <div style={{
+                    <Box sx={{
                         textAlign: 'left',
-                        marginBottom: '50px',
+                        marginBottom: { xs: '30px', sm: '50px' },
                         width: '100%'
                     }}>
-                        <h1 style={{
-                            fontSize: '32px',
+                        <Typography variant="h1" sx={{
+                            fontSize: { xs: '24px', sm: '32px' },
                             fontWeight: '800',
                             color: 'white',
-                            marginBottom: '16px'
+                            marginBottom: '16px',
+                            margin: 0
                         }}>
                             Area and Perimeter
-                        </h1>
-                        <p style={{
-                            fontSize: '16px',
+                        </Typography>
+                        <Typography sx={{
+                            fontSize: { xs: '14px', sm: '16px' },
                             color: '#B3BDD2',
-                            fontWeight: '300'
+                            fontWeight: '300',
+                            lineHeight: 1.5
                         }}>
                             Let's explore shapes, numbers, and discover the magic of perimeter and area together
-                        </p>
-                    </div>
+                        </Typography>
+                    </Box>
 
                     {/* Lesson Cards - Always Stacked Vertically */}
-                    <div style={{
+                    <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '24px',
+                        gap: { xs: '20px', sm: '24px' },
                         width: '100%',
-                        marginBottom: '40px'
+                        marginBottom: { xs: '20px', sm: '40px' }
                     }}>
                         <LessonCard
                             lessonNumber="Lesson 1"
                             title="Introduction to Perimeter"
                             description="Learn how to calculate the Perimter of different shapes in a fun way!"
-                            buttonText="Start Learning"
+                            buttonText="Start Lesson"
                             onClick={handleLessonSelect}
                             disabled={false}
                             backgroundColor="#17A94E"
@@ -142,9 +149,9 @@ function Home() {
                             backgroundColor="#FFB039"
                             tutorImage="area_tutor.png"
                         />
-                    </div>
-                </div>
-            </div>
+                    </Box>
+                </Box>
+            </Box>
         </div>
     )
 }

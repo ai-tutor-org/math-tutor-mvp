@@ -37,7 +37,6 @@ a:hover {
 
 body {
     margin: 0;
-    min-width: 1024px;
     min-height: 100vh;
     overflow-x: auto;
 }
