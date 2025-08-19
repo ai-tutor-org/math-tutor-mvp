@@ -299,22 +299,12 @@ const InteractiveLesson = () => {
         // Handle shape measurement interactions
         if (interaction?.type === 'shape-measurement') {
             if (answerData.isCorrect) {
-                // Check if this is the last measurement interaction in the presentation
-                const nextInteractionIndex = currentInteractionIndex + 1;
-                const isLastMeasurement = nextInteractionIndex >= presentation?.interactions?.length || 
-                                        presentation?.interactions[nextInteractionIndex]?.type !== 'shape-measurement';
-                
-                if (isLastMeasurement) {
-                    // For the last measurement, go to conclusion
-                    navigateToInteraction('measurement-conclusion');
-                } else {
-                    // For other measurements, show Continue feedback
-                    const feedbackText = getFeedbackText('shape-correct');
-                    if (feedbackText) {
-                        setDynamicTutorText(feedbackText);
-                    }
-                    setShowNextButton(true);
+                // Show success feedback for all measurements (including the last one)
+                const feedbackText = getFeedbackText('shape-correct');
+                if (feedbackText) {
+                    setDynamicTutorText(feedbackText);
                 }
+                setShowNextButton(true);
             } else {
                 const incorrectFeedback = getFeedbackText('shape-incorrect');
                 if (incorrectFeedback) {
