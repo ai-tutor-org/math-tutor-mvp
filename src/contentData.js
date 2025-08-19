@@ -1252,6 +1252,7 @@ export const presentations = {
                 id: 'lesson-summary-intro',
                 type: 'lesson-summary',
                 tutorText: "Congratulations! You've completed our perimeter lesson. Let's review what you learned:\n\n• Standard units help everyone measure consistently\n• Perimeter is the distance around the outside of a shape\n• You can find perimeter by adding up all the sides\n• Different shapes can have the same perimeter\n\nI hope you enjoyed learning about perimeter with me! Please fill out the form on the right to share your feedback.",
+                tutorAnimation: 'on-completion-confetti-happy',
                 ContentComponent: () => {
                     return React.createElement('div', {
                         style: { 
