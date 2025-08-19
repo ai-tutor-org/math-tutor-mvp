@@ -28,6 +28,7 @@ import DeveloperMenu from '../components/DeveloperMenu';
 import { useIsDevMode, useDevModeNavigate } from '../utils/devMode';
 import { useMobileDetection } from '../hooks/useMobileDetection';
 import MobileRestrictionOverlay from '../components/MobileRestrictionOverlay';
+import { useClickSound } from '../hooks/useClickSound';
 
 // Import all possible content components
 import RoomIllustration from '../components/RoomIllustration';
@@ -111,6 +112,9 @@ const InteractiveLesson = () => {
     
     // Video Ref for animation control
     const videoRef = React.useRef();
+
+    // Click sound hook
+    const playClickSound = useClickSound();
 
     // Define which animations should loop vs play once
     const shouldAnimationLoop = (animationName) => {
@@ -292,6 +296,7 @@ const InteractiveLesson = () => {
     }, [interaction]);
 
     const handleAnswer = (answerData) => {
+        playClickSound();
         console.log('Answer selected:', answerData);
         console.log('Current interaction ID:', interaction?.id);
         console.log('Answer is correct:', answerData.isCorrect);
@@ -349,6 +354,7 @@ const InteractiveLesson = () => {
     };
 
     const handlePerimeterCheck = () => {
+        playClickSound();
         const userAnswer = parseInt(perimeterInput);
         const correctAnswer = interaction?.contentProps?.correctAnswer;
         const feedbackIds = interaction?.contentProps?.feedbackIds;
@@ -413,6 +419,7 @@ const InteractiveLesson = () => {
     }, []);
 
     const handleShapeDesignCheck = () => {
+        playClickSound();
         const targetPerimeter = interaction?.contentProps?.targetPerimeter;
         const feedbackIds = interaction?.contentProps?.feedbackIds;
 
@@ -454,6 +461,7 @@ const InteractiveLesson = () => {
     };
 
     const handleMeasurementCheck = () => {
+        playClickSound();
         const userAnswer = parseFloat(measurementInput);
         const correctAnswer = interaction?.contentProps?.correctAnswer;
 
@@ -482,6 +490,7 @@ const InteractiveLesson = () => {
 
     // Handle Done button to go home
     const handleDoneButton = () => {
+        playClickSound();
         if (interaction?.nextButtonText === "Done") {
             navigate('/');
         } else if (interaction?.navigateToInteraction) {
