@@ -747,7 +747,7 @@ const InteractiveLesson = () => {
                 }}>
                     {/* Left Side - Lesson Info */}
                     <Box>
-                        <Typography variant="caption" sx={{ color: '#999', fontSize: '0.7rem', lineHeight: 1 }}>
+                        <Typography variant="caption" sx={{ color: '#999', fontSize: '0.7rem', lineHeight: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
                             LESSON {lessonId === 'perimeter' ? '1' : '1'}
                             {isDevMode && (
                                 <span style={{ color: '#4CAF50', marginLeft: '8px', fontWeight: 600 }}>
@@ -755,7 +755,7 @@ const InteractiveLesson = () => {
                                 </span>
                             )}
                         </Typography>
-                        <Typography variant="h6" sx={{ color: '#fff', fontSize: '1.1rem', lineHeight: 1.2, textTransform: 'capitalize' }}>
+                        <Typography variant="h6" sx={{ color: '#fff', fontSize: '1.1rem', lineHeight: 1.2, textTransform: 'capitalize', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
                             {lesson?.title || 'Perimeter'}
                         </Typography>
                     </Box>
@@ -893,7 +893,9 @@ const InteractiveLesson = () => {
                                 textAlign: 'left',
                                 maxWidth: '100%',
                                 wordBreak: 'break-word',
-                                whiteSpace: 'pre-line'
+                                whiteSpace: 'pre-line',
+                                fontFamily: "'Fustat', 'Inter', sans-serif",
+                                fontWeight: 500
                             }}
                         >
                             {tutorText}
@@ -925,7 +927,7 @@ const InteractiveLesson = () => {
 
                             {/* Input field */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                                <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap' }}>
+                                <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
                                     Perimeter =
                                 </Typography>
                                 <TextField
@@ -963,7 +965,7 @@ const InteractiveLesson = () => {
                                         }
                                     }}
                                 />
-                                <Typography variant="body2" sx={{ color: '#fff' }}>
+                                <Typography variant="body2" sx={{ color: '#fff', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
                                     {interaction?.contentProps?.shape?.unit || 'units'}
                                 </Typography>
                             </Box>
@@ -982,6 +984,8 @@ const InteractiveLesson = () => {
                                         textTransform: 'none',
                                         fontSize: '1rem',
                                         minWidth: '120px',
+                                        fontFamily: "'Fustat', 'Inter', sans-serif",
+                                        fontWeight: 500,
                                         '&:hover': {
                                             background: '#545E7D'
                                         },
@@ -1003,7 +1007,7 @@ const InteractiveLesson = () => {
                         <Box sx={{ mb: 3, width: '100%' }}>
                             {/* Show current vs target perimeter */}
                             <Box sx={{ mb: 2, textAlign: 'left' }}>
-                                <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1 }}>
+                                <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
                                     Target: {interaction?.contentProps?.targetPerimeter} units
                                 </Typography>
                             </Box>
@@ -1020,6 +1024,8 @@ const InteractiveLesson = () => {
                                     textTransform: 'none',
                                     fontSize: '1rem',
                                     minWidth: '140px',
+                                    fontFamily: "'Fustat', 'Inter', sans-serif",
+                                    fontWeight: 500,
                                     '&:hover': {
                                         background: '#545E7D'
                                     }
@@ -1035,7 +1041,7 @@ const InteractiveLesson = () => {
                         <Box sx={{ mb: 3, width: '100%' }}>
                             {/* Input field */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                                <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap' }}>
+                                <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
                                     Length =
                                 </Typography>
                                 <TextField
@@ -1062,7 +1068,7 @@ const InteractiveLesson = () => {
                                         }
                                     }}
                                 />
-                                <Typography variant="body2" sx={{ color: '#fff' }}>
+                                <Typography variant="body2" sx={{ color: '#fff', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
                                     cm
                                 </Typography>
                             </Box>
@@ -1080,6 +1086,7 @@ const InteractiveLesson = () => {
                                     textTransform: 'none',
                                     fontSize: '1rem',
                                     minWidth: '120px',
+                                    fontFamily: "'Fustat', 'Inter', sans-serif",
                                     '&:hover': {
                                         background: '#545E7D'
                                     },
@@ -1116,12 +1123,13 @@ const InteractiveLesson = () => {
                                                 borderRadius: '12px',
                                                 border: '1px solid #545E7D',
                                                 background: '#484D5C',
-                                                fontWeight: 'bold',
+                                                fontWeight: 500,
                                                 color: '#fff',
                                                 textTransform: 'none',
                                                 fontSize: '0.95rem',
                                                 textAlign: 'left',
                                                 justifyContent: 'flex-start',
+                                                fontFamily: "'Fustat', 'Inter', sans-serif",
                                                 '&:hover': {
                                                     background: '#545E7D',
                                                     borderColor: '#545E7D'
@@ -1155,12 +1163,13 @@ const InteractiveLesson = () => {
                                                 borderRadius: '12px',
                                                 border: '1px solid #545E7D',
                                                 background: '#484D5C',
-                                                fontWeight: 'bold',
+                                                fontWeight: 500,
                                                 color: '#fff',
                                                 textTransform: 'none',
                                                 fontSize: '0.95rem',
                                                 textAlign: 'left',
                                                 justifyContent: 'flex-start',
+                                                fontFamily: "'Fustat', 'Inter', sans-serif",
                                                 '&:hover': {
                                                     background: '#545E7D',
                                                     borderColor: '#545E7D'
@@ -1183,14 +1192,16 @@ const InteractiveLesson = () => {
                             sx={{
                                 padding: '8px',
                                 borderRadius: '12px',
-                                background: '#484D5C',
+                                background: '#2281E4',
                                 color: '#fff',
                                 textTransform: 'none',
                                 fontSize: '1rem',
                                 minWidth: '140px',
                                 textAlign: 'center',
+                                fontFamily: "'Fustat', 'Inter', sans-serif",
+                                fontWeight: 700,
                                 '&:hover': {
-                                    background: '#545E7D'
+                                    background: '#1A6BC4'
                                 }
                             }}
                         >

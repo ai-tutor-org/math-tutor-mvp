@@ -54,7 +54,8 @@
     display: flex;
     position: relative;
     background-color: #f5f7fa;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Fustat', 'Inter', sans-serif;
+    font-weight: 500;
     overflow: hidden;
 }
 
@@ -123,6 +124,8 @@
     font-size: 1.1rem;
     line-height: 1.6;
     color: white;
+    font-family: 'Fustat', 'Inter', sans-serif;
+    font-weight: 500;
 }
 
 .controls-panel {
@@ -130,32 +133,35 @@
 }
 
 .lesson-button {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: #2281E4;
     color: white;
     border: none;
     padding: 15px 30px;
     border-radius: 25px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+    box-shadow: 0 4px 15px rgba(34, 129, 228, 0.4);
     letter-spacing: 1px;
     width: 100%;
+    font-family: 'Fustat', 'Inter', sans-serif;
 }
 
 .lesson-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
+    box-shadow: 0 6px 20px rgba(34, 129, 228, 0.6);
 }
 
 .welcome-button {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+    background: #2281E4;
+    box-shadow: 0 4px 15px rgba(34, 129, 228, 0.4);
     font-size: 1.2rem;
     padding: 20px 40px;
+    font-family: 'Fustat', 'Inter', sans-serif;
+    font-weight: 700;
 }
 
 .welcome-button:hover {
-    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
+    box-shadow: 0 6px 20px rgba(34, 129, 228, 0.6);
 }
