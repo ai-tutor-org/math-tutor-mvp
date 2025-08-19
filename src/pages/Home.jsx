@@ -1,214 +1,152 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import LessonCard from '../components/LessonCard'
 import { useDevModeNavigate } from '../utils/devMode'
+import { AppBar, Toolbar, Typography, Box } from '@mui/material'
 
 function Home() {
     const navigate = useDevModeNavigate()
-    const [isLoaded, setIsLoaded] = useState(false)
-    const [showSparkles, setShowSparkles] = useState(false)
-
-    useEffect(() => {
-        setIsLoaded(true)
-        const timer = setTimeout(() => setShowSparkles(true), 500)
-        return () => clearTimeout(timer)
-    }, [])
 
     const handleLessonSelect = () => {
         navigate('/lesson/perimeter')
     }
 
-    const sparkles = ['✨', '🌟', '💫', '⭐', '🎯', '🎨', '🧮', '📐']
-
     return (
         <div style={{
             width: '100vw',
-            height: '100vh',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            minHeight: '100vh',
+            backgroundColor: '#000',
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'relative',
-            overflow: 'hidden'
+            flexDirection: 'column'
         }}>
-            {/* Animated background elements */}
-            <div style={{
-                position: 'absolute',
-                top: '15%',
-                left: '15%',
-                fontSize: '4rem',
-                opacity: 0.1,
-                animation: 'float 6s ease-in-out infinite',
-                transform: `translateY(${isLoaded ? '0px' : '50px'})`,
-                transition: 'transform 1s ease-out'
+            {/* Header Bar - Similar to InteractiveLesson */}
+            <AppBar position="static" sx={{
+                bgcolor: '#000',
+                boxShadow: 'none',
+                borderBottom: '1px solid #2B2B2B'
             }}>
-                📐
-            </div>
-
-            <div style={{
-                position: 'absolute',
-                top: '25%',
-                right: '20%',
-                fontSize: '3.5rem',
-                opacity: 0.1,
-                animation: 'float 8s ease-in-out infinite reverse',
-                transform: `translateY(${isLoaded ? '0px' : '-30px'})`,
-                transition: 'transform 1.2s ease-out'
-            }}>
-                🧮
-            </div>
-
-            <div style={{
-                position: 'absolute',
-                bottom: '25%',
-                left: '20%',
-                fontSize: '3rem',
-                opacity: 0.1,
-                animation: 'float 7s ease-in-out infinite',
-                transform: `translateY(${isLoaded ? '0px' : '40px'})`,
-                transition: 'transform 0.8s ease-out'
-            }}>
-                🎯
-            </div>
-
-            {/* Main content */}
-            <div style={{
-                textAlign: 'center',
-                zIndex: 2,
-                transform: `translateY(${isLoaded ? '0px' : '100px'})`,
-                opacity: isLoaded ? 1 : 0,
-                transition: 'all 1s ease-out',
-                maxWidth: '800px',
-                width: '100%',
-                padding: '0 40px'
-            }}>
-                {/* Title with fun styling */}
-                <h1 style={{
-                    fontSize: '4.5rem',
-                    fontWeight: 'bold',
-                    color: 'white',
-                    marginBottom: '20px',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                <Toolbar sx={{
+                    justifyContent: 'space-between',
+                    minHeight: '60px !important',
+                    px: '32px',
+                    py: '16px'
                 }}>
-                    🎓 AI Personal Tutor
-                </h1>
-
-                {/* Fun description */}
-                <div style={{
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: '25px',
-                    padding: '30px',
-                    marginBottom: '40px',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    maxWidth: '700px',
-                    marginLeft: 'auto',
-                    marginRight: 'auto'
-                }}>
-                    <p style={{
-                        fontSize: '1.3rem',
-                        color: 'white',
-                        margin: '0',
-                        lineHeight: '1.6'
+                    {/* Left Side - Welcome Message with Avatar */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <img
+                            src="/images/tutor_avatar.png"
+                            alt="Tutor Avatar"
+                            style={{
+                                width: '50px',
+                                height: '50px',
+                                objectFit: 'contain'
+                            }}
+                        />
+                        <Box>
+                            <Typography variant="caption" sx={{
+                                color: '#999',
+                                fontWeight: '700',
+                                textTransform: 'uppercase'
+                            }}>
+                                Welcome to Mathy
+                            </Typography>
+                            <Typography variant="h6" sx={{
+                                color: '#fff',
+                                fontSize: '20px',
+                                fontWeight: '700'
+                            }}>
+                                Hi there
+                            </Typography>
+                        </Box>
+                    </Box>
+                    {/* Right Side - Grade Label */}
+                    <Box sx={{
+                        bgcolor: '#24262B',
+                        color: '#FFF',
+                        padding: '6px 16px',
+                        borderRadius: '8px'
                     }}>
-                        Ready for an amazing adventure in mathematics?
-                        Let's explore shapes, numbers, and discover the magic of perimeter together!
-                        🎨✨
-                    </p>
-                </div>
+                        <Typography sx={{
+                            fontWeight: '600'
+                        }}>
+                            5th Grade
+                        </Typography>
+                    </Box>
+                </Toolbar>
+            </AppBar>
 
-                {/* Subtitle */}
-                <p style={{
-                    fontSize: '2rem',
-                    color: 'rgba(255,255,255,0.9)',
-                    marginBottom: '40px',
-                    fontWeight: '300',
-                    textShadow: '1px 1px 2px rgba(0,0,0,0.2)'
-                }}>
-                    Choose your lesson! 🚀
-                </p>
-
-                {/* Sparkles animation */}
-                {showSparkles && (
-                    <div style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        pointerEvents: 'none',
-                        zIndex: 1
-                    }}>
-                        {sparkles.map((sparkle, index) => (
-                            <span
-                                key={index}
-                                style={{
-                                    position: 'absolute',
-                                    fontSize: '2rem',
-                                    animation: `sparkle ${2 + index * 0.5}s ease-in-out infinite`,
-                                    animationDelay: `${index * 0.2}s`,
-                                    opacity: 0
-                                }}
-                            >
-                                {sparkle}
-                            </span>
-                        ))}
-                    </div>
-                )}
-
-                {/* Lesson card with enhanced styling */}
+            {/* Main Content */}
+            <div style={{
+                flex: 1,
+                display: 'flex',
+                justifyContent: 'center',
+                padding: '40px 20px',
+                boxSizing: 'border-box'
+            }}>
+                {/* Content Container - 75% width */}
                 <div style={{
-                    transform: `scale(${isLoaded ? 1 : 0.8})`,
-                    transition: 'transform 0.8s ease-out 0.5s',
+                    width: '75%',
+                    maxWidth: '1200px',
                     display: 'flex',
-                    justifyContent: 'center'
+                    flexDirection: 'column'
                 }}>
-                    <LessonCard
-                        title="Introduction to Perimeter"
-                        description="🎯 Learn how to calculate the perimeter of different shapes in a fun way!"
-                        onClick={handleLessonSelect}
-                    />
-                </div>
+                    {/* Header Section - Left Aligned */}
+                    <div style={{
+                        textAlign: 'left',
+                        marginBottom: '50px',
+                        width: '100%'
+                    }}>
+                        <h1 style={{
+                            fontSize: '32px',
+                            fontWeight: '800',
+                            color: 'white',
+                            marginBottom: '16px'
+                        }}>
+                            Area and Perimeter
+                        </h1>
+                        <p style={{
+                            fontSize: '16px',
+                            color: '#B3BDD2',
+                            fontWeight: '300'
+                        }}>
+                            Let's explore shapes, numbers, and discover the magic of perimeter and area together
+                        </p>
+                    </div>
 
-                {/* Fun footer */}
-                <div style={{
-                    marginTop: '60px',
-                    color: 'rgba(255,255,255,0.7)',
-                    fontSize: '1.1rem'
-                }}>
-                    <p>🌟 Made with ❤️ for curious minds 🌟</p>
+                    {/* Lesson Cards - Always Stacked Vertically */}
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '24px',
+                        width: '100%',
+                        marginBottom: '40px'
+                    }}>
+                        <LessonCard
+                            lessonNumber="Lesson 1"
+                            title="Introduction to Perimeter"
+                            description="Learn how to calculate the Perimter of different shapes in a fun way!"
+                            buttonText="Start Learning"
+                            onClick={handleLessonSelect}
+                            disabled={false}
+                            backgroundColor="#17A94E"
+                            tutorImage="perimeter_tutor.png"
+                        />
+
+                        <LessonCard
+                            lessonNumber="Lesson 2"
+                            title="Introduction to Area"
+                            description="In this lesson you’ll be taught to find an area of a given shape."
+                            buttonText="Coming Soon"
+                            onClick={() => { }}
+                            disabled={true}
+                            backgroundColor="#FFB039"
+                            tutorImage="area_tutor.png"
+                        />
+                    </div>
                 </div>
             </div>
-
-            {/* CSS animations */}
-            <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-        
-        @keyframes gradientShift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        
-        @keyframes sparkle {
-          0% { 
-            transform: translate(0, 0) scale(0) rotate(0deg);
-            opacity: 0;
-          }
-          50% { 
-            transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) scale(1) rotate(180deg);
-            opacity: 1;
-          }
-          100% { 
-            transform: translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) scale(0) rotate(360deg);
-            opacity: 0;
-          }
-        }
-            `}</style>
         </div>
     )
 }
 
-export default Home 
+export default Home

@@ -1,131 +1,203 @@
 import React, { useState } from 'react'
+import { PlayArrow } from '@mui/icons-material'
 
-function LessonCard({ title, description, onClick }) {
+function LessonCard({ 
+    lessonNumber,
+    title, 
+    description, 
+    buttonText, 
+    onClick, 
+    disabled = false,
+    backgroundColor = 'white',
+    tutorImage
+}) {
     const [isHovered, setIsHovered] = useState(false)
+    const [isClicked, setIsClicked] = useState(false)
+
+    const handleClick = () => {
+        if (!disabled) {
+            setIsClicked(true)
+            setTimeout(() => setIsClicked(false), 300)
+            onClick()
+        }
+    }
+
+    const getLevelColor = () => {
+        switch(level?.toLowerCase()) {
+            case 'beginner':
+                return '#4CAF50'
+            case 'intermediate':
+                return '#FF9800'
+            case 'advanced':
+                return '#F44336'
+            default:
+                return '#9E9E9E'
+        }
+    }
 
     return (
         <div
-            className="lesson-card"
-            onClick={onClick}
+            onClick={handleClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{
-                border: '3px solid #ff6b6b',
-                borderRadius: '30px',
-                padding: '40px',
-                margin: '20px',
-                cursor: 'pointer',
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(10px)',
-                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                transform: isHovered ? 'scale(1.05) translateY(-15px)' : 'scale(1)',
+                backgroundColor: backgroundColor,
+                borderRadius: '16px',
+                padding: '32px',
+                cursor: disabled ? 'not-allowed' : 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transform: isClicked 
+                    ? 'scale(0.98)' 
+                    : isHovered 
+                        ? 'translateY(-8px)' 
+                        : 'translateY(0)',
                 boxShadow: isHovered
-                    ? '0 25px 50px rgba(255, 107, 107, 0.4), 0 15px 30px rgba(0,0,0,0.1)'
-                    : '0 15px 40px rgba(0,0,0,0.1), 0 8px 20px rgba(255, 107, 107, 0.2)',
+                    ? '0 20px 40px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.2)'
+                    : '0 10px 25px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.1)',
+                opacity: 1,
                 position: 'relative',
-                overflow: 'hidden',
-                maxWidth: '500px',
-                minWidth: '400px',
-                width: '100%'
+                overflow: 'hidden'
             }}
         >
-            {/* Animated background gradient */}
+            {/* Main Container - Horizontal on desktop, vertical on mobile */}
+            <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '24px',
+                width: '100%'
+            }} className="card-content-container">
+                {/* Left - Tutor Image */}
+                {tutorImage && (
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                    }}>
+                        <img 
+                            src={`/images/${tutorImage}`}
+                            alt="Lesson Tutor"
+                            style={{
+                                width: '80px',
+                                height: '80px',
+                                objectFit: 'contain'
+                            }}
+                        />
+                    </div>
+                )}
+
+                {/* Middle - Text Content */}
+                <div style={{ 
+                    flex: 1,
+                    minWidth: 0 // Prevents text overflow
+                }}>
+                    {/* Lesson Number */}
+                    {lessonNumber && (
+                        <p style={{
+                            fontSize: '0.9rem',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            margin: 0,
+                            marginBottom: '8px',
+                            fontWeight: '700'
+                        }}>
+                            {lessonNumber}
+                        </p>
+                    )}
+
+                    {/* Title */}
+                    <h3 style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#000',
+                        margin: 0,
+                        marginBottom: '8px',
+                        lineHeight: '1.3'
+                    }}>
+                        {title}
+                    </h3>
+
+                    {/* Description */}
+                    <p style={{
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        color: '#3F2A0B',
+                        margin: 0,
+                        lineHeight: '1.5'
+                    }}>
+                        {description}
+                    </p>
+                </div>
+
+                {/* Right Side - Button */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center'
+                }}>
+                    <button
+                        style={{
+                            display: 'flex',
+                            width: '154px',
+                            height: '52px',
+                            padding: '10px',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            gap: '4px',
+                            flexShrink: 0,
+                            borderRadius: '32px',
+                            background: disabled ? '#FEE97D' : '#67E697',
+                            color: disabled ? '#B2761B' : '#0C612C',
+                            border: 'none',
+                            fontSize: '16px',
+                            fontWeight: '700',
+                            cursor: disabled ? 'not-allowed' : 'pointer',
+                            transition: 'all 0.2s ease',
+                            transform: isHovered && !disabled ? 'scale(1.02)' : 'scale(1)',
+                            boxShadow: isHovered && !disabled
+                                ? '0 4px 12px rgba(0, 0, 0, 0.2)' 
+                                : '0 2px 4px rgba(0, 0, 0, 0.1)',
+                            whiteSpace: 'nowrap'
+                        }}
+                        disabled={disabled}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {!disabled && (
+                            <PlayArrow style={{
+                                fontSize: '20px'
+                            }} />
+                        )}
+                        {buttonText}
+                    </button>
+                </div>
+            </div>
+
+            {/* Hover effect overlay */}
             <div style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
-                bottom: 0,
-                background: isHovered
-                    ? 'linear-gradient(45deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1), rgba(69, 183, 209, 0.1))'
-                    : 'linear-gradient(45deg, rgba(255, 107, 107, 0.05), rgba(78, 205, 196, 0.05))',
-                transition: 'all 0.4s ease',
-                zIndex: 0
+                height: '4px',
+                background: 'rgba(255, 255, 255, 0.5)',
+                transform: isHovered ? 'scaleX(1)' : 'scaleX(0)',
+                transformOrigin: 'left',
+                transition: 'transform 0.3s ease',
+                borderRadius: '16px 16px 0 0'
             }} />
 
-            {/* Content */}
-            <div style={{ position: 'relative', zIndex: 1 }}>
-                <h2 style={{
-                    fontSize: '2.5rem',
-                    fontWeight: 'bold',
-                    color: '#2c3e50',
-                    marginBottom: '20px',
-                    textAlign: 'center',
-                    transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-                    transition: 'transform 0.3s ease'
-                }}>
-                    {title}
-                </h2>
-
-                <p style={{
-                    fontSize: '1.3rem',
-                    color: '#34495e',
-                    textAlign: 'center',
-                    lineHeight: '1.6',
-                    margin: 0,
-                    transform: isHovered ? 'translateY(-5px)' : 'translateY(0)',
-                    transition: 'transform 0.3s ease'
-                }}>
-                    {description}
-                </p>
-
-                {/* Fun arrow indicator */}
-                <div style={{
-                    textAlign: 'center',
-                    marginTop: '30px',
-                    fontSize: '2rem',
-                    opacity: isHovered ? 1 : 0.7,
-                    transform: isHovered ? 'translateX(15px)' : 'translateX(0)',
-                    transition: 'all 0.3s ease'
-                }}>
-                    {isHovered ? '🎯' : '👉'}
-                </div>
-            </div>
-
-            {/* Floating particles on hover */}
-            {isHovered && (
-                <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    pointerEvents: 'none',
-                    zIndex: 2
-                }}>
-                    {['✨', '🎯', '💫'].map((particle, index) => (
-                        <span
-                            key={index}
-                            style={{
-                                position: 'absolute',
-                                fontSize: '1.5rem',
-                                animation: `particleFloat ${2 + index * 0.5}s ease-in-out infinite`,
-                                animationDelay: `${index * 0.3}s`,
-                                top: `${20 + index * 20}%`,
-                                left: `${10 + index * 30}%`
-                            }}
-                        >
-                            {particle}
-                        </span>
-                    ))}
-                </div>
-            )}
-
-            {/* CSS animations */}
+            {/* Responsive styles */}
             <style>{`
-        @keyframes particleFloat {
-          0%, 100% { 
-            transform: translateY(0px) rotate(0deg);
-            opacity: 0.7;
-          }
-          50% { 
-            transform: translateY(-15px) rotate(180deg);
-            opacity: 1;
-          }
-        }
-      `}</style>
+                @media (max-width: 768px) {
+                    .card-content-container {
+                        flex-direction: column !important;
+                        align-items: center !important;
+                        gap: 20px !important;
+                        text-align: center !important;
+                    }
+                }
+            `}</style>
         </div>
     )
 }
 
-export default LessonCard 
+export default LessonCard
