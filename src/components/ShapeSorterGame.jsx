@@ -84,8 +84,8 @@ const getShapeStatesForPhase = (phase, shapes, targetCount = 12) => {
     }
 };
 
-// Initial game state structure
-const initialState = {
+// Factory function to create fresh initial game state
+const createInitialState = () => ({
     currentPhase: GAME_PHASES.INTRO,
     shapes: [],
     bins: {
@@ -117,11 +117,21 @@ const initialState = {
     initialActiveCount: 0,
     lastFailedShape: null,
     waitingForPostAnimationTTS: false
-};
+});
 
 // Game state reducer for managing all state transitions
 const gameReducer = (state, action) => {
     switch (action.type) {
+        case 'RESET_GAME':
+            const freshState = createInitialState();
+            return {
+                ...freshState,
+                currentPhase: action.payload.phase,
+                targetShapes: action.payload.targetShapes || freshState.targetShapes,
+                maxInterventions: action.payload.maxInterventions || freshState.maxInterventions,
+                showContainers: ['tools', 'modeling', 'guided', 'practice', 'challenge'].includes(action.payload.phase)
+            };
+            
         case 'SET_PILE_AREA':
             return { 
                 ...state, 
@@ -485,13 +495,13 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
     const initialGameState = useMemo(() => {
         const { phaseConfig } = contentProps;
         const phase = phaseConfig?.initialPhase || GAME_PHASES.INTRO;
-        
+        const freshState = createInitialState();
         
         return {
-            ...initialState,
+            ...freshState,
             currentPhase: phase,
-            targetShapes: phaseConfig?.targetShapes || initialState.targetShapes,
-            maxInterventions: phaseConfig?.maxInterventions || initialState.maxInterventions,
+            targetShapes: phaseConfig?.targetShapes || freshState.targetShapes,
+            maxInterventions: phaseConfig?.maxInterventions || freshState.maxInterventions,
             showContainers: ['tools', 'modeling', 'guided', 'practice', 'challenge'].includes(phase)
         };
     }, [contentProps]);
@@ -857,22 +867,17 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         const newMaxInterventions = phaseConfig?.maxInterventions;
         
         if (newPhase && newPhase !== state.currentPhase) {
-            // Phase has changed - update phase and recalculate shape states
-            dispatch({ type: 'SET_PHASE', phase: newPhase });
+            // Phase has changed - reset game state to clear bin counts
+            dispatch({ 
+                type: 'RESET_GAME', 
+                payload: {
+                    phase: newPhase,
+                    targetShapes: newTargetShapes,
+                    maxInterventions: newMaxInterventions
+                }
+            });
             
-            // Update containers visibility based on phase
-            const shouldShowContainers = ['tools', 'modeling', 'guided', 'guided_success', 'practice_setup', 'practice', 'intervention', 'correction', 'challenge_setup', 'challenge', 'completion', 'recap'].includes(newPhase);
-            if (shouldShowContainers !== state.showContainers) {
-                dispatch({ type: 'SHOW_CONTAINERS' });
-            }
-            
-            // Update target shapes and max interventions if provided
-            if (newTargetShapes !== undefined && newTargetShapes !== state.targetShapes) {
-                dispatch({ type: 'SET_TARGET_SHAPES', count: newTargetShapes });
-            }
-            if (newMaxInterventions !== undefined && newMaxInterventions !== state.maxInterventions) {
-                dispatch({ type: 'SET_MAX_INTERVENTIONS', count: newMaxInterventions });
-            }
+            // Note: RESET_GAME already handles containers visibility, targetShapes, and maxInterventions
             
             // Recalculate shape states based on new phase and target count
             if (state.shapes.length > 0) {
