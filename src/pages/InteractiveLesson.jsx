@@ -954,15 +954,15 @@ const InteractiveLesson = () => {
                                 sx={{
                                     padding: '8px',
                                     borderRadius: '12px',
-                                    background: '#4CAF50',
+                                    background: '#2281E4',
                                     color: '#fff',
                                     textTransform: 'none',
                                     fontSize: '1rem',
                                     minWidth: '140px',
                                     fontFamily: "'Fustat', 'Inter', sans-serif",
-                                    fontWeight: 500,
+                                    fontWeight: 700,
                                     '&:hover': {
-                                        background: '#545E7D'
+                                        background: '#1A6BC4'
                                     }
                                 }}
                             >
