@@ -44,6 +44,7 @@ import FarmMap from '../components/FarmMap';
 import PerimeterDefinition from '../components/PerimeterDefinition';
 import RectangleSolution from '../components/RectangleSolution';
 import ShapeDesigner from '../components/ShapeDesigner';
+import MeasurementInput from '../components/MeasurementInput';
 
 import './InteractiveLesson.css';
 
@@ -925,80 +926,14 @@ const InteractiveLesson = () => {
                                 </Box>
                             )}
 
-                            {/* Input field */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                                <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
-                                    Perimeter =
-                                </Typography>
-                                <TextField
-                                    value={perimeterInput}
-                                    onChange={(e) => setPerimeterInput(e.target.value)}
-                                    type="number"
-                                    variant="outlined"
-                                    size="small"
-                                    disabled={showPerimeterSolution}
-                                    sx={{
-                                        flex: 1,
-                                        '& .MuiOutlinedInput-root': {
-                                            color: '#fff',
-                                            backgroundColor: '#2C2C2C',
-                                            '& fieldset': {
-                                                borderColor: '#555',
-                                            },
-                                            '&:hover fieldset': {
-                                                borderColor: '#777',
-                                            },
-                                            '&.Mui-focused fieldset': {
-                                                borderColor: '#4CAF50',
-                                            },
-                                            '&.Mui-disabled': {
-                                                color: '#4CAF50',
-                                                backgroundColor: '#1E1E1E',
-                                                '& fieldset': {
-                                                    borderColor: '#4CAF50',
-                                                }
-                                            }
-                                        },
-                                        '& .MuiInputBase-input.Mui-disabled': {
-                                            WebkitTextFillColor: '#4CAF50',
-                                            opacity: 1
-                                        }
-                                    }}
-                                />
-                                <Typography variant="body2" sx={{ color: '#fff', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
-                                    {interaction?.contentProps?.shape?.unit || 'units'}
-                                </Typography>
-                            </Box>
-
-                            {/* Check button */}
-                            {!showNextButton && !showPerimeterSolution && (
-                                <Button
-                                    variant="contained"
-                                    onClick={handlePerimeterCheck}
-                                    disabled={!perimeterInput.trim()}
-                                    sx={{
-                                        padding: '8px',
-                                        borderRadius: '12px',
-                                        background: '#4CAF50',
-                                        color: '#fff',
-                                        textTransform: 'none',
-                                        fontSize: '1rem',
-                                        minWidth: '120px',
-                                        fontFamily: "'Fustat', 'Inter', sans-serif",
-                                        fontWeight: 500,
-                                        '&:hover': {
-                                            background: '#545E7D'
-                                        },
-                                        '&:disabled': {
-                                            background: '#2C2C2C',
-                                            color: '#666',
-                                            border: '1px solid #2C2C2C'
-                                        }
-                                    }}
-                                >
-                                    Check
-                                </Button>
-                            )}
+                            <MeasurementInput
+                                value={perimeterInput}
+                                onInputChange={setPerimeterInput}
+                                onCheck={handlePerimeterCheck}
+                                disabled={showPerimeterSolution}
+                                placeholder="Enter perimeter"
+                                unit={interaction?.contentProps?.shape?.unit || 'units'}
+                            />
                         </Box>
                     )}
 
@@ -1038,107 +973,13 @@ const InteractiveLesson = () => {
 
                     {/* Measurement Input Interface */}
                     {interaction?.type === 'shape-measurement' && !isSpeaking && !showNextButton && (
-                        <Box sx={{ mb: 3, width: '100%', maxWidth: '295px' }}>
-                            {/* Input and Button on same line */}
-                            <Box sx={{ 
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '12px'
-                            }}>
-                                {/* Input field container */}
-                                <Box sx={{ 
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    background: '#fff',
-                                    borderRadius: '12px',
-                                    padding: '4px 14px',
-                                    filter: 'drop-shadow(0px 0px 8px rgba(34, 129, 228, 1))',
-                                    height: '48px',
-                                    flex: 1,
-                                    '&:focus-within': {
-                                        boxShadow: '0 0 0 4px #82B0FF'
-                                    }
-                                }}>
-                                    {/* Input field */}
-                                    <TextField
-                                        value={measurementInput}
-                                        onChange={(e) => setMeasurementInput(e.target.value)}
-                                        type="number"
-                                        variant="standard"
-                                        placeholder="Enter length"
-                                        sx={{
-                                            flex: 1,
-                                            '& .MuiInput-root': {
-                                                color: '#000',
-                                                fontSize: '16px',
-                                                fontFamily: "'Fustat', 'Inter', sans-serif",
-                                                fontWeight: 400,
-                                                '&:before': { display: 'none' },
-                                                '&:after': { display: 'none' },
-                                                '&:hover:not(.Mui-disabled):before': { display: 'none' }
-                                            },
-                                            '& .MuiInput-input': {
-                                                padding: '0',
-                                                '&::placeholder': {
-                                                    color: '#B3BDD2',
-                                                    opacity: 1
-                                                },
-                                                // Remove number input spinners
-                                                '&::-webkit-outer-spin-button': {
-                                                    '-webkit-appearance': 'none',
-                                                    margin: 0
-                                                },
-                                                '&::-webkit-inner-spin-button': {
-                                                    '-webkit-appearance': 'none',
-                                                    margin: 0
-                                                },
-                                                '&[type=number]': {
-                                                    '-moz-appearance': 'textfield'
-                                                }
-                                            }
-                                        }}
-                                    />
-                                    {/* Unit label */}
-                                    <Typography 
-                                        variant="body2" 
-                                        sx={{ 
-                                            color: '#000', 
-                                            fontFamily: "'Fustat', 'Inter', sans-serif", 
-                                            fontWeight: 400,
-                                            fontSize: '16px',
-                                            marginLeft: '8px'
-                                        }}
-                                    >
-                                        cm
-                                    </Typography>
-                                </Box>
-                                {/* Check button - separate from input */}
-                                <Button
-                                    variant="contained"
-                                    onClick={handleMeasurementCheck}
-                                    disabled={!measurementInput.trim()}
-                                    sx={{
-                                        minWidth: '54px',
-                                        width: '54px',
-                                        height: '44px',
-                                        borderRadius: '12px',
-                                        background: '#2281E4',
-                                        padding: 0,
-                                        '&:hover': {
-                                            background: '#135BB1'
-                                        },
-                                        '&:disabled': {
-                                            background: '#73757B',
-                                            opacity: 0.6
-                                        }
-                                    }}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="14" viewBox="0 0 10 14" fill="none">
-                                    <path d="M8.75003 7L3.14503 12.67C2.71503 13.11 2.01003 13.11 1.57503 12.67C1.14003 12.23 1.14003 11.52 1.57503 11.08L5.60503 7L1.57503 2.92C1.14003 2.48 1.14003 1.77 1.57503 1.33C2.01003 0.89 2.71503 0.89 3.14503 1.33L8.75003 7Z" fill="white" stroke="white"/>
-                                    </svg>
-                                </Button>
-                            </Box>
-                        </Box>
+                        <MeasurementInput
+                            value={measurementInput}
+                            onInputChange={setMeasurementInput}
+                            onCheck={handleMeasurementCheck}
+                            placeholder="Enter length"
+                            unit="cm"
+                        />
                     )}
 
 
