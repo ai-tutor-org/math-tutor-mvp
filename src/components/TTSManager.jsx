@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef, useCallback, useImperativeHandle, f
 
 const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = false, isMobile = false }, ref) => {
     const [audioMapping, setAudioMapping] = useState(null);
+    const [isPaused, setIsPaused] = useState(false);
     const audioRef = useRef(null);
+    const speechUtteranceRef = useRef(null);
 
     // Load audio mapping on component mount
     useEffect(() => {
@@ -32,7 +34,6 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
         const basePath = import.meta.env.BASE_URL || '/';
         const audioPath = `${basePath}audio/${audioFile}`.replace('//', '/');
         const audio = new Audio(audioPath);
-        audioRef.current = audio;
 
         // Set playback rate to 1.5x in dev mode
         if (isDevMode) {
@@ -43,14 +44,21 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
             if (onStart) onStart();
         };
 
+        // Only set audioRef when audio actually starts playing
+        audio.onplay = () => {
+            audioRef.current = audio;
+        };
+
         audio.onended = () => {
             audioRef.current = null;
+            setIsPaused(false);
             if (onEnd) onEnd();
         };
 
         audio.onerror = (event) => {
             console.error('Audio playback error:', event);
             audioRef.current = null;
+            setIsPaused(false);
             if (onError) onError(event.error || 'Audio playback failed');
             if (onEnd) onEnd(); // Ensure state machines don't get stuck
         };
@@ -92,12 +100,20 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
         utterance.volume = 0.8;
 
         // Event handlers
-        utterance.onstart = onStart;
+        utterance.onstart = () => {
+            // Only set speechUtteranceRef when speech actually starts
+            speechUtteranceRef.current = utterance;
+            if (onStart) onStart();
+        };
         utterance.onend = () => {
+            speechUtteranceRef.current = null;
+            setIsPaused(false);
             if (onEnd) onEnd();
         };
         utterance.onerror = (event) => {
             console.error('Web Speech API Error:', event.error);
+            speechUtteranceRef.current = null;
+            setIsPaused(false);
             if (onError) onError(event.error);
             if (onEnd) onEnd();
         };
@@ -112,11 +128,20 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
             return;
         }
 
+        // Reset pause state when starting new speech
+        setIsPaused(false);
+
         // Stop any currently playing audio
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
         }
+        
+        // Cancel any ongoing Web Speech API
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        speechUtteranceRef.current = null;
 
         // Check if we have a pre-generated audio file for this text
         // Apply same normalization as generate_audio.py (convert newlines to spaces)
@@ -132,14 +157,61 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
         }
     }, [audioMapping, playPreGeneratedAudio, playWithWebSpeechAPI]);
 
-    // Expose triggerTTS method to parent components
+    const pauseTTS = useCallback(() => {
+        if (audioRef.current && !audioRef.current.paused) {
+            // For pre-generated audio - only pause if it's currently playing
+            audioRef.current.pause();
+            setIsPaused(true);
+        } else if (speechUtteranceRef.current && window.speechSynthesis) {
+            // For Web Speech API - check if synthesis is speaking before pausing
+            if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+                window.speechSynthesis.pause();
+                setIsPaused(true);
+            }
+        }
+    }, []);
+
+    const resumeTTS = useCallback(() => {
+        if (audioRef.current) {
+            // For pre-generated audio
+            audioRef.current.play().catch(error => {
+                console.error('Failed to resume audio:', error);
+                setIsPaused(false);
+            });
+            setIsPaused(false);
+        } else if (speechUtteranceRef.current && window.speechSynthesis) {
+            // For Web Speech API - check if synthesis is paused before resuming
+            if (window.speechSynthesis.paused) {
+                window.speechSynthesis.resume();
+                setIsPaused(false);
+            }
+        }
+    }, []);
+
+    const stopTTS = useCallback(() => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            audioRef.current = null;
+        }
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        speechUtteranceRef.current = null;
+        setIsPaused(false);
+    }, []);
+
+    // Expose methods to parent components
     useImperativeHandle(ref, () => ({
         triggerTTS: (textToSpeak) => {
             if (!isMobile) {
                 speakText(textToSpeak);
             }
-        }
-    }), [speakText, isMobile]);
+        },
+        pauseTTS,
+        resumeTTS,
+        stopTTS
+    }), [speakText, isMobile, pauseTTS, resumeTTS, stopTTS]);
 
     // Effect to handle audio playback when text changes
     useEffect(() => {

@@ -18,7 +18,8 @@ import {
     Settings as SettingsIcon,
     ArrowBack as ArrowBackIcon,
     VolumeOff as VolumeOffIcon,
-    Pause as PauseIcon
+    Pause as PauseIcon,
+    PlayArrow as PlayArrowIcon
 } from '@mui/icons-material';
 
 import { lessons, presentations, conditionalPresentations } from '../contentData'; // Import centralized data
@@ -94,6 +95,7 @@ const InteractiveLesson = () => {
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
     const [hasUserInteracted, setHasUserInteracted] = useState(false); // Track user interaction for conditional transitions
+    const [isTTSPaused, setIsTTSPaused] = useState(false);
 
     // Measurement Input State
     const [measurementInput, setMeasurementInput] = useState('');
@@ -117,6 +119,26 @@ const InteractiveLesson = () => {
 
     // Click sound hook
     const playClickSound = useClickSound();
+
+    // TTS Pause/Resume handler
+    const handleTTSPauseResume = useCallback(() => {
+        playClickSound();
+        
+        // Only allow pause/resume while speaking or already paused
+        if (!isSpeaking && !isTTSPaused) {
+            return;
+        }
+        
+        if (ttsRef.current) {
+            if (isTTSPaused) {
+                ttsRef.current.resumeTTS();
+                setIsTTSPaused(false);
+            } else {
+                ttsRef.current.pauseTTS();
+                setIsTTSPaused(true);
+            }
+        }
+    }, [isTTSPaused, isSpeaking, playClickSound]);
 
     // Define which animations should loop vs play once
     const shouldAnimationLoop = (animationName) => {
@@ -249,6 +271,7 @@ const InteractiveLesson = () => {
         setAnimationTrigger(false);
         setHasUserInteracted(false);
         setActiveFeedbackInteraction(null);
+        setIsTTSPaused(false);
         
         // Reset measurement and perimeter input states
         setMeasurementInput('');
@@ -550,6 +573,7 @@ const InteractiveLesson = () => {
     const handleTTSEnd = useCallback(() => {
         setIsSpeaking(false);
         setIsWaving(false);
+        setIsTTSPaused(false);
 
         // Stop looping animations when TTS ends (but allow one-time animations to complete)
         if (videoRef.current && interaction?.tutorAnimation && shouldAnimationLoop(interaction.tutorAnimation)) {
@@ -609,6 +633,7 @@ const InteractiveLesson = () => {
 
     const handleTTSStart = useCallback(() => {
         setIsSpeaking(true);
+        setIsTTSPaused(false);
         if (interaction?.type === 'welcome') {
             setIsWaving(true);
         }
@@ -642,6 +667,7 @@ const InteractiveLesson = () => {
             }
         };
     }, []); // Empty dependency array ensures this runs only on mount and unmount
+
 
     // Render Content Component
     function renderContent() {
@@ -833,11 +859,11 @@ const InteractiveLesson = () => {
                             <VolumeOffIcon />
                         </IconButton>
                         <IconButton sx={{
-                            color: '#999',
-                            cursor: 'not-allowed',
-                            '&:hover': { color: '#999' }
-                        }} onClick={(e) => e.preventDefault()}>
-                            <PauseIcon />
+                            color: (isSpeaking || isTTSPaused) ? '#fff' : '#999',
+                            cursor: (isSpeaking || isTTSPaused) ? 'pointer' : 'not-allowed',
+                            '&:hover': { color: (isSpeaking || isTTSPaused) ? '#fff' : '#999' }
+                        }} onClick={(isSpeaking || isTTSPaused) ? handleTTSPauseResume : (e) => e.preventDefault()}>
+                            {isTTSPaused ? <PlayArrowIcon /> : <PauseIcon />}
                         </IconButton>
                     </Box>
 
