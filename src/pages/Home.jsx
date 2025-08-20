@@ -111,7 +111,7 @@ function Home() {
                             color: 'white',
                             marginBottom: '8px'
                         }}>
-                            Mathy
+                            Math Tutor
                         </Typography>
                         <Typography sx={{
                             fontSize: { xs: '14px', sm: '16px' },
