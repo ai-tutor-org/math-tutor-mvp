@@ -92,9 +92,14 @@ const MeasurementInput = ({
                         borderRadius: '12px',
                         background: '#2281E4',
                         padding: 0,
+                        transition: 'all 0.1s ease',
                         '&:hover': {
                             background: '#135BB1',
                             boxShadow: '0 4px 0 0 #0E4485',
+                        },
+                        '&:active': {
+                            transform: 'translateY(4px)',
+                            boxShadow: '0 0px 0 0 #0E4485',
                         },
                         '&:disabled': {
                             background: '#73757B',
