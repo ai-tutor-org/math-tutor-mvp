@@ -89,7 +89,8 @@ function LessonCard({
                             color: 'rgba(255, 255, 255, 0.8)',
                             margin: 0,
                             marginBottom: '8px',
-                            fontWeight: '700'
+                            fontFamily: 'Fustat',
+                            fontWeight: '500'
                         }}>
                             {lessonNumber}
                         </p>
@@ -98,6 +99,7 @@ function LessonCard({
                     {/* Title */}
                     <h3 style={{
                         fontSize: '24px',
+                        fontFamily: 'Fustat',
                         fontWeight: '700',
                         color: '#000',
                         margin: 0,
@@ -111,6 +113,7 @@ function LessonCard({
                     {/* Description */}
                     <p style={{
                         fontSize: '16px',
+                        fontFamily: 'Fustat',
                         fontWeight: '500',
                         color: '#3F2A0B',
                         margin: 0,
@@ -142,10 +145,11 @@ function LessonCard({
                             color: disabled ? '#B2761B' : '#0C612C',
                             border: 'none',
                             fontSize: '16px',
+                            fontFamily: 'Fustat',
                             fontWeight: '700',
                             cursor: disabled ? 'not-allowed' : 'pointer',
                             transition: 'all 0.2s ease',
-                            transform: isHovered && !disabled ? 'scale(1.02)' : 'scale(1)',
+                            transform: 'scale(1)',
                             boxShadow: isHovered && !disabled
                                 ? '0 4px 12px rgba(0, 0, 0, 0.2)' 
                                 : '0 2px 4px rgba(0, 0, 0, 0.1)',
@@ -168,19 +172,6 @@ function LessonCard({
                 </div>
             </div>
 
-            {/* Hover effect overlay */}
-            <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '4px',
-                background: 'rgba(255, 255, 255, 0.5)',
-                transform: isHovered ? 'scaleX(1)' : 'scaleX(0)',
-                transformOrigin: 'left',
-                transition: 'transform 0.3s ease',
-                borderRadius: '16px 16px 0 0'
-            }} />
 
             {/* Responsive styles */}
             <style>{`

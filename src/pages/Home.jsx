@@ -50,7 +50,8 @@ function Home() {
                         <Box>
                             <Typography variant="caption" sx={{
                                 color: '#999',
-                                fontWeight: '700',
+                                fontFamily: 'Fustat',
+                                fontWeight: '500',
                                 textTransform: 'uppercase'
                             }}>
                                 Welcome to Mathy
@@ -58,7 +59,8 @@ function Home() {
                             <Typography variant="h6" sx={{
                                 color: '#fff',
                                 fontSize: { xs: '16px', sm: '20px' },
-                                fontWeight: '700'
+                                fontFamily: 'Fustat',
+                                fontWeight: '500'
                             }}>
                                 Hi there
                             </Typography>
@@ -72,7 +74,8 @@ function Home() {
                         borderRadius: '8px'
                     }}>
                         <Typography sx={{
-                            fontWeight: '600'
+                            fontFamily: 'Fustat',
+                            fontWeight: '500'
                         }}>
                             5th Grade
                         </Typography>
@@ -103,7 +106,8 @@ function Home() {
                     }}>
                         <Typography variant="h1" sx={{
                             fontSize: { xs: '24px', sm: '32px' },
-                            fontWeight: '800',
+                            fontFamily: 'Fustat',
+                            fontWeight: '500',
                             color: 'white',
                             marginBottom: '8px'
                         }}>
@@ -112,7 +116,8 @@ function Home() {
                         <Typography sx={{
                             fontSize: { xs: '14px', sm: '16px' },
                             color: '#B3BDD2',
-                            fontWeight: '300',
+                            fontFamily: 'Fustat',
+                            fontWeight: '500',
                             lineHeight: 1.5
                         }}>
                             Let's explore shapes, numbers, and discover the magic of perimeter and area together
@@ -130,7 +135,7 @@ function Home() {
                         <LessonCard
                             lessonNumber="Lesson 1"
                             title="Introduction to Perimeter"
-                            description="Learn how to calculate the Perimter of different shapes in a fun way!"
+                            description="Learn how to calculate the Perimeter of different shapes in a fun way!"
                             buttonText="Start Lesson"
                             onClick={handleLessonSelect}
                             disabled={false}
