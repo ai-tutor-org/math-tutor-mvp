@@ -787,22 +787,6 @@ const InteractiveLesson = () => {
                         >
                             <HomeIcon />
                         </IconButton>
-                        <IconButton
-                            sx={{
-                                color: '#999',
-                                bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                borderRadius: '8px',
-                                padding: '8px',
-                                cursor: 'not-allowed',
-                                '&:hover': {
-                                    bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                    color: '#999'
-                                }
-                            }}
-                            onClick={(e) => e.preventDefault()}
-                        >
-                            <SettingsIcon />
-                        </IconButton>
                         <Button
                             startIcon={<ArrowBackIcon />}
                             sx={{
