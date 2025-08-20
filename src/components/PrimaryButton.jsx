@@ -1,17 +1,33 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button } from '@mui/material';
 
 const PrimaryButton = ({ 
     children,
     onClick,
     disabled = false,
+    autoFocus = true,
     sx = {},
     ...props 
 }) => {
+    const buttonRef = useRef(null);
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter' && !disabled && onClick) {
+            onClick(event);
+        }
+    };
+
+    useEffect(() => {
+        if (autoFocus && buttonRef.current && !disabled) {
+            buttonRef.current.focus();
+        }
+    }, [autoFocus, disabled]);
+
     return (
         <Button
+            ref={buttonRef}
             variant="contained"
             onClick={onClick}
+            onKeyDown={handleKeyDown}
             disabled={disabled}
             sx={{
                 padding: '8px',
@@ -33,6 +49,10 @@ const PrimaryButton = ({
                 '&:active': {
                     transform: 'translateY(4px)',
                     boxShadow: '0 0px 0 0 #0E4485',
+                },
+                '&:focus': {
+                    outline: 'none',
+                    boxShadow: '0 4px 0 0 #0E4485'
                 },
                 '&:disabled': {
                     background: '#73757B',

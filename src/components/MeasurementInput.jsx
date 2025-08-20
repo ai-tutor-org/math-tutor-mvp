@@ -9,6 +9,12 @@ const MeasurementInput = ({
     placeholder = "Enter value",
     unit = "units"
 }) => {
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter' && value.trim() && !disabled && onCheck) {
+            onCheck();
+        }
+    };
+
     return (
         <Box sx={{ mb: 3, width: '100%', maxWidth: '295px' }}>
             <Box sx={{ 
@@ -32,6 +38,7 @@ const MeasurementInput = ({
                     <TextField
                         value={value}
                         onChange={(e) => onInputChange(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         type="number"
                         variant="standard"
                         placeholder={placeholder}
@@ -84,6 +91,7 @@ const MeasurementInput = ({
                 <Button
                     variant="contained"
                     onClick={onCheck}
+                    onKeyDown={handleKeyDown}
                     disabled={!value.trim() || disabled}
                     sx={{
                         minWidth: '54px',
@@ -100,6 +108,10 @@ const MeasurementInput = ({
                         '&:active': {
                             transform: 'translateY(4px)',
                             boxShadow: '0 0px 0 0 #0E4485',
+                        },
+                        '&:focus': {
+                            outline: 'none',
+                            boxShadow: '0 4px 0 0 #0E4485'
                         },
                         '&:disabled': {
                             background: '#73757B',
