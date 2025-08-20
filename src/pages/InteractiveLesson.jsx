@@ -164,40 +164,22 @@ const InteractiveLesson = () => {
 
     // Helper function to get feedback text from contentData
     const getFeedbackText = useCallback((feedbackInteractionId) => {
-        // Check main presentations first
-        for (const [presId, pres] of Object.entries(presentations)) {
-            const feedbackInteraction = pres.interactions.find(int => int.id === feedbackInteractionId);
-            if (feedbackInteraction) {
-                return feedbackInteraction.tutorText;
-            }
+        // First check current presentation's feedbackRegistry
+        if (presentation?.feedbackRegistry?.[feedbackInteractionId]) {
+            return presentation.feedbackRegistry[feedbackInteractionId].tutorText;
         }
-        // Then check conditional presentations
-        for (const [presId, pres] of Object.entries(conditionalPresentations)) {
-            const feedbackInteraction = pres.interactions.find(int => int.id === feedbackInteractionId);
-            if (feedbackInteraction) {
-                return feedbackInteraction.tutorText;
-            }
-        }
+
         return null;
-    }, []);
+    }, [presentation]);
 
     // Helper function to get full feedback interaction data including ContentComponent
     const getFeedbackInteraction = useCallback((feedbackInteractionId) => {
-        for (const [presId, pres] of Object.entries(presentations)) {
-            const feedbackInteraction = pres.interactions.find(int => int.id === feedbackInteractionId);
-            if (feedbackInteraction) {
-                return feedbackInteraction;
-            }
-        }
-
-        for (const [presId, pres] of Object.entries(conditionalPresentations)) {
-            const feedbackInteraction = pres.interactions.find(int => int.id === feedbackInteractionId);
-            if (feedbackInteraction) {
-                return feedbackInteraction;
-            }
+        // First check current presentation's feedbackRegistry
+        if (presentation?.feedbackRegistry?.[feedbackInteractionId]) {
+            return presentation.feedbackRegistry[feedbackInteractionId];
         }
         return null;
-    }, []);
+    }, [presentation]);
 
     const advanceToNext = useCallback(() => {
         setAnimationTrigger(false); // Reset trigger for the next interaction

@@ -71,23 +71,8 @@ const InteractionList = ({
             });
         }
 
-        // Add feedback interactions for reference (but mark them as non-navigable)
-        const feedbackPresentation = conditionalPresentations['feedback-interactions'] || presentations['feedback-interactions'];
-        if (feedbackPresentation && feedbackPresentation.interactions) {
-            feedbackPresentation.interactions.forEach((interaction, interactionIndex) => {
-                allInteractions.push({
-                    id: interaction.id,
-                    tutorText: interaction.tutorText,
-                    type: interaction.type,
-                    presentationId: 'feedback-interactions',
-                    presIndex: -1,
-                    interactionIndex,
-                    isConditional: true,
-                    isFeedback: true,
-                    isCurrent: false
-                });
-            });
-        }
+        // Note: Feedback interactions are now managed per-presentation in feedbackRegistry
+        // No need to add them to the developer navigation since they're contextual
 
         return allInteractions;
     };
@@ -95,10 +80,6 @@ const InteractionList = ({
     const interactions = getAllInteractions();
 
     const handleInteractionClick = (interaction) => {
-        // if (interaction.isFeedback) {
-        //     // Don't navigate to feedback interactions
-        //     return;
-        // }
         onInteractionSelect(interaction);
         onClose();
     };
@@ -147,19 +128,13 @@ const InteractionList = ({
                     >
                         <ListItemButton
                             onClick={() => handleInteractionClick(interaction)}
-                            // disabled={interaction.isFeedback}
                             sx={{
                                 py: 2,
                                 px: 2,
                                 borderBottom: '1px solid #222',
                                 bgcolor: interaction.isCurrent ? 'rgba(76, 175, 80, 0.1)' : 'transparent',
                                 '&:hover': {
-                                    bgcolor: interaction.isFeedback 
-                                        ? 'rgba(255, 255, 255, 0.05)' 
-                                        : 'rgba(255, 255, 255, 0.08)'
-                                },
-                                '&.Mui-disabled': {
-                                    opacity: 0.5
+                                    bgcolor: 'rgba(255, 255, 255, 0.08)'
                                 }
                             }}
                         >
@@ -189,10 +164,10 @@ const InteractionList = ({
                                         )}
                                         {interaction.isConditional && (
                                             <Chip 
-                                                label={interaction.isFeedback ? "Feedback" : "Branch"} 
+                                                label="Branch" 
                                                 size="small" 
                                                 sx={{ 
-                                                    bgcolor: interaction.isFeedback ? '#FF9800' : '#2196F3', 
+                                                    bgcolor: '#2196F3', 
                                                     color: '#fff',
                                                     fontSize: '0.7rem',
                                                     height: '20px'

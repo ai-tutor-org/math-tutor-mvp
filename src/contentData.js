@@ -1,12 +1,5 @@
 import React from 'react';
 import {
-    FaShoePrints,
-    FaRuler,
-    FaPaperclip,
-    FaDoorOpen,
-    FaPaintBrush
-} from 'react-icons/fa';
-import {
     RulerMeasurement,
     MeterStick,
     Crayon,
@@ -96,441 +89,7 @@ export const lessons = {
 
 // Conditional/feedback presentations - triggered conditionally, not part of main sequence
 export const conditionalPresentations = {
-    'feedback-interactions': {
-        interactions: [
-            {
-                id: 'crayon-correct',
-                type: 'tutor-monologue',
-                tutorText: "Exactly! Centimeters are perfect for that.",
-                tutorAnimation: 'happy-applauding',
-                transitionType: 'auto'
-            },
-            {
-                id: 'crayon-incorrect',
-                type: 'tutor-monologue',
-                tutorText: "Good try, but a meter is way too big for a crayon! Centimeters are the better choice here.",
-                tutorAnimation: 'explaining',
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "Got it!"
-            },
-            {
-                id: 'shape-correct',
-                type: 'tutor-monologue',
-                tutorText: "Correct! Great job measuring.",
-                tutorAnimation: 'happy-applauding',
-                transitionType: 'auto'
-            },
-            {
-                id: 'shape-incorrect',
-                type: 'tutor-monologue',
-                tutorText: "Not quite. Try adjusting the ruler and measuring again.",
-                tutorAnimation: 'normal-talking',
-                transitionType: 'auto'
-            },
-            // Perimeter feedback interactions
-            {
-                id: 'rectangle-correct',
-                type: 'tutor-monologue',
-                tutorText: "That's exactly right! The perimeter is 100 meters.",
-                tutorAnimation: 'happy-applauding',
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "Not quite. Remember, the perimeter is the total length around the entire outside edge of the farm. \n\nTake another look and try again.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-solution',
-                type: 'rectangle-solution',
-                tutorText: "Hmm, let's try a different approach. Let's add up the sides together. \n\nThirty plus twenty plus thirty plus twenty equals one hundred.",
-                ContentComponent: RectangleSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "Got it!"
-            },
-            {
-                id: 'square-correct',
-                type: 'tutor-monologue',
-                tutorText: "Exactly! The perimeter of this square field is 60 meters.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'square-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "Not quite. Try to add up the sides again.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'square-solution',
-                type: 'square-solution',
-                tutorText: "Let's work this one out together. \n\nSince all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
-                ContentComponent: SquareSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "Got it!"
-            },
-            {
-                id: 'triangle-correct',
-                type: 'tutor-monologue',
-                tutorText: "Perfect! The perimeter is 40 meters.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'triangle-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "That's not it. Give it another shot!",
-                transitionType: 'auto'
-            },
-            {
-                id: 'triangle-solution',
-                type: 'triangle-solution',
-                tutorText: "No problem. Let's add them up: \n\nTen plus twelve plus eighteen equals forty.",
-                ContentComponent: TriangleSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "Got it!"
-            },
-            {
-                id: 'pentagon-correct',
-                type: 'tutor-monologue',
-                tutorText: "Incredible! The perimeter of this pentagon is 40 meters.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'pentagon-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "Not quite right. Remember, a pentagon has five sides!",
-                transitionType: 'auto'
-            },
-            {
-                id: 'pentagon-solution',
-                type: 'pentagon-solution',
-                tutorText: "Let's add them up together: \n\n Eight... plus eight... plus eight... plus eight... plus eight... equals forty.",
-                ContentComponent: PentagonSolution,
-                transitionType: 'manual',
-                showNextButton: true,
-                nextButtonText: "Got it!"
-            },
-            // Design feedback interactions
-            {
-                id: 'rectangle-design-correct',
-                type: 'tutor-monologue',
-                tutorText: "Perfect! A perimeter of 20 units. Great job!",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'success',
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: false,
-                    showSuccess: true,
-                    showCheckmark: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-hint-1',
-                type: 'tutor-monologue',
-                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 20.",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'hint',
-                    targetPerimeter: 20,
-                    showTarget: true,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: true,
-                    highlightDragIcon: true,
-                    showCurrentPerimeter: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-hint-2',
-                type: 'tutor-monologue',
-                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'hint',
-                    targetPerimeter: 20,
-                    showTarget: true,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: true,
-                    highlightDragIcon: true,
-                    showCurrentPerimeter: true,
-                    encouragementMode: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-solution',
-                type: 'tutor-monologue',
-                tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 6 units and 2 sides of 4 units. \n\n The total perimeter is 20 units.",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'solution',
-                    targetPerimeter: 20,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: false,
-                    showSolution: true,
-                    animateSolution: true,
-                    solutionWidth: 6,
-                    solutionHeight: 4
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-correct-2',
-                type: 'tutor-monologue',
-                tutorText: "Great job! You are a Pro at this!",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'success',
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: false,
-                    showSuccess: true,
-                    showCheckmark: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-hint-1-2',
-                type: 'tutor-monologue',
-                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 26.",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'hint',
-                    targetPerimeter: 26,
-                    showTarget: true,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: true,
-                    highlightDragIcon: true,
-                    showCurrentPerimeter: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-hint-2-2',
-                type: 'tutor-monologue',
-                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'hint',
-                    targetPerimeter: 26,
-                    showTarget: true,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: true,
-                    highlightDragIcon: true,
-                    showCurrentPerimeter: true,
-                    encouragementMode: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-solution-2',
-                type: 'tutor-monologue',
-                tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 8 units and 2 sides of 5 units. \n\n The total perimeter is 26 units.",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'solution',
-                    targetPerimeter: 26,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: false,
-                    showSolution: true,
-                    animateSolution: true,
-                    solutionWidth: 8,
-                    solutionHeight: 5
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-correct-3',
-                type: 'tutor-monologue',
-                tutorText: "Awesome! That's perfect!",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'success',
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: false,
-                    showSuccess: true,
-                    showCheckmark: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-hint-1-3',
-                type: 'tutor-monologue',
-                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 8.",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'hint',
-                    targetPerimeter: 8,
-                    showTarget: true,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: true,
-                    highlightDragIcon: true,
-                    showCurrentPerimeter: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-hint-2-3',
-                type: 'tutor-monologue',
-                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'hint',
-                    targetPerimeter: 8,
-                    showTarget: true,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: true,
-                    highlightDragIcon: true,
-                    showCurrentPerimeter: true,
-                    encouragementMode: true
-                },
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-design-solution-3',
-                type: 'tutor-monologue',
-                tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 2 units and 2 sides of 2 units. \n\n The total perimeter is 8 units.",
-                ContentComponent: ShapeDesigner,
-                contentProps: {
-                    mode: 'solution',
-                    targetPerimeter: 8,
-                    showGrid: true,
-                    showSideLabels: true,
-                    enableDragging: false,
-                    showSolution: true,
-                    animateSolution: true,
-                    solutionWidth: 2,
-                    solutionHeight: 2
-                },
-                transitionType: 'auto'
-            },
-            // Measurement reason feedback interactions
-            {
-                id: 'measurement-reason-retry',
-                type: 'multiple-choice-question',
-                tutorText: "No, the size of the room is the same. Choose again.",
-                tutorAnimation: 'thinking-curious-question',
-                contentProps: {
-                    showBothFootsteps: true,
-                    yourSteps: 10,
-                    friendSteps: 8,
-                    yourFootColor: '#4A90E2',
-                    friendFootColor: '#e24a4a',
-                    question: "What do you think is the reason?",
-                    choices: [
-                        {
-                            text: "The size of my feet and my friend's feet are different",
-                            isCorrect: true,
-                            feedbackId: 'measurement-reason-explanation'
-                        }
-                    ]
-                },
-                transitionType: 'manual'
-            },
-            {
-                id: 'measurement-reason-explanation',
-                type: 'tutor-monologue',
-                tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
-                tutorAnimation: 'explaining',
-                contentProps: {
-                    showBothFootsteps: true,
-                    yourSteps: 10,
-                    friendSteps: 8,
-                    yourFootColor: '#4A90E2',
-                    friendFootColor: '#e24a4a'
-                },
-                transitionType: 'auto',
-            },
-            // Shape Sorting Game feedback interactions
-            {
-                id: 'triangle-hint',
-                type: 'tutor-monologue',
-                tutorText: "Remember, a triangle has three sides. Look for the container labeled 'Triangles'.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'triangle-auto-help',
-                type: 'tutor-monologue',
-                tutorText: "Let me help you with that triangle. Watch as I place it in the correct container.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'triangle-correction',
-                type: 'tutor-monologue',
-                tutorText: "Great! Let's continue with the next shape.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'circle-hint',
-                type: 'tutor-monologue',
-                tutorText: "A circle is round with no corners. Find the 'Circles' container.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'circle-auto-help',
-                type: 'tutor-monologue',
-                tutorText: "No worries! Let me show you where this circle belongs.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'circle-correction',
-                type: 'tutor-monologue',
-                tutorText: "Perfect! You're getting the hang of this.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-hint',
-                type: 'tutor-monologue',
-                tutorText: "This rectangle has four sides with opposite sides equal. Look for the 'Rectangles' container.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-auto-help',
-                type: 'tutor-monologue',
-                tutorText: "Here, let me help you place this rectangle in the right spot.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'rectangle-correction',
-                type: 'tutor-monologue',
-                tutorText: "Excellent work! Keep going.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'square-hint',
-                type: 'tutor-monologue',
-                tutorText: "A square has four equal sides. Find the 'Squares' container.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'square-auto-help',
-                type: 'tutor-monologue',
-                tutorText: "Don't worry! Watch me put this square where it belongs.",
-                transitionType: 'auto'
-            },
-            {
-                id: 'square-correction',
-                type: 'tutor-monologue',
-                tutorText: "Wonderful! You sorted that perfectly.",
-                transitionType: 'auto'
-            }
-        ]
-    }
+
 };
 
 // Main sequential presentations - the primary lesson flow
@@ -639,6 +198,44 @@ export const presentations = {
                 transitionType: 'manual',
             },
         ],
+        feedbackRegistry: {
+            'measurement-reason-retry': {
+                id: 'measurement-reason-retry',
+                type: 'multiple-choice-question',
+                tutorText: "No, the size of the room is the same. Choose again.",
+                tutorAnimation: 'thinking-curious-question',
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a',
+                    question: "What do you think is the reason?",
+                    choices: [
+                        {
+                            text: "The size of my feet and my friend's feet are different",
+                            isCorrect: true,
+                            feedbackId: 'measurement-reason-explanation'
+                        }
+                    ]
+                },
+                transitionType: 'manual'
+            },
+            'measurement-reason-explanation': {
+                id: 'measurement-reason-explanation',
+                type: 'tutor-monologue',
+                tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
+                tutorAnimation: 'explaining',
+                contentProps: {
+                    showBothFootsteps: true,
+                    yourSteps: 10,
+                    friendSteps: 8,
+                    yourFootColor: '#4A90E2',
+                    friendFootColor: '#e24a4a'
+                },
+                transitionType: 'auto'
+            }
+        }
     },
     'intro-to-standard-units': {
         interactions: [
@@ -793,7 +390,39 @@ export const presentations = {
                 ContentComponent: () => null,
                 transitionType: 'auto'
             }
-        ]
+        ],
+        feedbackRegistry: {
+            'crayon-correct': {
+                id: 'crayon-correct',
+                type: 'tutor-monologue',
+                tutorText: "Exactly! Centimeters are perfect for that.",
+                tutorAnimation: 'happy-applauding',
+                transitionType: 'auto'
+            },
+            'crayon-incorrect': {
+                id: 'crayon-incorrect',
+                type: 'tutor-monologue',
+                tutorText: "Good try, but a meter is way too big for a crayon! Centimeters are the better choice here.",
+                tutorAnimation: 'explaining',
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
+            },
+            'shape-correct': {
+                id: 'shape-correct',
+                type: 'tutor-monologue',
+                tutorText: "Correct! Great job measuring.",
+                tutorAnimation: 'happy-applauding',
+                transitionType: 'auto'
+            },
+            'shape-incorrect': {
+                id: 'shape-incorrect',
+                type: 'tutor-monologue',
+                tutorText: "Not quite. Try adjusting the ruler and measuring again.",
+                tutorAnimation: 'normal-talking',
+                transitionType: 'auto'
+            }
+        }
     },
     'shape-sorting-factory': {
         interactions: [
@@ -961,7 +590,81 @@ export const presentations = {
                     highlightedShape: 'all'
                 }
             }
-        ]
+        ],
+        feedbackRegistry: {
+            'triangle-hint': {
+                id: 'triangle-hint',
+                type: 'tutor-monologue',
+                tutorText: "Remember, a triangle has three sides. Look for the container labeled 'Triangles'.",
+                transitionType: 'auto'
+            },
+            'triangle-auto-help': {
+                id: 'triangle-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "Let me help you with that triangle. Watch as I place it in the correct container.",
+                transitionType: 'auto'
+            },
+            'triangle-correction': {
+                id: 'triangle-correction',
+                type: 'tutor-monologue',
+                tutorText: "Great! Let's continue with the next shape.",
+                transitionType: 'auto'
+            },
+            'circle-hint': {
+                id: 'circle-hint',
+                type: 'tutor-monologue',
+                tutorText: "A circle is round with no corners. Find the 'Circles' container.",
+                transitionType: 'auto'
+            },
+            'circle-auto-help': {
+                id: 'circle-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "No worries! Let me show you where this circle belongs.",
+                transitionType: 'auto'
+            },
+            'circle-correction': {
+                id: 'circle-correction',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! You're getting the hang of this.",
+                transitionType: 'auto'
+            },
+            'rectangle-hint': {
+                id: 'rectangle-hint',
+                type: 'tutor-monologue',
+                tutorText: "This rectangle has four sides with opposite sides equal. Look for the 'Rectangles' container.",
+                transitionType: 'auto'
+            },
+            'rectangle-auto-help': {
+                id: 'rectangle-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "Here, let me help you place this rectangle in the right spot.",
+                transitionType: 'auto'
+            },
+            'rectangle-correction': {
+                id: 'rectangle-correction',
+                type: 'tutor-monologue',
+                tutorText: "Excellent work! Keep going.",
+                transitionType: 'auto'
+            },
+            'square-hint': {
+                id: 'square-hint',
+                type: 'tutor-monologue',
+                tutorText: "A square has four equal sides. Find the 'Squares' container.",
+                transitionType: 'auto'
+            },
+            'square-auto-help': {
+                id: 'square-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "Don't worry! Watch me put this square where it belongs.",
+                transitionType: 'auto'
+            },
+            'square-correction': {
+                id: 'square-correction',
+                type: 'tutor-monologue',
+                tutorText: "Wonderful! You sorted that perfectly.",
+                transitionType: 'auto'
+            }
+        }
     },
     // FARMER MISSION PRESENTATIONS
     'farmer-mission-intro': {
@@ -1041,7 +744,31 @@ export const presentations = {
                 ContentComponent: FarmerCelebration,
                 transitionType: 'auto'
             }
-        ]
+        ],
+        feedbackRegistry: {
+            'rectangle-correct': {
+                id: 'rectangle-correct',
+                type: 'tutor-monologue',
+                tutorText: "That's exactly right! The perimeter is 100 meters.",
+                tutorAnimation: 'happy-applauding',
+                transitionType: 'auto'
+            },
+            'rectangle-hint-1': {
+                id: 'rectangle-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "Not quite. Remember, the perimeter is the total length around the entire outside edge of the farm. \n\nTake another look and try again.",
+                transitionType: 'auto'
+            },
+            'rectangle-solution': {
+                id: 'rectangle-solution',
+                type: 'rectangle-solution',
+                tutorText: "Hmm, let's try a different approach. Let's add up the sides together. \n\nThirty plus twenty plus thirty plus twenty equals one hundred.",
+                ContentComponent: RectangleSolution,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
+            }
+        }
     },
     'square-field-practice': {
         interactions: [
@@ -1062,7 +789,30 @@ export const presentations = {
                 },
                 transitionType: 'manual'
             }
-        ]
+        ],
+        feedbackRegistry: {
+            'square-correct': {
+                id: 'square-correct',
+                type: 'tutor-monologue',
+                tutorText: "Exactly! The perimeter of this square field is 60 meters.",
+                transitionType: 'auto'
+            },
+            'square-hint-1': {
+                id: 'square-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "Not quite. Try to add up the sides again.",
+                transitionType: 'auto'
+            },
+            'square-solution': {
+                id: 'square-solution',
+                type: 'square-solution',
+                tutorText: "Let's work this one out together. \n\nSince all four sides of a square are equal, we can add them up like this: Fifteen plus fifteen plus fifteen plus fifteen equals sixty.",
+                ContentComponent: SquareSolution,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
+            }
+        }
     },
     'triangle-field-practice': {
         interactions: [
@@ -1083,7 +833,30 @@ export const presentations = {
                 },
                 transitionType: 'manual'
             }
-        ]
+        ],
+        feedbackRegistry: {
+            'triangle-correct': {
+                id: 'triangle-correct',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! The perimeter is 40 meters.",
+                transitionType: 'auto'
+            },
+            'triangle-hint-1': {
+                id: 'triangle-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "That's not it. Give it another shot!",
+                transitionType: 'auto'
+            },
+            'triangle-solution': {
+                id: 'triangle-solution',
+                type: 'triangle-solution',
+                tutorText: "No problem. Let's add them up: \n\nTen plus twelve plus eighteen equals forty.",
+                ContentComponent: TriangleSolution,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
+            }
+        }
     },
     'pentagon-final-challenge': {
         interactions: [
@@ -1114,7 +887,30 @@ export const presentations = {
                 showNextButton: true,
                 nextButtonText: "I'm a Pro!"
             }
-        ]
+        ],
+        feedbackRegistry: {
+            'pentagon-correct': {
+                id: 'pentagon-correct',
+                type: 'tutor-monologue',
+                tutorText: "Incredible! The perimeter of this pentagon is 40 meters.",
+                transitionType: 'auto'
+            },
+            'pentagon-hint-1': {
+                id: 'pentagon-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "Not quite right. Remember, a pentagon has five sides!",
+                transitionType: 'auto'
+            },
+            'pentagon-solution': {
+                id: 'pentagon-solution',
+                type: 'pentagon-solution',
+                tutorText: "Let's add them up together: \n\n Eight... plus eight... plus eight... plus eight... plus eight... equals forty.",
+                ContentComponent: PentagonSolution,
+                transitionType: 'manual',
+                showNextButton: true,
+                nextButtonText: "Got it!"
+            }
+        }
     },
     'shape-designer-intro': {
         title: "Shape Designer Tool",
@@ -1184,7 +980,77 @@ export const presentations = {
                 },
                 transitionType: 'manual'
             },
-        ]
+        ],
+        feedbackRegistry: {
+            'rectangle-design-correct': {
+                id: 'rectangle-design-correct',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! A perimeter of 20 units. Great job!",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'success',
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSuccess: true,
+                    showCheckmark: true
+                },
+                transitionType: 'auto'
+            },
+            'rectangle-design-hint-1': {
+                id: 'rectangle-design-hint-1',
+                type: 'tutor-monologue',
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 20.",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'hint',
+                    targetPerimeter: 20,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true
+                },
+                transitionType: 'auto'
+            },
+            'rectangle-design-hint-2': {
+                id: 'rectangle-design-hint-2',
+                type: 'tutor-monologue',
+                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'hint',
+                    targetPerimeter: 20,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true,
+                    encouragementMode: true
+                },
+                transitionType: 'auto'
+            },
+            'rectangle-design-solution': {
+                id: 'rectangle-design-solution',
+                type: 'tutor-monologue',
+                tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 6 units and 2 sides of 4 units. \n\n The total perimeter is 20 units.",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'solution',
+                    targetPerimeter: 20,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSolution: true,
+                    animateSolution: true,
+                    solutionWidth: 6,
+                    solutionHeight: 4
+                },
+                transitionType: 'auto'
+            }
+        }
     },
     'rectangle-design-challenge-2': {
         title: "Rectangle Challenge",
@@ -1213,7 +1079,77 @@ export const presentations = {
                 },
                 transitionType: 'manual'
             },
-        ]
+        ],
+        feedbackRegistry: {
+            'rectangle-design-correct-2': {
+                id: 'rectangle-design-correct-2',
+                type: 'tutor-monologue',
+                tutorText: "Great job! You are a Pro at this!",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'success',
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSuccess: true,
+                    showCheckmark: true
+                },
+                transitionType: 'auto'
+            },
+            'rectangle-design-hint-1-2': {
+                id: 'rectangle-design-hint-1-2',
+                type: 'tutor-monologue',
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 26.",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'hint',
+                    targetPerimeter: 26,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true
+                },
+                transitionType: 'auto'
+            },
+            'rectangle-design-hint-2-2': {
+                id: 'rectangle-design-hint-2-2',
+                type: 'tutor-monologue',
+                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'hint',
+                    targetPerimeter: 26,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true,
+                    encouragementMode: true
+                },
+                transitionType: 'auto'
+            },
+            'rectangle-design-solution-2': {
+                id: 'rectangle-design-solution-2',
+                type: 'tutor-monologue',
+                tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 8 units and 2 sides of 5 units. \n\n The total perimeter is 26 units.",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'solution',
+                    targetPerimeter: 26,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSolution: true,
+                    animateSolution: true,
+                    solutionWidth: 8,
+                    solutionHeight: 5
+                },
+                transitionType: 'auto'
+            }
+        }
     },
     'rectangle-design-challenge-3': {
         title: "Rectangle Challenge",
@@ -1242,7 +1178,77 @@ export const presentations = {
                 },
                 transitionType: 'manual'
             },
-        ]
+        ],
+        feedbackRegistry: {
+            'rectangle-design-correct-3': {
+                id: 'rectangle-design-correct-3',
+                type: 'tutor-monologue',
+                tutorText: "Awesome! That's perfect!",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'success',
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSuccess: true,
+                    showCheckmark: true
+                },
+                transitionType: 'auto'
+            },
+            'rectangle-design-hint-1-3': {
+                id: 'rectangle-design-hint-1-3',
+                type: 'tutor-monologue',
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 8.",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'hint',
+                    targetPerimeter: 8,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true
+                },
+                transitionType: 'auto'
+            },
+            'rectangle-design-hint-2-3': {
+                id: 'rectangle-design-hint-2-3',
+                type: 'tutor-monologue',
+                tutorText: "Almost there! Your perimeter is {currentPerimeter}. One more try - you can do this!",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'hint',
+                    targetPerimeter: 8,
+                    showTarget: true,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: true,
+                    highlightDragIcon: true,
+                    showCurrentPerimeter: true,
+                    encouragementMode: true
+                },
+                transitionType: 'auto'
+            },
+            'rectangle-design-solution-3': {
+                id: 'rectangle-design-solution-3',
+                type: 'tutor-monologue',
+                tutorText: "Okay, I will show one correct solution. \n\nSee it has 2 sides of 2 units and 2 sides of 2 units. \n\n The total perimeter is 8 units.",
+                ContentComponent: ShapeDesigner,
+                contentProps: {
+                    mode: 'solution',
+                    targetPerimeter: 8,
+                    showGrid: true,
+                    showSideLabels: true,
+                    enableDragging: false,
+                    showSolution: true,
+                    animateSolution: true,
+                    solutionWidth: 2,
+                    solutionHeight: 2
+                },
+                transitionType: 'auto'
+            }
+        }
     },
     'lesson-summary': {
         title: "Lesson Summary",
