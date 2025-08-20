@@ -45,6 +45,7 @@ import PerimeterDefinition from '../components/PerimeterDefinition';
 import RectangleSolution from '../components/RectangleSolution';
 import ShapeDesigner from '../components/ShapeDesigner';
 import MeasurementInput from '../components/MeasurementInput';
+import PrimaryButton from '../components/PrimaryButton';
 
 import './InteractiveLesson.css';
 
@@ -948,26 +949,9 @@ const InteractiveLesson = () => {
                             </Box>
                             
                             {/* Check button */}
-                            <Button
-                                variant="contained"
-                                onClick={handleShapeDesignCheck}
-                                sx={{
-                                    padding: '8px',
-                                    borderRadius: '12px',
-                                    background: '#2281E4',
-                                    color: '#fff',
-                                    textTransform: 'none',
-                                    fontSize: '1rem',
-                                    minWidth: '140px',
-                                    fontFamily: "'Fustat', 'Inter', sans-serif",
-                                    fontWeight: 700,
-                                    '&:hover': {
-                                        background: '#1A6BC4'
-                                    }
-                                }}
-                            >
+                            <PrimaryButton onClick={handleShapeDesignCheck}>
                                 Check My Shape
-                            </Button>
+                            </PrimaryButton>
                         </Box>
                     )}
 
@@ -1066,29 +1050,11 @@ const InteractiveLesson = () => {
 
                     {/* Action Button */}
                     {showNextButton && (
-                        <Button
-                            variant="contained"
-                            onClick={handleDoneButton}
-                            sx={{
-                                padding: '8px',
-                                borderRadius: '12px',
-                                background: '#2281E4',
-                                color: '#fff',
-                                textTransform: 'none',
-                                fontSize: '1rem',
-                                minWidth: '140px',
-                                textAlign: 'center',
-                                fontFamily: "'Fustat', 'Inter', sans-serif",
-                                fontWeight: 700,
-                                '&:hover': {
-                                    background: '#1A6BC4'
-                                }
-                            }}
-                        >
+                        <PrimaryButton onClick={handleDoneButton}>
                             {(activeFeedbackInteraction || interaction)?.type === 'welcome' ? "Let's Go!" : 
                              (interaction?.transitionType === 'conditional' && interaction?.buttonText ? interaction.buttonText : 
                              ((activeFeedbackInteraction || interaction)?.nextButtonText || "Continue"))}
-                        </Button>
+                        </PrimaryButton>
                     )}
                 </Box>
 
