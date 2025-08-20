@@ -160,7 +160,7 @@ export const conditionalPresentations = {
             {
                 id: 'square-hint-1',
                 type: 'tutor-monologue',
-                tutorText: "Not quite, try again!",
+                tutorText: "Not quite. Try to add up the sides again.",
                 transitionType: 'auto'
             },
             {
