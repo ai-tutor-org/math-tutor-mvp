@@ -62,7 +62,7 @@ function Home() {
                                 fontFamily: 'Fustat',
                                 fontWeight: '500'
                             }}>
-                                Hi there
+                                Hey learner!
                             </Typography>
                         </Box>
                     </Box>
@@ -111,7 +111,7 @@ function Home() {
                             color: 'white',
                             marginBottom: '8px'
                         }}>
-                            Area and Perimeter
+                            Mathy
                         </Typography>
                         <Typography sx={{
                             fontSize: { xs: '14px', sm: '16px' },
@@ -120,7 +120,7 @@ function Home() {
                             fontWeight: '500',
                             lineHeight: 1.5
                         }}>
-                            Let's explore shapes, numbers, and discover the magic of perimeter and area together
+                            A warm, engaging and fun AI tutor for your child
                         </Typography>
                     </Box>
 
