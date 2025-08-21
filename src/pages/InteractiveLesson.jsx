@@ -426,21 +426,21 @@ const InteractiveLesson = () => {
         if (hintText) {
             setDynamicTutorText(hintText);
         }
-    }, []);
+    }, [getFeedbackText]);
 
     const handleShapeAutoHelp = useCallback((shapeType) => {
         const autoHelpText = getFeedbackText(`${shapeType}-auto-help`);
         if (autoHelpText) {
             setDynamicTutorText(autoHelpText);
         }
-    }, []);
+    }, [getFeedbackText]);
 
     const handleShapeCorrection = useCallback((shapeType) => {
         const correctionText = getFeedbackText(`${shapeType}-correction`);
         if (correctionText) {
             setDynamicTutorText(correctionText);
         }
-    }, []);
+    }, [getFeedbackText]);
 
     const handleShapeDesignCheck = () => {
         playClickSound();
