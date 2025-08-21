@@ -11,6 +11,8 @@ const MeasurementInput = ({
 }) => {
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && value.trim() && !disabled && onCheck) {
+            event.preventDefault();
+            event.stopPropagation();
             onCheck();
         }
     };
@@ -91,7 +93,6 @@ const MeasurementInput = ({
                 <Button
                     variant="contained"
                     onClick={onCheck}
-                    onKeyDown={handleKeyDown}
                     disabled={!value.trim() || disabled}
                     sx={{
                         minWidth: '54px',
