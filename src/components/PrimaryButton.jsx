@@ -10,11 +10,6 @@ const PrimaryButton = ({
     ...props 
 }) => {
     const buttonRef = useRef(null);
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter' && !disabled && onClick) {
-            onClick(event);
-        }
-    };
 
     useEffect(() => {
         if (autoFocus && buttonRef.current && !disabled) {
@@ -27,7 +22,6 @@ const PrimaryButton = ({
             ref={buttonRef}
             variant="contained"
             onClick={onClick}
-            onKeyDown={handleKeyDown}
             disabled={disabled}
             sx={{
                 padding: '8px',
