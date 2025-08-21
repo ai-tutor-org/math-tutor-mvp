@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
 
-const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = false, isMobile = false }, ref) => {
+const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = false, isMobile = false, isMuted = false }, ref) => {
     const [audioMapping, setAudioMapping] = useState(null);
     const [isPaused, setIsPaused] = useState(false);
     const audioRef = useRef(null);
     const speechUtteranceRef = useRef(null);
+    
+    // Use a ref to track mute state without causing re-renders
+    const isMutedRef = useRef(isMuted);
+    useEffect(() => {
+        isMutedRef.current = isMuted;
+    }, [isMuted]);
 
     // Load audio mapping on component mount
     useEffect(() => {
@@ -39,6 +45,9 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
         if (isDevMode) {
             audio.playbackRate = 1.5;
         }
+        
+        // Set volume based on current mute state from ref
+        audio.volume = isMutedRef.current ? 0 : 1;
 
         audio.onloadstart = () => {
             if (onStart) onStart();
@@ -71,7 +80,7 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
                 if (onEnd) onEnd();
             });
         }, 100);
-    }, [onStart, onEnd, onError]);
+    }, [onStart, onEnd, onError, isDevMode]);
 
     const playWithWebSpeechAPI = useCallback((textToSpeak) => {
         const synth = window.speechSynthesis;
@@ -121,7 +130,7 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
         setTimeout(() => {
             synth.speak(utterance);
         }, 100);
-    }, [onStart, onEnd, onError]);
+    }, [onStart, onEnd, onError, isDevMode]);
 
     const speakText = useCallback((textToSpeak) => {
         if (!textToSpeak || !textToSpeak.trim() || audioMapping === null) {
@@ -219,6 +228,15 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
             speakText(text);
         }
     }, [text, speakText, isMobile]);
+
+    // Handle runtime volume changes for currently playing audio
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = isMuted ? 0 : 1;
+        }
+        // Note: Web Speech API volume cannot be changed after utterance starts
+        // This is intentional - Web Speech will continue at normal volume
+    }, [isMuted]);
 
     // Cleanup on unmount
     useEffect(() => {

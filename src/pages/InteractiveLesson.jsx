@@ -18,6 +18,7 @@ import {
     Settings as SettingsIcon,
     ArrowBack as ArrowBackIcon,
     VolumeOff as VolumeOffIcon,
+    VolumeUp as VolumeUpIcon,
     Pause as PauseIcon,
     PlayArrow as PlayArrowIcon
 } from '@mui/icons-material';
@@ -96,6 +97,12 @@ const InteractiveLesson = () => {
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
     const [hasUserInteracted, setHasUserInteracted] = useState(false); // Track user interaction for conditional transitions
     const [isTTSPaused, setIsTTSPaused] = useState(false);
+    
+    // Mute State with localStorage persistence
+    const [isMuted, setIsMuted] = useState(() => {
+        const stored = localStorage.getItem('tts-muted');
+        return stored === 'true';
+    });
 
     // Measurement Input State
     const [measurementInput, setMeasurementInput] = useState('');
@@ -139,6 +146,16 @@ const InteractiveLesson = () => {
             }
         }
     }, [isTTSPaused, isSpeaking, playClickSound]);
+    
+    // Mute/Unmute handler
+    const handleMuteToggle = useCallback(() => {
+        playClickSound();
+        setIsMuted(prev => {
+            const newState = !prev;
+            localStorage.setItem('tts-muted', newState.toString());
+            return newState;
+        });
+    }, [playClickSound]);
 
     // Define which animations should loop vs play once
     const shouldAnimationLoop = (animationName) => {
@@ -741,6 +758,7 @@ const InteractiveLesson = () => {
                 onEnd={handleTTSEnd}
                 isDevMode={isDevMode}
                 isMobile={isMobile}
+                isMuted={isMuted}
             />
 
             {/* Top Menu Bar */}
@@ -834,11 +852,13 @@ const InteractiveLesson = () => {
                         mb: 2
                     }}>
                         <IconButton sx={{
-                            color: '#999',
-                            cursor: 'not-allowed',
-                            '&:hover': { color: '#999' }
-                        }} onClick={(e) => e.preventDefault()}>
-                            <VolumeOffIcon />
+                            color: isMuted ? '#999' : '#fff',
+                            '&:hover': { 
+                                color: isMuted ? '#bbb' : '#fff',
+                                bgcolor: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }} onClick={handleMuteToggle}>
+                            {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                         </IconButton>
                         <IconButton sx={{
                             color: (isSpeaking || isTTSPaused) ? '#fff' : '#999',
