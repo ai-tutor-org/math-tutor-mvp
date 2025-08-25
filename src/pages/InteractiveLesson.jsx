@@ -32,6 +32,11 @@ import { useMobileDetection } from '../hooks/useMobileDetection';
 import MobileRestrictionOverlay from '../components/layout/MobileRestrictionOverlay';
 import { useClickSound } from '../hooks/useClickSound';
 
+// Custom hooks
+import usePerimeterInput from '../hooks/usePerimeterInput';
+import useShapeDesignInput from '../hooks/useShapeDesignInput';
+import useMeasurementInput from '../hooks/useMeasurementInput';
+
 // Import all possible content components
 import RoomIllustration from '../components/presentations/01-introduction/RoomIllustration';
 import ConflictingMeasurements from '../components/presentations/01-introduction/ConflictingMeasurements';
@@ -104,20 +109,6 @@ const InteractiveLesson = () => {
         return stored === 'true';
     });
 
-    // Measurement Input State
-    const [measurementInput, setMeasurementInput] = useState('');
-
-    // Perimeter Input State
-    const [perimeterInput, setPerimeterInput] = useState('');
-    const [perimeterAttempts, setPerimeterAttempts] = useState(0);
-    const [showPerimeterSolution, setShowPerimeterSolution] = useState(false);
-    const [showSideHighlighting, setShowSideHighlighting] = useState(false);
-    const [currentEquationStep, setCurrentEquationStep] = useState(0);
-
-    // Shape Design State
-    const [currentPerimeter, setCurrentPerimeter] = useState(0);
-    const [shapeDesignAttempts, setShapeDesignAttempts] = useState(0);
-
     // TTS Ref for direct control
     const ttsRef = React.useRef();
     
@@ -126,6 +117,11 @@ const InteractiveLesson = () => {
 
     // Click sound hook
     const playClickSound = useClickSound();
+
+    // Custom hooks for input management
+    const measurementHook = useMeasurementInput();
+    const perimeterHook = usePerimeterInput();
+    const shapeDesignHook = useShapeDesignInput();
 
     // TTS Pause/Resume handler
     const handleTTSPauseResume = useCallback(() => {
@@ -248,6 +244,7 @@ const InteractiveLesson = () => {
         console.warn(`Interaction ${interactionId} not found`);
     }, [lesson]);
 
+
     // Developer mode handlers
     const handleDevInteractionSelect = useCallback((interaction) => {
         console.log('Dev navigation to:', interaction);
@@ -270,19 +267,11 @@ const InteractiveLesson = () => {
         setAnimationTrigger(false);
         setHasUserInteracted(false);
         setActiveFeedbackInteraction(null);
-        setIsTTSPaused(false);
         
-        // Reset measurement and perimeter input states
-        setMeasurementInput('');
-        setPerimeterInput('');
-        setPerimeterAttempts(0);
-        setShowPerimeterSolution(false);
-        setShowSideHighlighting(false);
-        setCurrentEquationStep(0);
-        
-        // Reset shape design state
-        setCurrentPerimeter(0);
-        setShapeDesignAttempts(0);
+        // Reset input states using hooks
+        measurementHook.resetMeasurementState();
+        perimeterHook.resetPerimeterState();
+        shapeDesignHook.resetShapeDesignState();
 
         if (interaction.isConditional) {
             // Navigate to conditional presentation
@@ -377,48 +366,18 @@ const InteractiveLesson = () => {
         setShowNextButton(true);
     };
 
-    const handlePerimeterCheck = () => {
+    const handlePerimeterCheck = useCallback(() => {
         playClickSound();
-        const userAnswer = parseInt(perimeterInput);
-        const correctAnswer = interaction?.contentProps?.correctAnswer;
-        const feedbackIds = interaction?.contentProps?.feedbackIds;
-
-        if (userAnswer === correctAnswer) {
-            // Correct answer
-            console.log(userAnswer, correctAnswer);
-            const feedbackText = getFeedbackText(feedbackIds?.correct);
-            if (feedbackText) {
-                setDynamicTutorText(feedbackText);
-            }
-            setShowNextButton(true);
-            setPerimeterAttempts(0); // Reset for next interaction
-        } else {
-            // Incorrect answer
-            const newAttempts = perimeterAttempts + 1;
-            setPerimeterAttempts(newAttempts);
-
-            if (newAttempts === 1) {
-                // First incorrect attempt - show hint
-                const feedbackText = getFeedbackText(feedbackIds?.hint1);
-                if (feedbackText) {
-                    setDynamicTutorText(feedbackText);
-                }
-                setPerimeterInput(''); // Clear input for retry
-            } else if (newAttempts === 2) {
-                // Second incorrect attempt - show solution
-                const feedbackInteraction = getFeedbackInteraction(feedbackIds?.solution);
-                if (feedbackInteraction) {
-                    setDynamicTutorText(feedbackInteraction.tutorText);
-                    setActiveFeedbackInteraction(feedbackInteraction);
-                }
-                setShowPerimeterSolution(true);
-                setShowSideHighlighting(true);
-                setCurrentEquationStep(0);
-                setPerimeterInput(correctAnswer.toString());
-                setPerimeterAttempts(0); // Reset for next interaction
-            }
-        }
-    };
+        perimeterHook.handlePerimeterCheck(
+            interaction?.contentProps?.correctAnswer,
+            interaction?.contentProps?.feedbackIds,
+            getFeedbackText,
+            getFeedbackInteraction,
+            setDynamicTutorText,
+            setActiveFeedbackInteraction,
+            setShowNextButton
+        );
+    }, [perimeterHook, interaction, getFeedbackText, getFeedbackInteraction, playClickSound]);
 
     // Shape sorting game intervention callbacks
     const handleShapeHint = useCallback((shapeType) => {
@@ -442,61 +401,27 @@ const InteractiveLesson = () => {
         }
     }, [getFeedbackText]);
 
-    const handleShapeDesignCheck = () => {
+    const handleShapeDesignCheck = useCallback(() => {
         playClickSound();
-        const targetPerimeter = interaction?.contentProps?.targetPerimeter;
-        const feedbackIds = interaction?.contentProps?.feedbackIds;
+        shapeDesignHook.handleShapeDesignCheck(
+            interaction?.contentProps?.targetPerimeter,
+            interaction?.contentProps?.feedbackIds,
+            getFeedbackText,
+            getFeedbackInteraction,
+            setDynamicTutorText,
+            setActiveFeedbackInteraction,
+            setShowNextButton
+        );
+    }, [shapeDesignHook, interaction, getFeedbackText, getFeedbackInteraction, playClickSound]);
 
-        if (currentPerimeter === targetPerimeter) {
-            // Correct answer
-            const feedbackText = getFeedbackText(feedbackIds?.correct);
-            if (feedbackText) {
-                setDynamicTutorText(feedbackText);
-            }
-            setShowNextButton(true);
-            setShapeDesignAttempts(0); // Reset for next interaction
-        } else {
-            // Incorrect answer
-            const newAttempts = shapeDesignAttempts + 1;
-            setShapeDesignAttempts(newAttempts);
-
-            if (newAttempts === 1) {
-                // First incorrect attempt - show hint
-                const feedbackText = getFeedbackText(feedbackIds?.hint1);
-                if (feedbackText) {
-                    setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
-                }
-            } else if (newAttempts === 2) {
-                // Second incorrect attempt - show second hint
-                const feedbackText = getFeedbackText(feedbackIds?.hint2);
-                if (feedbackText) {
-                    setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
-                }
-            } else if (newAttempts === 3) {
-                // Third incorrect attempt - show solution
-                const feedbackInteraction = getFeedbackInteraction(feedbackIds?.solution);
-                if (feedbackInteraction) {
-                    setDynamicTutorText(feedbackInteraction.tutorText);
-                    setActiveFeedbackInteraction(feedbackInteraction);
-                }
-                setShapeDesignAttempts(0); // Reset for next interaction
-            }
-        }
-    };
-
-    const handleMeasurementCheck = () => {
+    const handleMeasurementCheck = useCallback(() => {
         playClickSound();
-        const userAnswer = parseFloat(measurementInput);
-        const correctAnswer = interaction?.contentProps?.correctAnswer;
-
-        handleAnswer({
-            interactionId: interaction?.contentProps?.interactionId,
-            isCorrect: userAnswer === correctAnswer,
-            answer: userAnswer,
-        });
-
-        setMeasurementInput(''); // Clear input after check
-    };
+        measurementHook.handleMeasurementCheck(
+            interaction?.contentProps?.correctAnswer,
+            interaction,
+            handleAnswer
+        );
+    }, [measurementHook, interaction, handleAnswer, playClickSound]);
 
     const handleAnimationComplete = useCallback(() => {
         // Special handling for demo animation completion
@@ -548,19 +473,10 @@ const InteractiveLesson = () => {
         // Reset dynamic tutor text when interaction changes
         setDynamicTutorText(null);
 
-        // Reset perimeter input state when interaction changes
-        setPerimeterInput('');
-        setPerimeterAttempts(0);
-        setShowPerimeterSolution(false);
-        setShowSideHighlighting(false);
-        setCurrentEquationStep(0);
-
-        // Reset shape design state when interaction changes
-        setCurrentPerimeter(0);
-        setShapeDesignAttempts(0);
-
-        // Reset measurement input state when interaction changes
-        setMeasurementInput('');
+        // Reset input states when interaction changes
+        perimeterHook.resetPerimeterState();
+        shapeDesignHook.resetShapeDesignState();
+        measurementHook.resetMeasurementState();
 
         // Reset video loop state for new interactions
         if (videoRef.current && interaction?.tutorAnimation && shouldAnimationLoop(interaction.tutorAnimation)) {
@@ -628,11 +544,10 @@ const InteractiveLesson = () => {
             // For all other manual transitions, just show the button.
             setShowNextButton(true);
         }
-    }, [interaction, activeFeedbackInteraction, advanceToNext]);
+    }, [interaction, activeFeedbackInteraction, advanceToNext, navigateToInteraction]);
 
     const handleTTSStart = useCallback(() => {
         setIsSpeaking(true);
-        setIsTTSPaused(false);
         if (interaction?.type === 'welcome') {
             setIsWaving(true);
         }
@@ -681,7 +596,7 @@ const InteractiveLesson = () => {
                 onAnimationComplete: handleAnimationComplete,
                 startAnimation: animationTrigger,
                 onAnswer: handleAnswer,
-                showSideHighlighting: showSideHighlighting,
+                showSideHighlighting: perimeterHook.showSideHighlighting,
                 onHighlightComplete: handleHighlightComplete,
             };
             return <FeedbackComponent {...feedbackProps} />;
@@ -719,10 +634,10 @@ const InteractiveLesson = () => {
             // Pass the onAnswer handler to any component that might need it
             onAnswer: handleAnswer,
             // Pass highlighting props for perimeter input interactions
-            showSideHighlighting: showSideHighlighting,
+            showSideHighlighting: perimeterHook.showSideHighlighting,
             onHighlightComplete: handleHighlightComplete,
             // Pass perimeter callback for shape design components
-            onPerimeterCalculated: setCurrentPerimeter,
+            onPerimeterCalculated: shapeDesignHook.setCurrentPerimeter,
         };
 
         // Special handling for shape-sorting-game component
@@ -920,7 +835,7 @@ const InteractiveLesson = () => {
                     {interaction?.type === 'perimeter-input' && !isSpeaking && !showNextButton && (
                         <Box sx={{ mb: 3, width: '100%' }}>
                             {/* Show solution equation if needed */}
-                            {showPerimeterSolution && (
+                            {perimeterHook.showPerimeterSolution && (
                                 <Box sx={{ mb: 2, textAlign: 'left' }}>
                                     <Typography variant="body2" sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>
                                         {interaction?.contentProps?.shape?.type === 'rectangle' &&
@@ -940,10 +855,10 @@ const InteractiveLesson = () => {
                             )}
 
                             <MeasurementInput
-                                value={perimeterInput}
-                                onInputChange={setPerimeterInput}
+                                value={perimeterHook.perimeterInput}
+                                onInputChange={perimeterHook.setPerimeterInput}
                                 onCheck={handlePerimeterCheck}
-                                disabled={showPerimeterSolution}
+                                disabled={perimeterHook.showPerimeterSolution}
                                 placeholder="Enter perimeter"
                                 unit={interaction?.contentProps?.shape?.unit || 'units'}
                             />
@@ -970,8 +885,8 @@ const InteractiveLesson = () => {
                     {/* Measurement Input Interface */}
                     {interaction?.type === 'shape-measurement' && !isSpeaking && !showNextButton && (
                         <MeasurementInput
-                            value={measurementInput}
-                            onInputChange={setMeasurementInput}
+                            value={measurementHook.measurementInput}
+                            onInputChange={measurementHook.setMeasurementInput}
                             onCheck={handleMeasurementCheck}
                             placeholder="Enter length"
                             unit="cm"
