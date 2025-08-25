@@ -1,5 +1,5 @@
 import React from 'react';
-import { StandardUnits, RulerMeasurement, MeterStick } from '../../components';
+import { StandardUnits, RulerMeasurement, MeterStick } from '../../components/presentations/01-introduction';
 
 export const introductionPresentations = {
     'standard-units-pre-intro': {

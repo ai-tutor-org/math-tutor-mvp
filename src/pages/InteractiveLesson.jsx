@@ -25,29 +25,29 @@ import {
 
 import { lessons, presentations, conditionalPresentations } from '../content'; // Import centralized data
 
-import TTSManager from '../components/TTSManager';
-import DeveloperMenu from '../components/DeveloperMenu';
+import TTSManager from '../components/layout/TTSManager';
+import DeveloperMenu from '../components/dev/DeveloperMenu';
 import { useIsDevMode, useDevModeNavigate } from '../utils/devMode';
 import { useMobileDetection } from '../hooks/useMobileDetection';
-import MobileRestrictionOverlay from '../components/MobileRestrictionOverlay';
+import MobileRestrictionOverlay from '../components/layout/MobileRestrictionOverlay';
 import { useClickSound } from '../hooks/useClickSound';
 
 // Import all possible content components
-import RoomIllustration from '../components/RoomIllustration';
-import ConflictingMeasurements from '../components/ConflictingMeasurements';
-import StandardUnits from '../components/StandardUnits';
-import RulerMeasurement from '../components/RulerMeasurement';
-import MeterStick from '../components/MeterStick';
-import ShapeSorterGame from '../components/ShapeSorterGame';
-import MissionReadiness from '../components/MissionReadiness';
-import FarmerIntro from '../components/FarmerIntro';
-import FoxThreat from '../components/FoxThreat';
-import FarmMap from '../components/FarmMap';
-import PerimeterDefinition from '../components/PerimeterDefinition';
-import RectangleSolution from '../components/RectangleSolution';
-import ShapeDesigner from '../components/ShapeDesigner';
-import MeasurementInput from '../components/MeasurementInput';
-import PrimaryButton from '../components/PrimaryButton';
+import RoomIllustration from '../components/presentations/01-introduction/RoomIllustration';
+import ConflictingMeasurements from '../components/presentations/01-introduction/ConflictingMeasurements';
+import StandardUnits from '../components/presentations/01-introduction/StandardUnits';
+import RulerMeasurement from '../components/presentations/01-introduction/RulerMeasurement';
+import MeterStick from '../components/presentations/01-introduction/MeterStick';
+import ShapeSorterGame from '../components/presentations/03-shape-sorting/ShapeSorterGame';
+import MissionReadiness from '../components/presentations/04-farmer-missions/MissionReadiness';
+import FarmerIntro from '../components/presentations/04-farmer-missions/FarmerIntro';
+import FoxThreat from '../components/presentations/04-farmer-missions/FoxThreat';
+import FarmMap from '../components/presentations/04-farmer-missions/FarmMap';
+import PerimeterDefinition from '../components/presentations/04-farmer-missions/PerimeterDefinition';
+import RectangleSolution from '../components/presentations/04-farmer-missions/RectangleSolution';
+import ShapeDesigner from '../components/presentations/05-shape-designer/ShapeDesigner';
+import MeasurementInput from '../components/common/MeasurementInput';
+import PrimaryButton from '../components/common/PrimaryButton';
 
 import './InteractiveLesson.css';
 

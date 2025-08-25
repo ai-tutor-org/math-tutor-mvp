@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import LessonCard from '../components/LessonCard'
+import LessonCard from '../components/common/LessonCard'
 import { useDevModeNavigate } from '../utils/devMode'
 
 function Chapter() {

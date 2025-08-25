@@ -11,8 +11,8 @@ import {
     getPracticePhaseShapes,
     getGuidedPhaseShapes,
     getChallengePhaseShapes
-} from '../data/shapeDefinitions';
-import { useShapeAnimations } from '../hooks/useShapeAnimations';
+} from '../../../data/shapeDefinitions';
+import { useShapeAnimations } from '../../../hooks/useShapeAnimations';
 import './ShapeSorterGame.css';
 
 // Game phases following the 13 interaction sequence

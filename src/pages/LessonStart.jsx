@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import NameInput from '../components/NameInput'
+import NameInput from '../components/common/NameInput'
 import { useDevModeNavigate, useIsDevMode } from '../utils/devMode'
 
 function LessonStart() {

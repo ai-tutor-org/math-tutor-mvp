@@ -13,7 +13,7 @@ import {
     TriangleSolution,
     PentagonFarmMap,
     PentagonSolution
-} from '../../components';
+} from '../../components/presentations/04-farmer-missions';
 
 export const farmerMissionPresentations = {
     'farmer-mission-intro': {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Crayon, ShapeMeasurement } from '../../components';
+import { Crayon, ShapeMeasurement } from '../../components/presentations/02-measurement';
 
 export const measurementPresentations = {
     'measurement-practice-activities': {

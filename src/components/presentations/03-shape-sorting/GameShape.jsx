@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, useMotionValue } from 'framer-motion';
-import { SHAPE_TYPES } from '../data/shapeDefinitions';
+import { SHAPE_TYPES } from '../../../data/shapeDefinitions';
 import './GameShape.css';
 
 /**

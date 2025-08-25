@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShapeDesigner } from '../../components';
+import { ShapeDesigner } from '../../components/presentations/05-shape-designer';
 
 export const shapeDesignerPresentations = {
     'shape-designer-intro': {

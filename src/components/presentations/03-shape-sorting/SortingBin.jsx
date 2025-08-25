@@ -1,6 +1,6 @@
 import React, { useRef, forwardRef, useImperativeHandle } from 'react';
 import { motion } from 'framer-motion';
-import { SHAPE_TYPES, CONTAINER_DEFINITIONS } from '../data/shapeDefinitions';
+import { SHAPE_TYPES, CONTAINER_DEFINITIONS } from '../../../data/shapeDefinitions';
 import './SortingBin.css';
 
 /**
