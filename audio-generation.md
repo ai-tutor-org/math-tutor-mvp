@@ -33,7 +33,7 @@ This guide explains how to set up and use ElevenLabs TTS for the math tutor appl
    ```
 
 The script will:
-- Extract all tutor text from `src/contentData.js` using improved regex
+- Extract all tutor text from `src/content` using regex
 - Smart cleanup: only remove audio files that don't match current content
 - Skip generation for existing audio files (saves time and API calls)
 - Generate unique MP3 files only for new/changed text segments
@@ -74,13 +74,6 @@ You can modify the voice settings in `generate_audio.py`:
 - **Model**: Switch between `eleven_flash_v2_5` (fast) or `eleven_multilingual_v2` (higher quality)
 - **Output Format**: Adjust audio quality with different formats (currently `mp3_44100_128`)
 
-## Cost Considerations
-
-ElevenLabs pricing is per character:
-- Your lesson has approximately 3,000-4,000 characters of tutor text
-- Initial generation should cost less than $1
-- Smart caching means you only pay for new/changed content on subsequent runs
-- Significant cost savings when iterating on content
 
 ## Troubleshooting
 
