@@ -74,7 +74,7 @@ If you want to add new presentations or interactions, follow best practices from
 ```
 src/content/
 ├── index.js                     // Main export point
-├── lessons.js                   // Lesson structure & conditionalPresentations  
+├── lessons.js                   // Lesson structure
 └── presentations/
     ├── index.js                 // Combines all presentations
     ├── 01-introduction.js       // Standard units intro

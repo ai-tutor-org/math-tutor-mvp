@@ -59,12 +59,5 @@ export const lessons = {
                 transition: { type: 'manual', buttonText: "Complete Lesson" }
             }
         ],
-        // These presentations are not in the main sequence - they are navigated to conditionally
-        conditionalPresentations: []
     }
-};
-
-// Conditional/feedback presentations - triggered conditionally, not part of main sequence
-export const conditionalPresentations = {
-
 };

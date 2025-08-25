@@ -8,7 +8,7 @@ import {
     Box,
     Chip
 } from '@mui/material';
-import { lessons, presentations, conditionalPresentations } from '../../content';
+import { lessons, presentations } from '../../content';
 
 /**
  * Component that displays all interactions in the current lesson for developer navigation
@@ -17,7 +17,6 @@ const InteractionList = ({
     lessonId, 
     currentPresIndex, 
     currentInteractionIndex, 
-    currentConditionalPresentation,
     onInteractionSelect,
     onClose 
 }) => {
@@ -30,7 +29,7 @@ const InteractionList = ({
 
         // Add interactions from main sequence
         lesson.sequence.forEach((sequenceItem, presIndex) => {
-            const presentation = presentations[sequenceItem.presentationId] || conditionalPresentations[sequenceItem.presentationId];
+            const presentation = presentations[sequenceItem.presentationId];
             if (presentation && presentation.interactions) {
                 presentation.interactions.forEach((interaction, interactionIndex) => {
                     allInteractions.push({
@@ -40,36 +39,13 @@ const InteractionList = ({
                         presentationId: sequenceItem.presentationId,
                         presIndex,
                         interactionIndex,
-                        isConditional: false,
                         isCurrent: presIndex === currentPresIndex && 
-                                  interactionIndex === currentInteractionIndex && 
-                                  !currentConditionalPresentation
+                                  interactionIndex === currentInteractionIndex
                     });
                 });
             }
         });
 
-        // Add conditional presentations
-        if (lesson.conditionalPresentations) {
-            lesson.conditionalPresentations.forEach(presId => {
-                const presentation = conditionalPresentations[presId] || presentations[presId];
-                if (presentation && presentation.interactions) {
-                    presentation.interactions.forEach((interaction, interactionIndex) => {
-                        allInteractions.push({
-                            id: interaction.id,
-                            tutorText: interaction.tutorText,
-                            type: interaction.type,
-                            presentationId: presId,
-                            presIndex: -1, // Conditional presentations don't have a presIndex
-                            interactionIndex,
-                            isConditional: true,
-                            isCurrent: currentConditionalPresentation === presId && 
-                                      interactionIndex === currentInteractionIndex
-                        });
-                    });
-                }
-            });
-        }
 
         // Note: Feedback interactions are now managed per-presentation in feedbackRegistry
         // No need to add them to the developer navigation since they're contextual
@@ -156,18 +132,6 @@ const InteractionList = ({
                                                 size="small" 
                                                 sx={{ 
                                                     bgcolor: '#4CAF50', 
-                                                    color: '#fff',
-                                                    fontSize: '0.7rem',
-                                                    height: '20px'
-                                                }} 
-                                            />
-                                        )}
-                                        {interaction.isConditional && (
-                                            <Chip 
-                                                label="Branch" 
-                                                size="small" 
-                                                sx={{ 
-                                                    bgcolor: '#2196F3', 
                                                     color: '#fff',
                                                     fontSize: '0.7rem',
                                                     height: '20px'

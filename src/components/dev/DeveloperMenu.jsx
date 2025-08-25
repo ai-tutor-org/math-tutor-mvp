@@ -20,7 +20,6 @@ const DeveloperMenu = ({
     lessonId,
     currentPresIndex,
     currentInteractionIndex,
-    currentConditionalPresentation,
     onInteractionSelect,
     onResetLesson
 }) => {
@@ -100,10 +99,7 @@ const DeveloperMenu = ({
                         Lesson: {lessonId}
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#ccc' }}>
-                        {currentConditionalPresentation 
-                            ? `Conditional: ${currentConditionalPresentation}`
-                            : `Presentation: ${currentPresIndex + 1}`
-                        }
+                        {`Presentation: ${currentPresIndex + 1}`}
                         {' • '}
                         Interaction: {currentInteractionIndex + 1}
                     </Typography>
@@ -133,7 +129,6 @@ const DeveloperMenu = ({
                     lessonId={lessonId}
                     currentPresIndex={currentPresIndex}
                     currentInteractionIndex={currentInteractionIndex}
-                    currentConditionalPresentation={currentConditionalPresentation}
                     onInteractionSelect={onInteractionSelect}
                     onClose={handleClose}
                 />

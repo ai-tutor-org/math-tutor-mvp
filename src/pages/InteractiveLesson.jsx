@@ -23,7 +23,7 @@ import {
     PlayArrow as PlayArrowIcon
 } from '@mui/icons-material';
 
-import { lessons, presentations, conditionalPresentations } from '../content'; // Import centralized data
+import { lessons, presentations } from '../content'; // Import centralized data
 
 import TTSManager from '../components/layout/TTSManager';
 import DeveloperMenu from '../components/dev/DeveloperMenu';
@@ -91,7 +91,6 @@ const InteractiveLesson = () => {
     // Lesson State
     const [currentPresIndex, setCurrentPresIndex] = useState(0);
     const [currentInteractionIndex, setCurrentInteractionIndex] = useState(0);
-    const [currentConditionalPresentation, setCurrentConditionalPresentation] = useState(null); // For conditional presentations
 
     // UI State
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -166,12 +165,10 @@ const InteractiveLesson = () => {
     // Data from contentData.js
     const lesson = useMemo(() => lessons[lessonId], [lessonId]);
     const presentationId = useMemo(() => {
-        // Use conditional presentation if set, otherwise use normal sequence
-        return currentConditionalPresentation || lesson.sequence[currentPresIndex]?.presentationId;
-    }, [lesson, currentPresIndex, currentConditionalPresentation]);
+        return lesson.sequence[currentPresIndex]?.presentationId;
+    }, [lesson, currentPresIndex]);
     const presentation = useMemo(() => {
-        // Check main presentations first, then conditional presentations
-        return presentations[presentationId] || conditionalPresentations[presentationId];
+        return presentations[presentationId];
     }, [presentationId]);
     const interaction = useMemo(() => presentation?.interactions[currentInteractionIndex], [presentation, currentInteractionIndex]);
 
@@ -231,7 +228,6 @@ const InteractiveLesson = () => {
                 const lessonSeqIndex = lesson.sequence.findIndex(seq => seq.presentationId === presId);
                 if (lessonSeqIndex !== -1) {
                     console.log(`Found in lesson sequence at: ${lessonSeqIndex}`);
-                    setCurrentConditionalPresentation(null); // Clear conditional presentation
                     setCurrentPresIndex(lessonSeqIndex);
                     setCurrentInteractionIndex(interactionIndex);
                     setDynamicTutorText(null);
@@ -273,23 +269,15 @@ const InteractiveLesson = () => {
         perimeterHook.resetPerimeterState();
         shapeDesignHook.resetShapeDesignState();
 
-        if (interaction.isConditional) {
-            // Navigate to conditional presentation
-            setCurrentConditionalPresentation(interaction.presentationId);
-            setCurrentInteractionIndex(interaction.interactionIndex);
-        } else {
-            // Navigate to regular sequence presentation
-            setCurrentConditionalPresentation(null);
-            setCurrentPresIndex(interaction.presIndex);
-            setCurrentInteractionIndex(interaction.interactionIndex);
-        }
+        // Navigate to regular sequence presentation
+        setCurrentPresIndex(interaction.presIndex);
+        setCurrentInteractionIndex(interaction.interactionIndex);
     }, []);
 
     const handleDevResetLesson = useCallback(() => {
         setCurrentPresIndex(0);
         setCurrentInteractionIndex(0);
-        setCurrentConditionalPresentation(null);
-        setDynamicTutorText(null);
+                setDynamicTutorText(null);
         setShowNextButton(false);
         setAnimationTrigger(false);
         setHasUserInteracted(false);
@@ -449,7 +437,6 @@ const InteractiveLesson = () => {
             // Handle special navigation (like from 5C to standard-units-intro)
             const targetPresIndex = lesson.sequence.findIndex(seq => seq.presentationId === interaction.navigateToPresentation);
             if (targetPresIndex !== -1) {
-                setCurrentConditionalPresentation(null); // Clear conditional presentation
                 setCurrentPresIndex(targetPresIndex);
                 setCurrentInteractionIndex(0);
                 setDynamicTutorText(null);
@@ -711,7 +698,6 @@ const InteractiveLesson = () => {
                                 lessonId={lessonId}
                                 currentPresIndex={currentPresIndex}
                                 currentInteractionIndex={currentInteractionIndex}
-                                currentConditionalPresentation={currentConditionalPresentation}
                                 onInteractionSelect={handleDevInteractionSelect}
                                 onResetLesson={handleDevResetLesson}
                             />
