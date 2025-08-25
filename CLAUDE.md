@@ -16,7 +16,7 @@ This is a React-based educational application for teaching perimeter concepts, b
 
 ### Key Architecture Patterns
 
-- **Centralized Content Management**: All lesson content is managed in `src/contentData.js` which defines lesson sequences, presentations, and interactions
+- **Modular Content Management**: All lesson content is organized in `src/content/` with separate files for lessons and presentation groups, imported through `src/content/index.js`
 - **Component-based Interactions**: Interactive elements are implemented as reusable components in `src/components/` that can be dynamically rendered based on content data
 - **State-driven Progression**: The lesson flow is controlled by state indices (`currentPresIndex`, `currentInteractionIndex`) that track progress through structured content
 - **Dynamic Layout System**: The UI can switch between `full-screen` and `dual-panel` layouts depending on the interaction type
@@ -61,14 +61,29 @@ The app uses React's built-in state management with:
 If you want to add new presentations or interactions, follow best practices from @adding-new-presentations.md.
 
 **Important Notes:**
-- All TTS content must be in `contentData.js` for pre-generation
+- All TTS content must be in the `src/content/` files for pre-generation by `generate_audio.py`
 - IDs must be unique across all presentations
-- ContentComponents need to be imported at the top of the file
+- ContentComponents need to be imported at the top of presentation files in `src/content/presentations/`
 - Update `componentMap` in `InteractiveLesson.jsx` if using new interaction types
 - Except for conditional transitions, in all the other manual transitions, the CTA should come on the left column, not the right.
 - After all the interactions of a presentation are made, connect them with each other
 - **TTS Rule**: Never call `triggerTTS()` manually - TTSManager automatically triggers TTS when `dynamicTutorText` changes, so only use `setDynamicTutorText()`
 - When changing anything in an interaction, see if there is some corresponding code custom written for this interaction in `InteractiveLesson.jsx`
+
+**Content Structure:**
+```
+src/content/
+├── index.js                     // Main export point
+├── lessons.js                   // Lesson structure & conditionalPresentations  
+└── presentations/
+    ├── index.js                 // Combines all presentations
+    ├── 01-introduction.js       // Standard units intro
+    ├── 02-measurement.js        // Measurement practice
+    ├── 03-shape-sorting.js      // Shape sorting game
+    ├── 04-farmer-missions.js    // All farmer missions
+    ├── 05-shape-designer.js     // Shape designer challenges
+    └── 06-summary.js            // Lesson summary
+```
 
 **Content Guidelines**
 - Try to keep most text content on left hand side (which the tutor will speak) along with the CTAs to move to next, or an input box as required for the transition

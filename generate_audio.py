@@ -2,11 +2,11 @@
 """
 Audio Generation Script for Math Tutor MVP
 
-This script extracts tutor text from contentData.js and generates audio files
+This script extracts tutor text from the modular content structure and generates audio files
 using the ElevenLabs API.
 
 Requirements:
-    pip install elevenlabs requests
+    pip install elevenlabs requests python-dotenv
 
 Usage:
     1. Set your ElevenLabs API key as an environment variable:
@@ -16,7 +16,7 @@ Usage:
        python generate_audio.py
 
 The script will:
-- Parse contentData.js to extract all tutor text
+- Parse the modular content files in src/content/ (with fallback to contentData.js)
 - Generate unique audio files for each text segment
 - Save files to public/audio/ directory
 - Create a mapping file for the frontend to use
@@ -96,59 +96,86 @@ def expand_template_text(template_text, variable_values):
     
     return generate_combinations(template_text)
 
-def extract_tutor_texts(content_data_path):
+def extract_tutor_texts_from_content(content_dir):
     """
-    Extract all tutor text from contentData.js file and expand templates.
+    Extract all tutor text from the new modular content structure.
     Returns a dictionary mapping text to unique identifiers.
     """
-    print(f"Reading {content_data_path}...")
+    print(f"Reading content files from {content_dir}...")
     
-    with open(content_data_path, 'r', encoding='utf-8') as f:
-        content = f.read()
+    # Dynamically discover all .js files in the content directory
+    content_files = []
+    for root, _, files in os.walk(content_dir):
+        for file in files:
+            if file.endswith('.js'):
+                # Get relative path from content_dir
+                rel_path = os.path.relpath(os.path.join(root, file), content_dir)
+                content_files.append(rel_path)
     
-    # Find all tutorText entries using regex - handle both single and double quotes properly
-    # Pattern explanation:
-    # - tutorText:\s* - matches "tutorText:" with optional whitespace
-    # - " - matches opening double quote
-    # - ((?:[^"\\]|\\.)* - matches any character except quote/backslash, or any escaped character
-    # - " - matches closing double quote
-    tutor_text_pattern = r'tutorText:\s*"((?:[^"\\]|\\.)*)"'
-    matches = re.findall(tutor_text_pattern, content, re.DOTALL)
+    # Sort files for consistent processing order
+    content_files.sort()
     
     # Get variable values for template expansion
     variable_values = get_variable_values()
     
-    # Clean up matches and expand templates
+    # Process all content files
     tutor_texts = {}
     template_count = 0
     static_count = 0
     
-    for match in matches:
-        # Clean up the text - remove extra whitespace and escape sequences
-        clean_text = match.replace('\\n', ' ').replace('\\"', '"').strip()
-        if not clean_text:
+    for file_path in content_files:
+        full_path = os.path.join(content_dir, file_path)
+        if not os.path.exists(full_path):
+            print(f"⚠️  Warning: {full_path} not found, skipping...")
             continue
             
-        # Check if this text contains variables
-        if '{' in clean_text and '}' in clean_text:
-            # This is a template - expand it
-            expanded_texts = expand_template_text(clean_text, variable_values)
-            template_count += 1
-            
-            for expanded_text, unique_id in expanded_texts:
-                if expanded_text not in tutor_texts:
-                    tutor_texts[expanded_text] = unique_id
-                    
-        else:
-            # Static text - add as is
-            if clean_text not in tutor_texts:
-                text_hash = hashlib.md5(clean_text.encode()).hexdigest()[:12]
-                tutor_texts[clean_text] = f"tutor_{text_hash}"
-                static_count += 1
+        print(f"  Processing {file_path}...")
+        
+        with open(full_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Find all tutorText entries using regex
+        tutor_text_pattern = r'tutorText:\s*"((?:[^"\\]|\\.)*)"'
+        matches = re.findall(tutor_text_pattern, content, re.DOTALL)
+        
+        for match in matches:
+            # Clean up the text - remove extra whitespace and escape sequences
+            clean_text = match.replace('\\n', ' ').replace('\\"', '"').strip()
+            if not clean_text:
+                continue
+                
+            # Check if this text contains variables
+            if '{' in clean_text and '}' in clean_text:
+                # This is a template - expand it
+                expanded_texts = expand_template_text(clean_text, variable_values)
+                template_count += 1
+                
+                for expanded_text, unique_id in expanded_texts:
+                    if expanded_text not in tutor_texts:
+                        tutor_texts[expanded_text] = unique_id
+                        
+            else:
+                # Static text - add as is
+                if clean_text not in tutor_texts:
+                    text_hash = hashlib.md5(clean_text.encode()).hexdigest()[:12]
+                    tutor_texts[clean_text] = f"tutor_{text_hash}"
+                    static_count += 1
     
     print(f"Found {static_count} static text segments and {template_count} templates")
     print(f"Generated {len(tutor_texts)} total unique audio segments")
     return tutor_texts
+
+def extract_tutor_texts():
+    """
+    Extract all tutor text from the modular content structure.
+    Returns a dictionary mapping text to unique identifiers.
+    """
+    content_dir = "src/content"
+    if not os.path.exists(content_dir):
+        print(f"❌ Error: Content directory {content_dir} not found")
+        return {}
+    
+    return extract_tutor_texts_from_content(content_dir)
 
 def generate_audio(text, filename, voice_id=VOICE_ID):
     """
@@ -219,7 +246,6 @@ def smart_cleanup_audio_files(current_tutor_texts):
     
     # Find files that should be removed (not in current content)
     current_filenames = set(current_tutor_texts.values())
-    existing_files = set(f.name for f in AUDIO_DIR.glob("*.mp3"))
     
     files_to_remove = []
     for audio_file in AUDIO_DIR.glob("*.mp3"):
@@ -257,13 +283,8 @@ def main():
         print("Or create a .env file with: ELEVENLABS_API_KEY=your_key_here")
         return
     
-    # Extract tutor texts first
-    content_data_path = "src/contentData.js"
-    if not os.path.exists(content_data_path):
-        print(f"❌ Error: {content_data_path} not found")
-        return
-    
-    tutor_texts = extract_tutor_texts(content_data_path)
+    # Extract tutor texts from modular content structure
+    tutor_texts = extract_tutor_texts()
     
     if not tutor_texts:
         print("❌ No tutor texts found")

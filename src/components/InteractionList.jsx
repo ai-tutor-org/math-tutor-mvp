@@ -8,7 +8,7 @@ import {
     Box,
     Chip
 } from '@mui/material';
-import { lessons, presentations, conditionalPresentations } from '../contentData';
+import { lessons, presentations, conditionalPresentations } from '../content';
 
 /**
  * Component that displays all interactions in the current lesson for developer navigation

@@ -23,7 +23,7 @@ import {
     PlayArrow as PlayArrowIcon
 } from '@mui/icons-material';
 
-import { lessons, presentations, conditionalPresentations } from '../contentData'; // Import centralized data
+import { lessons, presentations, conditionalPresentations } from '../content'; // Import centralized data
 
 import TTSManager from '../components/TTSManager';
 import DeveloperMenu from '../components/DeveloperMenu';
