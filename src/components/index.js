@@ -29,5 +29,4 @@ export { default as TTSManager } from './TTSManager';
 export { default as TutorAvatar } from './TutorAvatar';
 export { default as ShapeDesigner } from './ShapeDesigner';
 
-// Toast Notification System - Global Infrastructure
-export { default as ToastProvider } from './ToastProvider'; 
+ 
