@@ -3,7 +3,6 @@ import React from 'react';
 export const summaryPresentations = {
     'lesson-summary': {
         title: "Lesson Summary",
-        layout: "dual-panel",
         interactions: [
             {
                 id: 'lesson-summary-intro',

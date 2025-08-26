@@ -4,7 +4,6 @@ import { ShapeDesigner } from '../../components/presentations/05-shape-designer'
 export const shapeDesignerPresentations = {
     'shape-designer-intro': {
         title: "Shape Designer Tool",
-        layout: "dual-panel",
         interactions: [
             {
                 id: 'shape-designer-welcome',
@@ -45,7 +44,6 @@ export const shapeDesignerPresentations = {
     },
     'rectangle-design-challenge': {
         title: "Rectangle Challenge",
-        layout: "dual-panel",
         interactions: [
             {
                 id: 'rectangle-design-size-20',
@@ -144,7 +142,6 @@ export const shapeDesignerPresentations = {
     },
     'rectangle-design-challenge-2': {
         title: "Rectangle Challenge",
-        layout: "dual-panel",
         interactions: [
             {
                 id: 'rectangle-design-size-26',
@@ -243,7 +240,6 @@ export const shapeDesignerPresentations = {
     },
     'rectangle-design-challenge-3': {
         title: "Rectangle Challenge",
-        layout: "dual-panel",
         interactions: [
             {
                 id: 'rectangle-design-size-8',
