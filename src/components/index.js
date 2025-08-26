@@ -25,7 +25,6 @@ export { ShapeSorterGame } from './presentations/03-shape-sorting';
 export { GameShape } from './presentations/03-shape-sorting';
 export { SortingBin } from './presentations/03-shape-sorting';
 export { TTSManager } from './layout';
-export { TutorAvatar } from './layout';
 export { ShapeDesigner } from './presentations/05-shape-designer';
 
  
