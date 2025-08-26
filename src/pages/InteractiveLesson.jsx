@@ -10,12 +10,10 @@ import {
     Box,
     IconButton,
     Button,
-    Paper,
-    TextField
+    Paper
 } from '@mui/material';
 import {
     Home as HomeIcon,
-    Settings as SettingsIcon,
     ArrowBack as ArrowBackIcon,
     VolumeOff as VolumeOffIcon,
     VolumeUp as VolumeUpIcon,
@@ -38,45 +36,16 @@ import usePerimeterInput from '../hooks/usePerimeterInput';
 import useShapeDesignInput from '../hooks/useShapeDesignInput';
 import useMeasurementInput from '../hooks/useMeasurementInput';
 
-// Import all possible content components
-import RoomIllustration from '../components/presentations/01-introduction/RoomIllustration';
-import ConflictingMeasurements from '../components/presentations/01-introduction/ConflictingMeasurements';
-import StandardUnits from '../components/presentations/01-introduction/StandardUnits';
-import RulerMeasurement from '../components/presentations/01-introduction/RulerMeasurement';
-import MeterStick from '../components/presentations/01-introduction/MeterStick';
-import ShapeSorterGame from '../components/presentations/03-shape-sorting/ShapeSorterGame';
-import MissionReadiness from '../components/presentations/04-farmer-missions/MissionReadiness';
-import FarmerIntro from '../components/presentations/04-farmer-missions/FarmerIntro';
-import FoxThreat from '../components/presentations/04-farmer-missions/FoxThreat';
-import FarmMap from '../components/presentations/04-farmer-missions/FarmMap';
-import PerimeterDefinition from '../components/presentations/04-farmer-missions/PerimeterDefinition';
-import RectangleSolution from '../components/presentations/04-farmer-missions/RectangleSolution';
-import ShapeDesigner from '../components/presentations/05-shape-designer/ShapeDesigner';
+// Import common components
 import MeasurementInput from '../components/common/MeasurementInput';
 import PrimaryButton from '../components/common/PrimaryButton';
 
+// Import component registry and utilities
+import { componentMap } from '../utils/componentRegistry';
+import { shouldAnimationLoop } from '../utils/animationHelpers';
+
 import './InteractiveLesson.css';
 
-const componentMap = {
-    'room-question': RoomIllustration,
-    'footsteps-animation': RoomIllustration,
-    'footsteps-animation-friend': RoomIllustration,
-    'conflicting-measurements': RoomIllustration,
-    'standard-units-explanation': StandardUnits,
-    'ruler-measurement': RulerMeasurement,
-    'meter-measurement': MeterStick,
-    'multiple-choice-question': RoomIllustration,
-    'tutor-monologue': RoomIllustration,
-    'shape-sorting-game': ShapeSorterGame,
-    'mission-readiness': MissionReadiness,
-    'farmer-intro': FarmerIntro,
-    'fox-threat': FoxThreat,
-    'farm-map': FarmMap,
-    'perimeter-definition': PerimeterDefinition,
-    'perimeter-input': FarmMap,
-    'rectangle-solution': RectangleSolution,
-    'shape-designer': ShapeDesigner
-};
 
 const InteractiveLesson = () => {
     const navigate = useDevModeNavigate();
@@ -156,15 +125,6 @@ const InteractiveLesson = () => {
         });
     }, [playClickSound]);
 
-    // Define which animations should loop vs play once
-    const shouldAnimationLoop = (animationName) => {
-        const oneTimeAnimations = [
-            'waving',
-            'happy-applauding', 
-            'on-completion-confetti-happy'
-        ];
-        return !oneTimeAnimations.includes(animationName);
-    };
 
     // Data from contentData.js
     const lesson = useMemo(() => lessons[lessonId], [lessonId]);
@@ -213,25 +173,20 @@ const InteractiveLesson = () => {
                 setCurrentPresIndex(nextPresIndex);
                 setCurrentInteractionIndex(0);
             } else {
-                console.log("End of lesson.");
                 navigate('/'); // Navigate home
             }
         }
     }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
 
     const navigateToInteraction = useCallback((interactionId) => {
-        console.log(`Looking for interaction: ${interactionId}`);
         // Find the presentation containing this interaction
         for (const [presId, pres] of Object.entries(presentations)) {
-            console.log(`Checking presentation: ${presId}`);
             const interactionIndex = pres.interactions.findIndex(int => int.id === interactionId);
-            console.log(`Found interaction at index: ${interactionIndex}`);
             if (interactionIndex !== -1) {
 
                 // For normal presentations in the lesson sequence
                 const lessonSeqIndex = lesson.sequence.findIndex(seq => seq.presentationId === presId);
                 if (lessonSeqIndex !== -1) {
-                    console.log(`Found in lesson sequence at: ${lessonSeqIndex}`);
                     setCurrentPresIndex(lessonSeqIndex);
                     setCurrentInteractionIndex(interactionIndex);
                     setDynamicTutorText(null);
@@ -241,13 +196,12 @@ const InteractiveLesson = () => {
                 }
             }
         }
-        console.warn(`Interaction ${interactionId} not found`);
+        // Interaction not found - silently fail
     }, [lesson]);
 
 
     // Developer mode handlers
     const handleDevInteractionSelect = useCallback((interaction) => {
-        console.log('Dev navigation to:', interaction);
 
         // Stop any running TTS immediately
         if (window.speechSynthesis) {
@@ -476,7 +430,6 @@ const InteractiveLesson = () => {
                 setCurrentInteractionIndex(0);
                 setDynamicTutorText(null);
             } else {
-                console.warn(`Presentation ${interaction.navigateToPresentation} not found in lesson sequence`);
                 advanceToNext();
             }
         } else {
@@ -542,7 +495,6 @@ const InteractiveLesson = () => {
 
         // Special handling for demo animation - don't trigger here, let component handle internally
         if (interaction?.id === 'shape-demo-modeling') {
-            console.log('🎯 Demo interaction - TTS ended, waiting for component internal animation trigger');
             return; // Don't trigger animation here - component will handle it internally
         }
 
@@ -555,7 +507,6 @@ const InteractiveLesson = () => {
             }
         } else if (interaction?.transitionType === 'interaction-based') {
             // Wait for component to signal completion - don't auto-advance
-            console.log('🎯 Waiting for interaction-based completion');
             return;
         } else if (interaction?.type === 'welcome') {
             setTimeout(() => setShowNextButton(true), 500);
@@ -578,7 +529,6 @@ const InteractiveLesson = () => {
     // Listen for custom advancement events from components like ShapeSorterGame
     useEffect(() => {
         const handleAdvanceInteraction = () => {
-            console.log('🎯 Custom interaction advancement triggered');
             advanceToNext();
         };
 
@@ -687,7 +637,7 @@ const InteractiveLesson = () => {
     return (
         <div>
             <div className="lesson-content">
-                <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#000' }}>
+                <Box className="lesson-main-container">
             <TTSManager
                 ref={ttsRef}
                 text={tutorText}
@@ -699,20 +649,11 @@ const InteractiveLesson = () => {
             />
 
             {/* Top Menu Bar */}
-            <AppBar position="static" sx={{
-                bgcolor: '#000',
-                boxShadow: 'none',
-                borderBottom: '1px solid #2B2B2B'
-            }}>
-                <Toolbar sx={{
-                    justifyContent: 'space-between',
-                    minHeight: '60px !important',
-                    px: '32px',
-                    py: '16px'
-                }}>
+            <AppBar position="static" className="lesson-app-bar">
+                <Toolbar className="lesson-toolbar">
                     {/* Left Side - Lesson Info */}
                     <Box>
-                        <Typography variant="caption" sx={{ color: '#999', fontSize: '0.7rem', lineHeight: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
+                        <Typography variant="caption" className="lesson-info-caption">
                             LESSON {lessonId === 'perimeter' ? '1' : '1'}
                             {isDevMode && (
                                 <span style={{ color: '#4CAF50', marginLeft: '8px', fontWeight: 600 }}>
@@ -720,13 +661,13 @@ const InteractiveLesson = () => {
                                 </span>
                             )}
                         </Typography>
-                        <Typography variant="h6" sx={{ color: '#fff', fontSize: '1.1rem', lineHeight: 1.2, textTransform: 'capitalize', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
+                        <Typography variant="h6" className="lesson-info-title">
                             {lesson?.title || 'Perimeter'}
                         </Typography>
                     </Box>
 
                     {/* Right Side - Navigation */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box className="lesson-nav-buttons">
                         {/* Developer Menu */}
                         {isDevMode && (
                             <DeveloperMenu
@@ -769,24 +710,11 @@ const InteractiveLesson = () => {
             </AppBar>
 
             {/* Main Content Area */}
-            <Box sx={{ flex: 1, display: 'flex', bgcolor: '#000' }}>
+            <Box className="lesson-content-area">
                 {/* Left Panel - Tutor (26%) */}
-                <Box sx={{
-                    width: '26%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    p: 3,
-                    alignItems: 'flex-start',
-                    textAlign: 'left'
-                }}>
+                <Box className="lesson-left-panel">
                     {/* Audio Controls */}
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        width: '100%',
-                        gap: 1,
-                        mb: 2
-                    }}>
+                    <Box className="lesson-audio-controls">
                         <IconButton sx={{
                             color: isMuted ? '#999' : '#fff',
                             '&:hover': { 
@@ -806,7 +734,7 @@ const InteractiveLesson = () => {
                     </Box>
 
                     {/* Tutor Avatar */}
-                    <Box sx={{ mb: 3 }}>
+                    <Box className="lesson-mb-3">
                         {interaction?.tutorAnimation ? (
                             <video
                                 ref={videoRef}
@@ -833,7 +761,7 @@ const InteractiveLesson = () => {
                     </Box>
 
                     {/* Tutor Speech */}
-                    <Box sx={{ mb: 3 }}>
+                    <Box className="lesson-mb-3">
                         <Typography
                             variant="body2"
                             sx={{
@@ -919,7 +847,7 @@ const InteractiveLesson = () => {
                     {/* Multiple Choice Question Interface - Feedback interactions */}
                     {activeFeedbackInteraction?.type === 'multiple-choice-question' && !isSpeaking && !showNextButton && (
                         <Box sx={{ mb: 3, width: '100%' }}>
-                            <Box sx={{ mb: 3 }}>
+                            <Box className="lesson-mb-3">
                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                                     {activeFeedbackInteraction?.contentProps?.choices?.map((choice, index) => (
                                         <Button
@@ -959,7 +887,7 @@ const InteractiveLesson = () => {
                     {/* Multiple Choice Question Interface - General case */}
                     {interaction?.type === 'multiple-choice-question' && !activeFeedbackInteraction && !isSpeaking && !showNextButton && (
                         <Box sx={{ mb: 3, width: '100%' }}>
-                            <Box sx={{ mb: 3 }}>
+                            <Box className="lesson-mb-3">
                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                                     {interaction?.contentProps?.choices?.map((choice, index) => (
                                         <Button
@@ -1007,14 +935,7 @@ const InteractiveLesson = () => {
                 </Box>
 
                 {/* Right Panel - Container (74%) */}
-                <Box sx={{
-                    width: '74%',
-                    bgcolor: '#000',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 3
-                }}>
+                <Box className="lesson-right-panel">
                     {/* Content Playground */}
                     <Paper
                         sx={{
