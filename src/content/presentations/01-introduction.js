@@ -164,7 +164,7 @@ export const introductionPresentations = {
                 contentProps: { length: 3, unit: 'cm' },
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: 'Show Me More!',
+                nextButtonText: 'Show More',
             },
             {
                 id: 'meter-stick-demo',

@@ -31,7 +31,7 @@ export const shapeSortingPresentations = {
                 layout: 'full-screen',
                 transitionType: 'interaction',
                 showNextButton: true,
-                nextButtonText: "Try It Yourself!",
+                nextButtonText: "Try It",
                 phaseConfig: { initialPhase: 'modeling' }
             },
             {
@@ -71,7 +71,7 @@ export const shapeSortingPresentations = {
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: "Begin Final Challenge",
+                nextButtonText: "Begin Challenge",
                 phaseConfig: { initialPhase: 'challenge_setup', targetShapes: 8 }
             },
             {
@@ -159,7 +159,7 @@ export const shapeSortingPresentations = {
                 layout: 'full-screen',
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: "Continue to Next Lesson",
+                nextButtonText: "Continue Lesson",
                 phaseConfig: { initialPhase: 'recap' },
                 contentProps: {
                     highlightedShape: 'all'

@@ -38,7 +38,7 @@ export const shapeDesignerPresentations = {
                 },
                 transitionType: 'conditional',
                 condition: 'hasInteracted',
-                buttonText: "I'm Ready for a Challenge!",
+                buttonText: "I'm Ready",
                 waitTime: 3000
             }
         ]

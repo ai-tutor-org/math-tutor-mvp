@@ -44,7 +44,7 @@ export const farmerMissionPresentations = {
                 ContentComponent: FoxThreat,
                 transitionType: 'manual',
                 showNextButton: true,
-                nextButtonText: "Help the Farmer!"
+                nextButtonText: "Help Farmer"
             },
             {
                 id: 'farm-map',
