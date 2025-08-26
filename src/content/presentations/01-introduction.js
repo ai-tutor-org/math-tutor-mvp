@@ -131,7 +131,7 @@ export const introductionPresentations = {
             'measurement-reason-explanation': {
                 id: 'measurement-reason-explanation',
                 type: 'tutor-monologue',
-                tutorText: "Exactly, the size of your feet and your friend's feet are different. Because of this, we cannot use our feet to measure the room, because everyone will get a different number.",
+                tutorText: "Exactly, the size of your feet and your friend's feet are different. This is why we can't use our feet to measure. Everyone would get different numbers.",
                 tutorAnimation: 'explaining',
                 contentProps: {
                     showBothFootsteps: true,

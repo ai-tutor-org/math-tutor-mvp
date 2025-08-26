@@ -49,7 +49,7 @@ export const farmerMissionPresentations = {
             {
                 id: 'farm-map',
                 type: 'farm-map',
-                tutorText: "Fantastic! Here's the plan. \n\nThis is a map of his farm. It's a perfect rectangle. \n\nWe need to figure out the total length of the boundary to know how much fencing material to buy.",
+                tutorText: "Fantastic! Here's the plan. \n\nThis is a map of his farm. It's a perfect rectangle. \n\nWe need to figure out the total length of the edge to know how many fence pieces to buy.",
                 tutorAnimation: 'explaining',
                 ContentComponent: FarmMap,
                 transitionType: 'auto'
@@ -57,7 +57,7 @@ export const farmerMissionPresentations = {
             {
                 id: 'perimeter-definition',
                 type: 'perimeter-definition',
-                tutorText: "This total length around the outside edge of a shape has a very important name in mathematics. \n\nIt's called the Perimeter.",
+                tutorText: "This total length around the outside edge of a shape has a very important name in math. \n\nIt's called the Perimeter.",
                 tutorAnimation: 'explaining',
                 ContentComponent: PerimeterDefinition,
                 transitionType: 'manual',
@@ -111,7 +111,7 @@ export const farmerMissionPresentations = {
             'rectangle-solution': {
                 id: 'rectangle-solution',
                 type: 'rectangle-solution',
-                tutorText: "Hmm, let's try a different approach. Let's add up the sides together. \n\nThirty plus twenty plus thirty plus twenty equals one hundred.",
+                tutorText: "Hmm, let's try a different way. Let's add up the sides together. \n\nThirty plus twenty plus thirty plus twenty equals one hundred.",
                 ContentComponent: RectangleSolution,
                 transitionType: 'manual',
                 showNextButton: true,

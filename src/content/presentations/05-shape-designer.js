@@ -88,7 +88,7 @@ export const shapeDesignerPresentations = {
             'rectangle-design-hint-1': {
                 id: 'rectangle-design-hint-1',
                 type: 'tutor-monologue',
-                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 20.",
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try changing the sides a bit more to get to exactly 20.",
                 ContentComponent: ShapeDesigner,
                 contentProps: {
                     mode: 'hint',
@@ -186,7 +186,7 @@ export const shapeDesignerPresentations = {
             'rectangle-design-hint-1-2': {
                 id: 'rectangle-design-hint-1-2',
                 type: 'tutor-monologue',
-                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 26.",
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try changing the sides a bit more to get to exactly 26.",
                 ContentComponent: ShapeDesigner,
                 contentProps: {
                     mode: 'hint',
@@ -284,7 +284,7 @@ export const shapeDesignerPresentations = {
             'rectangle-design-hint-1-3': {
                 id: 'rectangle-design-hint-1-3',
                 type: 'tutor-monologue',
-                tutorText: "So close! Your perimeter is {currentPerimeter}. Try adjusting the sides a bit more to get to exactly 8.",
+                tutorText: "So close! Your perimeter is {currentPerimeter}. Try changing the sides a bit more to get to exactly 8.",
                 ContentComponent: ShapeDesigner,
                 contentProps: {
                     mode: 'hint',

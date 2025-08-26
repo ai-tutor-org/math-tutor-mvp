@@ -149,7 +149,7 @@ export const measurementPresentations = {
             'shape-incorrect': {
                 id: 'shape-incorrect',
                 type: 'tutor-monologue',
-                tutorText: "Not quite. Try adjusting the ruler and measuring again.",
+                tutorText: "Not quite. Try moving the ruler and measuring again.",
                 tutorAnimation: 'normal-talking',
                 transitionType: 'auto'
             }

@@ -60,7 +60,7 @@ export const shapeSortingPresentations = {
             {
                 id: 'shape-challenge-setup',
                 type: 'shape-sorting-game',
-                tutorText: "Great progress! Now for the final challenge - you'll sort 8 shapes with minimal help. This will show how well you understand shape sorting!",
+                tutorText: "Great progress! Now for the final challenge - you'll sort 8 shapes with very little help. This will show how well you understand shape sorting!",
                 tutorAnimation: 'explaining',
                 transitionType: 'manual',
                 showNextButton: true,
@@ -78,7 +78,7 @@ export const shapeSortingPresentations = {
             {
                 id: 'shape-completion',
                 type: 'shape-sorting-game',
-                tutorText: "Outstanding work! You've successfully completed the Shape Factory challenge. You've shown you can identify and sort shapes accurately!",
+                tutorText: "Outstanding work! You've successfully completed the Shape Factory challenge. You've shown you can identify and sort shapes correctly!",
                 tutorAnimation: 'happy-applauding',
                 transitionType: 'manual',
                 showNextButton: true,
