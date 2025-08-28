@@ -120,7 +120,7 @@ function Home() {
                             fontWeight: '500',
                             lineHeight: 1.5
                         }}>
-                            A warm, engaging and fun AI tutor for your child
+                            A warm, engaging and fun AI tutor for children
                         </Typography>
                     </Box>
 
