@@ -31,6 +31,7 @@ import { useIsDevMode, useDevModeNavigate } from '../utils/devMode';
 import { useMobileDetection } from '../hooks/useMobileDetection';
 import MobileRestrictionOverlay from '../components/layout/MobileRestrictionOverlay';
 import { useClickSound } from '../hooks/useClickSound';
+import useAnswerSound from '../hooks/useAnswerSound';
 
 // Custom hooks
 import usePerimeterInput from '../hooks/usePerimeterInput';
@@ -116,6 +117,9 @@ const InteractiveLesson = () => {
 
     // Click sound hook
     const playClickSound = useClickSound();
+    
+    // Answer sound hooks
+    const { playCorrectSound, playIncorrectSound } = useAnswerSound();
 
     // Custom hooks for input management
     const measurementHook = useMeasurementInput();
@@ -297,7 +301,13 @@ const InteractiveLesson = () => {
     }, [interaction]);
 
     const handleAnswer = (answerData) => {
-        playClickSound();
+        // Play appropriate sound based on answer correctness
+        if (answerData.isCorrect) {
+            playCorrectSound();
+        } else {
+            playIncorrectSound();
+        }
+        
         console.log('Answer selected:', answerData);
         console.log('Current interaction ID:', interaction?.id);
         console.log('Answer is correct:', answerData.isCorrect);
@@ -355,9 +365,21 @@ const InteractiveLesson = () => {
     };
 
     const handlePerimeterCheck = useCallback(() => {
-        playClickSound();
+        // Validate answer immediately to determine which sound to play
+        const userAnswer = parseInt(perimeterHook.perimeterInput);
+        const correctAnswer = interaction?.contentProps?.correctAnswer;
+        const isCorrect = userAnswer === correctAnswer;
+        
+        // Play appropriate sound immediately
+        if (isCorrect) {
+            playCorrectSound();
+        } else {
+            playIncorrectSound();
+        }
+        
+        // Continue with existing perimeter check logic
         perimeterHook.handlePerimeterCheck(
-            interaction?.contentProps?.correctAnswer,
+            correctAnswer,
             interaction?.contentProps?.feedbackIds,
             getFeedbackText,
             getFeedbackInteraction,
@@ -365,7 +387,7 @@ const InteractiveLesson = () => {
             setActiveFeedbackInteraction,
             setShowNextButton
         );
-    }, [perimeterHook, interaction, getFeedbackText, getFeedbackInteraction, playClickSound]);
+    }, [perimeterHook, interaction, getFeedbackText, getFeedbackInteraction, playCorrectSound, playIncorrectSound]);
 
     // Shape sorting game intervention callbacks
     const handleShapeHint = useCallback((shapeType) => {
@@ -403,13 +425,26 @@ const InteractiveLesson = () => {
     }, [shapeDesignHook, interaction, getFeedbackText, getFeedbackInteraction, playClickSound]);
 
     const handleMeasurementCheck = useCallback(() => {
-        playClickSound();
+        // Validate answer immediately to determine which sound to play
+        const userAnswer = parseFloat(measurementHook.measurementInput);
+        const correctAnswer = interaction?.contentProps?.correctAnswer;
+        const isCorrect = userAnswer === correctAnswer;
+        
+        
+        // Play appropriate sound immediately
+        if (isCorrect) {
+            playCorrectSound();
+        } else {
+            playIncorrectSound();
+        }
+        
+        // Continue with existing measurement check logic
         measurementHook.handleMeasurementCheck(
-            interaction?.contentProps?.correctAnswer,
+            correctAnswer,
             interaction,
             handleAnswer
         );
-    }, [measurementHook, interaction, handleAnswer, playClickSound]);
+    }, [measurementHook, interaction, handleAnswer, playCorrectSound, playIncorrectSound]);
 
     const handleAnimationComplete = useCallback(() => {
         // Special handling for demo animation completion
