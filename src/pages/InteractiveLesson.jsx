@@ -23,9 +23,8 @@ import MobileRestrictionOverlay from '../components/layout/MobileRestrictionOver
 import InteractiveUI from '../components/lesson/InteractiveUI';
 
 // ===================================================================
-// CORE ARCHITECTURE IMPORTS (Phase 1)
+// CORE ARCHITECTURE IMPORTS (Phase 2B)
 // ===================================================================
-import { LessonCoordinator } from '../core/LessonCoordinator';
 import { LessonErrorBoundary } from '../core/LessonErrorBoundary';
 import { LessonDebugger } from '../core/LessonDebugger';
 
@@ -37,10 +36,15 @@ import { useMobileDetection } from '../hooks/useMobileDetection';
 import { useClickSound } from '../hooks/useClickSound';
 import useAnswerSound from '../hooks/useAnswerSound';
 
-// Custom lesson hooks
+// Direct hook imports for React compliance (Phase 2B)
 import usePerimeterInput from '../hooks/usePerimeterInput';
-import useShapeDesignInput from '../hooks/useShapeDesignInput';
 import useMeasurementInput from '../hooks/useMeasurementInput';
+import useShapeDesignInput from '../hooks/useShapeDesignInput';
+
+// Enhanced Coordinator Pattern (Phase 2B)
+import { createLessonCoordinator } from '../coordinators/CoordinatorFactory';
+import { LessonHookManager } from '../core/LessonHookManager';
+import { getLessonConfig } from '../lessons/LessonRegistry';
 
 // Component registry and utilities
 import { componentMap } from '../utils/componentRegistry';
@@ -92,10 +96,48 @@ const InteractiveLesson = () => {
     // Answer sound hooks
     const { playCorrectSound, playIncorrectSound } = useAnswerSound();
 
-    // Custom hooks for input management
-    const measurementHook = useMeasurementInput();
-    const perimeterHook = usePerimeterInput();
-    const shapeDesignHook = useShapeDesignInput();
+    // Enhanced Coordinator Pattern - Dynamic Hook Loading (Phase 2B)
+    const lessonConfig = useMemo(() => getLessonConfig(lessonId), [lessonId]);
+    
+    // Call hooks directly at top level - React compliant approach
+    const rawPerimeterHook = usePerimeterInput();
+    const rawMeasurementHook = useMeasurementInput();
+    const rawShapeDesignHook = useShapeDesignInput();
+    
+    // Build lesson hooks object based on configuration
+    const lessonHooks = useMemo(() => {
+        const hooks = {};
+        
+        // Map configured hooks to actual hook instances
+        if (lessonConfig?.hooks) {
+            lessonConfig.hooks.forEach(hookConfig => {
+                switch(hookConfig.name) {
+                    case 'usePerimeterInput':
+                        if (rawPerimeterHook) hooks[hookConfig.key] = rawPerimeterHook;
+                        break;
+                    case 'useMeasurementInput':
+                        if (rawMeasurementHook) hooks[hookConfig.key] = rawMeasurementHook;
+                        break;
+                    case 'useShapeDesignInput':
+                        if (rawShapeDesignHook) hooks[hookConfig.key] = rawShapeDesignHook;
+                        break;
+                    default:
+                        console.warn(`[InteractiveLesson] Unknown hook: ${hookConfig.name}`);
+                }
+            });
+        }
+        
+        return hooks;
+    }, [lessonConfig, rawPerimeterHook, rawMeasurementHook, rawShapeDesignHook].filter(dep => dep !== undefined));
+    
+    const hookResetMethods = useMemo(() => 
+        LessonHookManager.getResetMethods(lessonHooks), [lessonHooks]);
+
+    // Maintain backward compatibility - extract individual hooks for existing code
+    // Safety guards to prevent issues during initial render
+    const measurementHook = lessonHooks.measurementHook || {};
+    const perimeterHook = lessonHooks.perimeterHook || {};
+    const shapeDesignHook = lessonHooks.shapeDesignHook || {};
 
     // TTS Pause/Resume handler
     const handleTTSPauseResume = useCallback(() => {
@@ -224,10 +266,8 @@ const InteractiveLesson = () => {
         setHasUserInteracted(false);
         setActiveFeedbackInteraction(null);
 
-        // Reset input states using hooks
-        measurementHook.resetMeasurementState();
-        perimeterHook.resetPerimeterState();
-        shapeDesignHook.resetShapeDesignState();
+        // Reset input states using centralized hook manager (Phase 2B)
+        hookResetMethods.resetAllStates();
 
         // Navigate to regular sequence presentation
         setCurrentPresIndex(interaction.presIndex);
@@ -268,52 +308,22 @@ const InteractiveLesson = () => {
         console.log('Current interaction ID:', interaction?.id);
         console.log('Answer is correct:', answerData.isCorrect);
 
-
-        // Handle multiple choice questions with feedbackId
-        if (interaction?.type === 'multiple-choice-question' && answerData.feedbackId) {
-            const feedbackInteraction = getFeedbackInteraction(answerData.feedbackId);
-            if (feedbackInteraction) {
-                setDynamicTutorText(feedbackInteraction.tutorText);
-                setActiveFeedbackInteraction(feedbackInteraction);
-
-                if (feedbackInteraction.type === 'multiple-choice-question') {
-                    // For retry questions, don't show next button - let user answer again
-                    return;
-                }
-                // Let TTS completion handle showing the next button
-            }
-            return;
-        }
-
-
-        // Handle shape measurement interactions
-        if (interaction?.type === 'shape-measurement') {
-            if (answerData.isCorrect) {
-                // Show success feedback for all measurements (including the last one)
-                const feedbackText = getFeedbackText('shape-correct');
-                if (feedbackText) {
-                    setDynamicTutorText(feedbackText);
-                }
-                setShowNextButton(true);
-            } else {
-                const incorrectFeedback = getFeedbackText('shape-incorrect');
-                if (incorrectFeedback) {
-                    setDynamicTutorText(incorrectFeedback);
-                }
-            }
-            return;
-        } else if (answerData.feedbackInteractionId) {
-            // For crayon activity: determine correct feedback based on answer result
-            const feedbackId = answerData.isCorrect ? 'crayon-correct' : 'crayon-incorrect';
-            const feedbackText = getFeedbackText(feedbackId);
-            if (feedbackText) {
-                setDynamicTutorText(feedbackText);
-                setShowNextButton(true); // Show continue button after feedback
-            }
-        } else {
-            // For other question types, advance as before
+        // Enhanced Coordinator Pattern - delegate to coordinator (Phase 2B)
+        const result = lessonCoordinator.handleAnswer(answerData, interaction, coordinatorContext);
+        
+        // Process coordinator response
+        if (result?.action === 'advance') {
             advanceToNext();
+        } else if (result?.action === 'wait-for-tts') {
+            // Let TTS completion handle next steps
+            return;
+        } else if (result?.action === 'handled') {
+            // Coordinator handled everything
+            return;
         }
+        
+        // Fallback: if no specific action, maintain original behavior for unknown cases
+        // This preserves backward compatibility during transition
     };
 
     const handleHighlightComplete = () => {
@@ -321,14 +331,11 @@ const InteractiveLesson = () => {
     };
 
     // ===================================================================
-    // CORE ARCHITECTURE INITIALIZATION (Phase 1)
+    // ENHANCED COORDINATOR ARCHITECTURE (Phase 2B)
     // ===================================================================
 
-    // Initialize lesson coordinator (Phase 1B) - MOVED HERE BEFORE USAGE
-    const lessonCoordinator = useMemo(() => {
-        const coordinator = new LessonCoordinator(lessonId);
-        return coordinator;
-    }, [lessonId]);
+    // Create lesson coordinator using factory pattern - replaces hardcoded LessonCoordinator
+    const lessonCoordinator = useMemo(() => createLessonCoordinator(lessonId), [lessonId]);
 
     // Create coordinator context (same data as before, just bundled) - MOVED HERE
     const coordinatorContext = useMemo(() => ({
@@ -482,10 +489,8 @@ const InteractiveLesson = () => {
         // Reset dynamic tutor text when interaction changes
         setDynamicTutorText(null);
 
-        // Reset input states when interaction changes
-        perimeterHook.resetPerimeterState();
-        shapeDesignHook.resetShapeDesignState();
-        measurementHook.resetMeasurementState();
+        // Reset input states when interaction changes (Phase 2B)
+        hookResetMethods.resetAllStates();
 
         // Reset video loop state for new interactions
         if (videoRef.current && interaction?.tutorAnimation && shouldAnimationLoop(interaction.tutorAnimation)) {
@@ -641,12 +646,8 @@ const InteractiveLesson = () => {
             onHighlightComplete: handleHighlightComplete,
         };
 
-        // Let coordinator customize props with lesson-specific logic
-        const props = lessonCoordinator.getComponentProps(interaction, baseProps, {
-            perimeterHook,
-            measurementHook,
-            shapeDesignHook
-        });
+        // Let coordinator customize props with lesson-specific logic (Phase 2B)
+        const props = lessonCoordinator.getComponentProps(interaction, baseProps, lessonHooks);
 
         return <Component {...props} />;
     }

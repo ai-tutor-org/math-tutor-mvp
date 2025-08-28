@@ -1,6 +1,5 @@
 // Component registry for mapping interaction types to components
 import RoomIllustration from '../components/presentations/01-introduction/RoomIllustration';
-import ConflictingMeasurements from '../components/presentations/01-introduction/ConflictingMeasurements';
 import StandardUnits from '../components/presentations/01-introduction/StandardUnits';
 import RulerMeasurement from '../components/presentations/01-introduction/RulerMeasurement';
 import MeterStick from '../components/presentations/01-introduction/MeterStick';

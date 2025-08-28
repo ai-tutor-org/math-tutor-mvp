@@ -1,4 +1,3 @@
-export { ConflictingMeasurements } from './presentations/01-introduction';
 export { Crayon } from './presentations/02-measurement';
 export { FarmMap } from './presentations/04-farmer-missions';
 export { FarmerIntro } from './presentations/04-farmer-missions';
