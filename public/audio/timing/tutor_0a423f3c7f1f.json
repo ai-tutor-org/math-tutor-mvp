@@ -1,0 +1,20 @@
+{
+  "text": "A common way is to use footsteps! Let's try it. Help me walk from one side to the other by clicking the button for each step.",
+  "sentences": [
+    {
+      "text": "A common way is to use footsteps!",
+      "start": 0.0,
+      "end": 2.101
+    },
+    {
+      "text": "Let's try it.",
+      "start": 2.415,
+      "end": 3.146
+    },
+    {
+      "text": "Help me walk from one side to the other by clicking the button for each step.",
+      "start": 3.692,
+      "end": 7.686
+    }
+  ]
+}

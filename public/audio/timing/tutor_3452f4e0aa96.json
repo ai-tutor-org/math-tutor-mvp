@@ -1,0 +1,30 @@
+{
+  "text": "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long.   But the room didn't change! Who is right? This is confusing, isn't it?",
+  "sentences": [
+    {
+      "text": "Hold on.",
+      "start": 0.0,
+      "end": 0.569
+    },
+    {
+      "text": "One person says the room is 10 steps long, and another says it's 8 steps long.",
+      "start": 0.952,
+      "end": 6.084
+    },
+    {
+      "text": "But the room didn't change!",
+      "start": 6.711,
+      "end": 8.266
+    },
+    {
+      "text": "Who is right?",
+      "start": 8.464,
+      "end": 9.23
+    },
+    {
+      "text": "This is confusing, isn't it?",
+      "start": 9.822,
+      "end": 11.378
+    }
+  ]
+}

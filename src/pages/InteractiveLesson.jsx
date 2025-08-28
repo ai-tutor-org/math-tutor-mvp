@@ -49,6 +49,7 @@ import RectangleSolution from '../components/presentations/04-farmer-missions/Re
 import ShapeDesigner from '../components/presentations/05-shape-designer/ShapeDesigner';
 import MeasurementInput from '../components/common/MeasurementInput';
 import PrimaryButton from '../components/common/PrimaryButton';
+import HighlightedText from '../components/common/HighlightedText';
 
 import './InteractiveLesson.css';
 
@@ -86,6 +87,10 @@ const InteractiveLesson = () => {
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
     const [isTTSPaused, setIsTTSPaused] = useState(false);
+    
+    // Highlighting State
+    const [currentAudioTime, setCurrentAudioTime] = useState(0);
+    const [currentTimingData, setCurrentTimingData] = useState(null);
     
     // Mute State with localStorage persistence
     const [isMuted, setIsMuted] = useState(() => {
@@ -129,6 +134,11 @@ const InteractiveLesson = () => {
             }
         }
     }, [isTTSPaused, isSpeaking, playClickSound]);
+    
+    // Timing update handler for highlighting
+    const handleTimeUpdate = useCallback((time) => {
+        setCurrentAudioTime(time);
+    }, []);
     
     // Mute/Unmute handler
     const handleMuteToggle = useCallback(() => {
@@ -197,7 +207,6 @@ const InteractiveLesson = () => {
                 setCurrentPresIndex(nextPresIndex);
                 setCurrentInteractionIndex(0);
             } else {
-                console.log("End of lesson.");
                 navigate('/'); // Navigate home
             }
         }
@@ -207,7 +216,6 @@ const InteractiveLesson = () => {
 
     // Developer mode handlers
     const handleDevInteractionSelect = useCallback((interaction) => {
-        console.log('Dev navigation to:', interaction);
 
         // Stop any running TTS immediately
         if (window.speechSynthesis) {
@@ -262,11 +270,6 @@ const InteractiveLesson = () => {
         } else {
             playIncorrectSound();
         }
-        
-        console.log('Answer selected:', answerData);
-        console.log('Current interaction ID:', interaction?.id);
-        console.log('Answer is correct:', answerData.isCorrect);
-
 
         // Handle multiple choice questions with feedbackId
         if (interaction?.type === 'multiple-choice-question' && answerData.feedbackId) {
@@ -514,6 +517,26 @@ const InteractiveLesson = () => {
 
     const tutorText = dynamicTutorText || (interaction?.tutorText.replace('{userName}', userName) ?? '');
 
+
+    // Update timing data when tutor text changes
+    useEffect(() => {
+        
+        const loadTimingData = async () => {
+            if (ttsRef.current && tutorText) {
+                const timingData = await ttsRef.current.getTimingData(tutorText);
+                console.log('InteractiveLesson: Got timing data:', { hasTimingData: !!timingData, wordCount: timingData?.words?.length });
+                setCurrentTimingData(timingData);
+            } else {
+                console.log('InteractiveLesson: No TTS ref or tutor text');
+                setCurrentTimingData(null);
+            }
+        };
+        
+        loadTimingData();
+        // Reset current time when text changes
+        setCurrentAudioTime(0);
+    }, [tutorText]);
+
     // Effect to cancel speech on unmount
     useEffect(() => {
         return () => {
@@ -604,6 +627,7 @@ const InteractiveLesson = () => {
                 text={tutorText}
                 onStart={handleTTSStart}
                 onEnd={handleTTSEnd}
+                onTimeUpdate={handleTimeUpdate}
                 isDevMode={isDevMode}
                 isMobile={isMobile}
                 isMuted={isMuted}
@@ -745,7 +769,10 @@ const InteractiveLesson = () => {
 
                     {/* Tutor Speech */}
                     <Box sx={{ mb: 3 }}>
-                        <Typography
+                        <HighlightedText
+                            text={tutorText}
+                            currentTime={currentAudioTime}
+                            timingData={currentTimingData}
                             variant="body2"
                             sx={{
                                 color: '#fff',
@@ -758,9 +785,7 @@ const InteractiveLesson = () => {
                                 fontFamily: "'Fustat', 'Inter', sans-serif",
                                 fontWeight: 500
                             }}
-                        >
-                            {tutorText}
-                        </Typography>
+                        />
                     </Box>
 
                     {/* Perimeter Input Interface */}

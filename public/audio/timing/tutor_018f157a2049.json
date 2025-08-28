@@ -1,0 +1,40 @@
+{
+  "text": "Okay, so the room is 10 steps long.   Simple enough! But wait... here comes your friend, who has bigger feet. He doesn't believe that the room is 10 steps long. He will use his own steps to measure the room.   Help him measure the room too - click the button for each of his steps.",
+  "sentences": [
+    {
+      "text": "Okay, so the room is 10 steps long.",
+      "start": 0.0,
+      "end": 2.902
+    },
+    {
+      "text": "Simple enough!",
+      "start": 3.251,
+      "end": 4.04
+    },
+    {
+      "text": "But wait...",
+      "start": 4.458,
+      "end": 4.981
+    },
+    {
+      "text": "here comes your friend, who has bigger feet.",
+      "start": 5.364,
+      "end": 7.895
+    },
+    {
+      "text": "He doesn't believe that the room is 10 steps long.",
+      "start": 8.324,
+      "end": 10.89
+    },
+    {
+      "text": "He will use his own steps to measure the room.",
+      "start": 11.308,
+      "end": 13.711
+    },
+    {
+      "text": "Help him measure the room too - click the button for each of his steps.",
+      "start": 14.269,
+      "end": 18.297
+    }
+  ]
+}

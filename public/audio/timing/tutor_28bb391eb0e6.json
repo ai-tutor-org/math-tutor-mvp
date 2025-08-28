@@ -1,0 +1,35 @@
+{
+  "text": "Great job! Now for a real challenge. You'll see a shape with colored sides. Your mission is to figure out the length of each colored side using a special on-screen ruler that you can drag around.   Once you measure a side, enter its length in the input box. Let's see what you've got!",
+  "sentences": [
+    {
+      "text": "Great job!",
+      "start": 0.0,
+      "end": 0.906
+    },
+    {
+      "text": "Now for a real challenge.",
+      "start": 1.289,
+      "end": 2.821
+    },
+    {
+      "text": "You'll see a shape with colored sides.",
+      "start": 3.158,
+      "end": 5.294
+    },
+    {
+      "text": "Your mission is to figure out the length of each colored side using a special on-screen ruler that you can drag around.",
+      "start": 5.724,
+      "end": 12.736
+    },
+    {
+      "text": "Once you measure a side, enter its length in the input box.",
+      "start": 13.201,
+      "end": 16.788
+    },
+    {
+      "text": "Let's see what you've got!",
+      "start": 17.345,
+      "end": 18.355
+    }
+  ]
+}

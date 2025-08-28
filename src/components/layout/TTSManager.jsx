@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
 
-const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = false, isMobile = false, isMuted = false }, ref) => {
+const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = false, isMobile = false, isMuted = false, onTimeUpdate }, ref) => {
     const [audioMapping, setAudioMapping] = useState(null);
+    const [timingIndex, setTimingIndex] = useState(null);
     const [isPaused, setIsPaused] = useState(false);
     const audioRef = useRef(null);
     const speechUtteranceRef = useRef(null);
@@ -12,28 +13,44 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
         isMutedRef.current = isMuted;
     }, [isMuted]);
 
-    // Load audio mapping on component mount
+    // Load audio mapping and timing index on component mount
     useEffect(() => {
-        const loadAudioMapping = async () => {
+        const loadAudioData = async () => {
             try {
                 const basePath = import.meta.env.BASE_URL || '/';
+                
+                // Load audio mapping
                 const audioMappingPath = `${basePath}audio/audio_mapping.json`.replace('//', '/');
-                const response = await fetch(audioMappingPath);
-                if (response.ok) {
-                    const mapping = await response.json();
+                const audioResponse = await fetch(audioMappingPath);
+                if (audioResponse.ok) {
+                    const mapping = await audioResponse.json();
                     setAudioMapping(mapping);
                     console.log('Audio mapping loaded successfully');
                 } else {
                     console.warn('Audio mapping not found, falling back to Web Speech API');
                     setAudioMapping({});
                 }
+                
+                // Load timing index
+                const timingIndexPath = `${basePath}audio/timing/index.json`.replace('//', '/');
+                const timingResponse = await fetch(timingIndexPath);
+                if (timingResponse.ok) {
+                    const timing = await timingResponse.json();
+                    setTimingIndex(timing);
+                    console.log('Timing index loaded successfully');
+                } else {
+                    console.warn('Timing index not found');
+                    setTimingIndex({});
+                }
+                
             } catch (error) {
-                console.warn('Failed to load audio mapping, falling back to Web Speech API:', error);
+                console.warn('Failed to load audio data:', error);
                 setAudioMapping({});
+                setTimingIndex({});
             }
         };
 
-        loadAudioMapping();
+        loadAudioData();
     }, []);
 
     const playPreGeneratedAudio = useCallback((audioFile) => {
@@ -58,9 +75,17 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
             audioRef.current = audio;
         };
 
+        // Add time update handler for highlighting
+        if (onTimeUpdate) {
+            audio.ontimeupdate = () => {
+                onTimeUpdate(audio.currentTime);
+            };
+        }
+
         audio.onended = () => {
             audioRef.current = null;
             setIsPaused(false);
+            if (onTimeUpdate) onTimeUpdate(0); // Reset time on end
             if (onEnd) onEnd();
         };
 
@@ -68,6 +93,7 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
             console.error('Audio playback error:', event);
             audioRef.current = null;
             setIsPaused(false);
+            if (onTimeUpdate) onTimeUpdate(0); // Reset time on error
             if (onError) onError(event.error || 'Audio playback failed');
             if (onEnd) onEnd(); // Ensure state machines don't get stuck
         };
@@ -80,7 +106,7 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
                 if (onEnd) onEnd();
             });
         }, 100);
-    }, [onStart, onEnd, onError, isDevMode]);
+    }, [onStart, onEnd, onError, isDevMode, onTimeUpdate]);
 
     const playWithWebSpeechAPI = useCallback((textToSpeak) => {
         const synth = window.speechSynthesis;
@@ -208,7 +234,46 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
         }
         speechUtteranceRef.current = null;
         setIsPaused(false);
-    }, []);
+        if (onTimeUpdate) onTimeUpdate(0); // Reset time on stop
+    }, [onTimeUpdate]);
+
+    const getTimingData = useCallback(async (textToSpeak) => {
+        if (!textToSpeak || !timingIndex) {
+            return null;
+        }
+
+        // Normalize text same way as audio mapping
+        const normalizedText = textToSpeak.trim().replace(/\n/g, ' ');
+        
+        // Get the audio filename from mapping
+        const audioFile = audioMapping?.[normalizedText];
+        if (!audioFile) {
+            return null; // No timing data for fallback speech
+        }
+
+        // Extract filename without extension for timing lookup
+        const baseFilename = audioFile.replace('.mp3', '');
+        const timingFile = timingIndex[baseFilename];
+        
+        if (!timingFile) {
+            return null;
+        }
+
+        try {
+            const basePath = import.meta.env.BASE_URL || '/';
+            const timingPath = `${basePath}audio/${timingFile}`.replace('//', '/');
+            const response = await fetch(timingPath);
+            
+            if (response.ok) {
+                const timingData = await response.json();
+                return timingData;
+            }
+        } catch (error) {
+            console.warn('Failed to load timing data:', error);
+        }
+        
+        return null;
+    }, [audioMapping, timingIndex]);
 
     // Expose methods to parent components
     useImperativeHandle(ref, () => ({
@@ -219,8 +284,9 @@ const TTSManager = forwardRef(({ text, onStart, onEnd, onError, isDevMode = fals
         },
         pauseTTS,
         resumeTTS,
-        stopTTS
-    }), [speakText, isMobile, pauseTTS, resumeTTS, stopTTS]);
+        stopTTS,
+        getTimingData
+    }), [speakText, isMobile, pauseTTS, resumeTTS, stopTTS, getTimingData]);
 
     // Effect to handle audio playback when text changes
     useEffect(() => {
