@@ -1,0 +1,25 @@
+{
+  "text": "Hey there!   I'm Mathy, your personal tutor.   I'm so excited to explore the world of shapes and sizes with you.   Ready to start our first adventure?",
+  "sentences": [
+    {
+      "text": "Hey there!",
+      "start": 0.0,
+      "end": 0.673
+    },
+    {
+      "text": "I'm Mathy, your personal tutor.",
+      "start": 0.906,
+      "end": 2.914
+    },
+    {
+      "text": "I'm so excited to explore the world of shapes and sizes with you.",
+      "start": 3.379,
+      "end": 6.954
+    },
+    {
+      "text": "Ready to start our first adventure?",
+      "start": 7.512,
+      "end": 9.439
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "text": "Nice! For bigger things, we use a bigger unit called a meter.   A meter is the same as 100 centimeters.   See how this meter stick compares to the height of a door?",
+  "sentences": [
+    {
+      "text": "Nice!",
+      "start": 0.0,
+      "end": 0.627
+    },
+    {
+      "text": "For bigger things, we use a bigger unit called a meter.",
+      "start": 0.848,
+      "end": 4.098
+    },
+    {
+      "text": "A meter is the same as 100 centimeters.",
+      "start": 4.563,
+      "end": 6.954
+    },
+    {
+      "text": "See how this meter stick compares to the height of a door?",
+      "start": 7.419,
+      "end": 10.147
+    }
+  ]
+}

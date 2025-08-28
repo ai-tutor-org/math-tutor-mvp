@@ -1,0 +1,20 @@
+{
+  "text": "A standard unit is something which measures the same for everyone.   One of the standard units is the centimeter (cm). It's very small, perfect for measuring little things.",
+  "sentences": [
+    {
+      "text": "A standard unit is something which measures the same for everyone.",
+      "start": 0.0,
+      "end": 3.669
+    },
+    {
+      "text": "One of the standard units is the centimeter (cm).",
+      "start": 4.11,
+      "end": 7.396
+    },
+    {
+      "text": "It's very small, perfect for measuring little things.",
+      "start": 7.93,
+      "end": 11.006
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "text": "No, the size of the room is the same. Choose again.",
+  "sentences": [
+    {
+      "text": "No, the size of the room is the same.",
+      "start": 0.0,
+      "end": 2.067
+    },
+    {
+      "text": "Choose again.",
+      "start": 2.368,
+      "end": 3.053
+    }
+  ]
+}

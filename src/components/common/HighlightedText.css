@@ -1,0 +1,16 @@
+.highlighted-word {
+    color: white;
+    transition: color var(--animation-duration, 400ms) ease-out;
+}
+
+.highlighted-word.has-timing {
+    color: black;
+}
+
+.highlighted-word.highlight-active {
+    color: white;
+}
+
+.highlighted-word.highlight-previous {
+    color: white;
+}
