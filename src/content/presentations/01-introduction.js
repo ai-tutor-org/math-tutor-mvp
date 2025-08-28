@@ -7,7 +7,14 @@ export const introductionPresentations = {
             {
                 id: 'welcome',
                 type: 'welcome',
-                tutorText: "Hey there! \n\nI'm Mathy, your personal tutor. 😊 I'm so excited to explore the world of shapes and sizes with you. \n\nReady to start our first adventure?",
+                tutorText: "Hey there!",
+                tutorAnimation: 'waving',
+                transitionType: 'auto',
+            },
+            {
+                id: 'welcome',
+                type: 'welcome',
+                tutorText: "I'm Mathy, your personal tutor. 😊 I'm so excited to explore the world of shapes and sizes with you. \n\nReady to start our first adventure?",
                 tutorAnimation: 'waving',
                 transitionType: 'manual',
                 showWelcomeButton: true,
