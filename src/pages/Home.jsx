@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import LessonCard from '../components/common/LessonCard'
 import { useDevModeNavigate } from '../utils/devMode'
 import { AppBar, Toolbar, Typography, Box } from '@mui/material'
+import { getLessonsList } from '../content/lessons'
 
 function Home() {
     const navigate = useDevModeNavigate()
+    const lessonsList = getLessonsList()
 
-    const handleLessonSelect = () => {
-        navigate('/lesson/perimeter')
+    const handleLessonSelect = (lessonId) => {
+        navigate(`/lesson/${lessonId}`)
     }
 
     return (
@@ -124,7 +126,7 @@ function Home() {
                         </Typography>
                     </Box>
 
-                    {/* Lesson Cards - Always Stacked Vertically */}
+                    {/* Lesson Cards - Dynamic from lessons.js */}
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -132,27 +134,19 @@ function Home() {
                         width: '100%',
                         marginBottom: { xs: '20px', sm: '40px' }
                     }}>
-                        <LessonCard
-                            lessonNumber="Lesson 1"
-                            title="Introduction to Perimeter"
-                            description="Learn how to calculate the Perimeter of different shapes in a fun way!"
-                            buttonText="Start Lesson"
-                            onClick={handleLessonSelect}
-                            disabled={false}
-                            backgroundColor="#17A94E"
-                            tutorImage="perimeter_tutor.png"
-                        />
-
-                        <LessonCard
-                            lessonNumber="Lesson 2"
-                            title="Introduction to Area"
-                            description="In this lesson you’ll be taught to find an area of a given shape."
-                            buttonText="Coming Soon"
-                            onClick={() => { }}
-                            disabled={true}
-                            backgroundColor="#FFB039"
-                            tutorImage="area_tutor.png"
-                        />
+                        {lessonsList.map((lesson) => (
+                            <LessonCard
+                                key={lesson.id}
+                                lessonNumber={`Lesson ${lesson.order}`}
+                                title={lesson.title}
+                                description={lesson.description}
+                                buttonText={lesson.status === 'available' ? 'Start Lesson' : 'Coming Soon'}
+                                onClick={() => lesson.status === 'available' && handleLessonSelect(lesson.id)}
+                                disabled={lesson.status !== 'available'}
+                                backgroundColor={lesson.theme.backgroundColor}
+                                tutorImage={lesson.theme.tutorImage}
+                            />
+                        ))}
                     </Box>
                 </Box>
             </Box>

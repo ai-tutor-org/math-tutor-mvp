@@ -1,6 +1,15 @@
 export const lessons = {
     perimeter: {
+        id: 'perimeter',
+        order: 1,
         title: "Introduction to Perimeter",
+        description: "Learn how to calculate the Perimeter of different shapes in a fun way!",
+        grade: "5th Grade",
+        status: "available",
+        theme: {
+            backgroundColor: "#17A94E",
+            tutorImage: "perimeter_tutor.png"
+        },
         sequence: [
             {
                 presentationId: 'standard-units-pre-intro',
@@ -59,5 +68,31 @@ export const lessons = {
                 transition: { type: 'manual', buttonText: "Complete Lesson" }
             }
         ],
+    },
+    area: {
+        id: 'area',
+        order: 2,
+        title: "Introduction to Area",
+        description: "In this lesson you'll be taught to find an area of a given shape.",
+        grade: "5th Grade",
+        status: "coming-soon",
+        theme: {
+            backgroundColor: "#FFB039",
+            tutorImage: "area_tutor.png"
+        },
+        sequence: []
     }
+};
+
+// Helper functions for lesson management
+export const getLessonsList = () => {
+    return Object.values(lessons).sort((a, b) => a.order - b.order);
+};
+
+export const getLesson = (lessonId) => {
+    return lessons[lessonId];
+};
+
+export const getAvailableLessons = () => {
+    return Object.values(lessons).filter(lesson => lesson.status === 'available');
 };
