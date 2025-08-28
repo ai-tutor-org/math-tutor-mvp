@@ -31,14 +31,6 @@ const HOOK_MAP = {
   // usePieChartInput
 };
 
-/**
- * Hook alias mappings for backward compatibility and cleaner naming
- */
-const HOOK_ALIASES = {
-  'perimeter': 'usePerimeterInput',
-  'measurement': 'useMeasurementInput', 
-  'shapeDesign': 'useShapeDesignInput'
-};
 
 export class LessonHookManager {
   constructor() {
@@ -225,8 +217,7 @@ export class LessonHookManager {
   static getHookStats() {
     return {
       totalHooks: Object.keys(HOOK_MAP).length,
-      availableHooks: Object.keys(HOOK_MAP),
-      aliases: HOOK_ALIASES
+      availableHooks: Object.keys(HOOK_MAP)
     };
   }
 }

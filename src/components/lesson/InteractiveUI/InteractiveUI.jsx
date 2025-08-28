@@ -1,8 +1,5 @@
 import React from 'react';
-import PerimeterInputInterface from './interfaces/PerimeterInputInterface';
-import ShapeDesignInterface from './interfaces/ShapeDesignInterface';
-import MeasurementInterface from './interfaces/MeasurementInterface';
-import MultipleChoiceInterface from './interfaces/MultipleChoiceInterface';
+import { getUIInterface } from '../../../utils/componentRegistry';
 import ActionButton from './interfaces/ActionButton';
 
 const InteractiveUI = ({
@@ -10,68 +7,85 @@ const InteractiveUI = ({
   activeFeedbackInteraction,
   isSpeaking,
   showNextButton,
-  perimeterHook,
-  measurementHook,
-  shapeDesignHook,
-  handlers
+  lessonHooks = {},
+  handlers = {}
 }) => {
-  // Calculate visibility conditions
+  // Base visibility condition - no inputs shown when speaking or showing next button
   const baseCondition = !isSpeaking && !showNextButton;
   
-  const showPerimeterInput = interaction?.type === 'perimeter-input' && baseCondition;
-  const showShapeDesign = interaction?.type === 'perimeter-design' && baseCondition;
-  const showMeasurement = interaction?.type === 'shape-measurement' && baseCondition;
+  // Helper function to render UI components based on registry
+  const renderUIComponent = (interactionData, visible, isMainInteraction = true) => {
+    if (!interactionData?.type || !visible) return null;
+    
+    const config = getUIInterface(interactionData.type);
+    if (!config) return null;
+    
+    const Component = config.component;
+    const props = {
+      interaction: interactionData,
+      visible,
+      disabled: isSpeaking
+    };
+    
+    // Map required hook if specified
+    if (config.hookKey && lessonHooks[config.hookKey]) {
+      props[config.hookKey] = lessonHooks[config.hookKey];
+      // Some components expect simplified prop names (backward compatibility)
+      const simplifiedHookName = config.hookKey.replace('Hook', '');
+      props[simplifiedHookName] = lessonHooks[config.hookKey];
+    }
+    
+    // Map required handler if specified
+    if (config.handlerKey && handlers[config.handlerKey]) {
+      const handlerKey = config.handlerKey;
+      
+      // Map handler to appropriate prop name based on component expectations
+      if (handlerKey === 'onAnswer') {
+        props.onAnswer = handlers[handlerKey];
+      } else if (handlerKey.includes('Check')) {
+        props.onCheck = handlers[handlerKey];
+      } else {
+        props[handlerKey] = handlers[handlerKey];
+      }
+    }
+    
+    // Handle special props for multiple choice interfaces
+    if (interactionData.type === 'multiple-choice-question') {
+      // For main interaction, use interaction's choices
+      // For feedback interaction, use activeFeedbackInteraction's choices
+      const choices = interactionData.contentProps?.choices || [];
+      props.choices = choices;
+    }
+    
+    // Pass through other content props
+    if (interactionData.contentProps) {
+      Object.assign(props, interactionData.contentProps);
+    }
+    
+    return <Component key={`${interactionData.type}-${isMainInteraction ? 'main' : 'feedback'}`} {...props} />;
+  };
   
-  const showMultipleChoiceFeedback = activeFeedbackInteraction?.type === 'multiple-choice-question' && baseCondition;
-  const showMultipleChoiceMain = interaction?.type === 'multiple-choice-question' && !activeFeedbackInteraction && baseCondition;
-
   return (
     <>
-      {/* Perimeter Input Interface */}
-      <PerimeterInputInterface
-        interaction={interaction}
-        perimeterHook={perimeterHook}
-        onCheck={handlers.onPerimeterCheck}
-        visible={showPerimeterInput}
-      />
-
-      {/* Shape Design Interface */}
-      <ShapeDesignInterface
-        interaction={interaction}
-        onCheck={handlers.onShapeDesignCheck}
-        visible={showShapeDesign}
-      />
-
-      {/* Measurement Interface */}
-      <MeasurementInterface
-        measurementHook={measurementHook}
-        onCheck={handlers.onMeasurementCheck}
-        visible={showMeasurement}
-      />
-
-      {/* Multiple Choice Interface - Feedback */}
-      <MultipleChoiceInterface
-        choices={activeFeedbackInteraction?.contentProps?.choices || []}
-        onAnswer={handlers.onAnswer}
-        disabled={isSpeaking || showNextButton}
-        visible={showMultipleChoiceFeedback}
-      />
-
-      {/* Multiple Choice Interface - Main */}
-      <MultipleChoiceInterface
-        choices={interaction?.contentProps?.choices || []}
-        onAnswer={handlers.onAnswer}
-        disabled={isSpeaking || showNextButton}
-        visible={showMultipleChoiceMain}
-      />
-
-      {/* Action Button */}
-      <ActionButton
-        interaction={interaction}
-        activeFeedbackInteraction={activeFeedbackInteraction}
-        onClick={handlers.onDoneButton}
-        visible={showNextButton}
-      />
+      {/* Main interaction UI - only show when there's no feedback interaction */}
+      {renderUIComponent(interaction, baseCondition && !activeFeedbackInteraction, true)}
+      
+      {/* Feedback interaction UI - only show when there IS a feedback interaction */}
+      {activeFeedbackInteraction && renderUIComponent(
+        activeFeedbackInteraction, 
+        baseCondition,
+        false
+      )}
+      
+      {/* Action Button - always handled separately */}
+      {showNextButton && (
+        <ActionButton
+          interaction={interaction}
+          activeFeedbackInteraction={activeFeedbackInteraction}
+          onClick={handlers.onDoneButton}
+          visible={showNextButton}
+        />
+      )}
     </>
   );
 };

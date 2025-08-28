@@ -726,9 +726,7 @@ const InteractiveLesson = () => {
                         activeFeedbackInteraction={activeFeedbackInteraction}
                         isSpeaking={isSpeaking}
                         showNextButton={showNextButton}
-                        perimeterHook={perimeterHook}
-                        measurementHook={measurementHook}
-                        shapeDesignHook={shapeDesignHook}
+                        lessonHooks={lessonHooks}
                         handlers={{
                             onPerimeterCheck: handlePerimeterCheck,
                             onShapeDesignCheck: handleShapeDesignCheck,

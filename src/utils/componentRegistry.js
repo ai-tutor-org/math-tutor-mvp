@@ -1,4 +1,6 @@
 // Component registry for mapping interaction types to components
+
+// ===== Presentation Components (Right Side Content) =====
 import RoomIllustration from '../components/presentations/01-introduction/RoomIllustration';
 import StandardUnits from '../components/presentations/01-introduction/StandardUnits';
 import RulerMeasurement from '../components/presentations/01-introduction/RulerMeasurement';
@@ -12,6 +14,14 @@ import PerimeterDefinition from '../components/presentations/04-farmer-missions/
 import RectangleSolution from '../components/presentations/04-farmer-missions/RectangleSolution';
 import ShapeDesigner from '../components/presentations/05-shape-designer/ShapeDesigner';
 
+// ===== UI Interface Components (Left Side Controls) =====
+import PerimeterInputInterface from '../components/lesson/InteractiveUI/interfaces/PerimeterInputInterface';
+import ShapeDesignInterface from '../components/lesson/InteractiveUI/interfaces/ShapeDesignInterface';
+import MeasurementInterface from '../components/lesson/InteractiveUI/interfaces/MeasurementInterface';
+import MultipleChoiceInterface from '../components/lesson/InteractiveUI/interfaces/MultipleChoiceInterface';
+import ActionButton from '../components/lesson/InteractiveUI/interfaces/ActionButton';
+
+// Presentation components for main content area (right side)
 export const componentMap = {
     'room-question': RoomIllustration,
     'footsteps-animation': RoomIllustration,
@@ -32,3 +42,47 @@ export const componentMap = {
     'rectangle-solution': RectangleSolution,
     'shape-designer': ShapeDesigner
 };
+
+// UI Interface components for user input controls (left side)
+export const uiInterfaceMap = {
+    'perimeter-input': {
+        component: PerimeterInputInterface,
+        hookKey: 'perimeterHook',
+        handlerKey: 'onPerimeterCheck',
+        category: 'input'
+    },
+    'perimeter-design': {
+        component: ShapeDesignInterface,
+        hookKey: 'shapeDesignHook',
+        handlerKey: 'onShapeDesignCheck',
+        category: 'design'
+    },
+    'shape-measurement': {
+        component: MeasurementInterface,
+        hookKey: 'measurementHook',
+        handlerKey: 'onMeasurementCheck',
+        category: 'input'
+    },
+    'multiple-choice-question': {
+        component: MultipleChoiceInterface,
+        handlerKey: 'onAnswer',
+        category: 'quiz'
+    }
+    // Note: action-button is handled separately as it's always shown with showNextButton
+    // Future lessons can add their UI interfaces here:
+    // 'fraction-input': {
+    //     component: FractionInputInterface,
+    //     hookKey: 'fractionHook',
+    //     handlerKey: 'onFractionCheck',
+    //     category: 'input'
+    // }
+};
+
+// Helper functions for UI interface components
+export function getUIInterface(interactionType) {
+    return uiInterfaceMap[interactionType];
+}
+
+export function hasUIInterface(interactionType) {
+    return interactionType in uiInterfaceMap;
+}
