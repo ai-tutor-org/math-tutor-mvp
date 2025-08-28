@@ -50,7 +50,6 @@ export function createLessonCoordinator(lessonId) {
     const CoordinatorClass = COORDINATOR_REGISTRY[lessonId];
     
     if (CoordinatorClass) {
-      console.log(`[CoordinatorFactory] Creating ${CoordinatorClass.name} for lesson: ${lessonId}`);
       return new CoordinatorClass(config);
     } else {
       console.warn(`[CoordinatorFactory] No specific coordinator found for lesson: ${lessonId}. Using BaseCoordinator.`);
@@ -71,7 +70,6 @@ export function createLessonCoordinator(lessonId) {
  * @returns {BaseCoordinator} Base coordinator instance
  */
 function createFallbackCoordinator(lessonId, config = null) {
-  console.log(`[CoordinatorFactory] Creating fallback BaseCoordinator for lesson: ${lessonId}`);
   
   // Use provided config or get default config
   const lessonConfig = config || getLessonConfig('default');
@@ -93,7 +91,6 @@ export function registerCoordinator(lessonId, CoordinatorClass) {
   }
   
   COORDINATOR_REGISTRY[lessonId] = CoordinatorClass;
-  console.log(`[CoordinatorFactory] Registered coordinator for lesson: ${lessonId}`);
 }
 
 /**

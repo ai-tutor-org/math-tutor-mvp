@@ -9,41 +9,25 @@ import {
     Paper
 } from '@mui/material';
 
-// ===================================================================
-// CONTENT & DATA IMPORTS
-// ===================================================================
 import { lessons, presentations } from '../content';
 
-// ===================================================================
-// COMPONENT IMPORTS
-// ===================================================================
 import TTSManager from '../components/layout/TTSManager';
 import { AudioControls, TutorAvatar, LessonTopBar } from '../components/lesson';
 import MobileRestrictionOverlay from '../components/layout/MobileRestrictionOverlay';
 import InteractiveUI from '../components/lesson/InteractiveUI';
 
-// ===================================================================
-// CORE ARCHITECTURE IMPORTS (Phase 2B)
-// ===================================================================
 import { LessonErrorBoundary } from '../core/LessonErrorBoundary';
 import { LessonDebugger } from '../core/LessonDebugger';
 
-// ===================================================================
-// HOOKS & UTILITIES
-// ===================================================================
 import { useIsDevMode, useDevModeNavigate } from '../utils/devMode';
 import { useMobileDetection } from '../hooks/useMobileDetection';
 import { useClickSound } from '../hooks/useClickSound';
 import useAnswerSound from '../hooks/useAnswerSound';
 
-// Direct hook imports for React compliance (Phase 2B)
-import usePerimeterInput from '../hooks/usePerimeterInput';
-import useMeasurementInput from '../hooks/useMeasurementInput';
-import useShapeDesignInput from '../hooks/useShapeDesignInput';
+// Hook management utility
+import useLessonHooks from '../utils/useLessonHooks';
 
-// Enhanced Coordinator Pattern (Phase 2B)
 import { createLessonCoordinator } from '../coordinators/CoordinatorFactory';
-import { LessonHookManager } from '../core/LessonHookManager';
 import { getLessonConfig } from '../lessons/LessonRegistry';
 
 // Component registry and utilities
@@ -96,45 +80,9 @@ const InteractiveLesson = () => {
     // Answer sound hooks
     const { playCorrectSound, playIncorrectSound } = useAnswerSound();
 
-    // Enhanced Coordinator Pattern - Dynamic Hook Loading (Phase 2B)
     const lessonConfig = useMemo(() => getLessonConfig(lessonId), [lessonId]);
-    
-    // Call hooks directly at top level - React compliant approach
-    const rawPerimeterHook = usePerimeterInput();
-    const rawMeasurementHook = useMeasurementInput();
-    const rawShapeDesignHook = useShapeDesignInput();
-    
-    // Build lesson hooks object based on configuration
-    const lessonHooks = useMemo(() => {
-        const hooks = {};
-        
-        // Map configured hooks to actual hook instances
-        if (lessonConfig?.hooks) {
-            lessonConfig.hooks.forEach(hookConfig => {
-                switch(hookConfig.name) {
-                    case 'usePerimeterInput':
-                        if (rawPerimeterHook) hooks[hookConfig.key] = rawPerimeterHook;
-                        break;
-                    case 'useMeasurementInput':
-                        if (rawMeasurementHook) hooks[hookConfig.key] = rawMeasurementHook;
-                        break;
-                    case 'useShapeDesignInput':
-                        if (rawShapeDesignHook) hooks[hookConfig.key] = rawShapeDesignHook;
-                        break;
-                    default:
-                        console.warn(`[InteractiveLesson] Unknown hook: ${hookConfig.name}`);
-                }
-            });
-        }
-        
-        return hooks;
-    }, [lessonConfig, rawPerimeterHook, rawMeasurementHook, rawShapeDesignHook].filter(dep => dep !== undefined));
-    
-    const hookResetMethods = useMemo(() => 
-        LessonHookManager.getResetMethods(lessonHooks), [lessonHooks]);
+    const { lessonHooks, resetMethods } = useLessonHooks(lessonConfig);
 
-    // Maintain backward compatibility - extract individual hooks for existing code
-    // Safety guards to prevent issues during initial render
     const measurementHook = lessonHooks.measurementHook || {};
     const perimeterHook = lessonHooks.perimeterHook || {};
     const shapeDesignHook = lessonHooks.shapeDesignHook || {};
@@ -266,8 +214,7 @@ const InteractiveLesson = () => {
         setHasUserInteracted(false);
         setActiveFeedbackInteraction(null);
 
-        // Reset input states using centralized hook manager (Phase 2B)
-        hookResetMethods.resetAllStates();
+        resetMethods.resetAllStates();
 
         // Navigate to regular sequence presentation
         setCurrentPresIndex(interaction.presIndex);
@@ -308,7 +255,6 @@ const InteractiveLesson = () => {
         console.log('Current interaction ID:', interaction?.id);
         console.log('Answer is correct:', answerData.isCorrect);
 
-        // Enhanced Coordinator Pattern - delegate to coordinator (Phase 2B)
         const result = lessonCoordinator.handleAnswer(answerData, interaction, coordinatorContext);
         
         // Process coordinator response
@@ -330,9 +276,6 @@ const InteractiveLesson = () => {
         setShowNextButton(true);
     };
 
-    // ===================================================================
-    // ENHANCED COORDINATOR ARCHITECTURE (Phase 2B)
-    // ===================================================================
 
     // Create lesson coordinator using factory pattern - replaces hardcoded LessonCoordinator
     const lessonCoordinator = useMemo(() => createLessonCoordinator(lessonId), [lessonId]);
@@ -476,7 +419,6 @@ const InteractiveLesson = () => {
 
     // Effect to handle layout changes and initial setup
     useEffect(() => {
-        // Debug logging for interaction changes
         lessonDebugger.logInteractionChange(interaction, previousInteractionRef.current);
         previousInteractionRef.current = interaction;
 
@@ -486,11 +428,9 @@ const InteractiveLesson = () => {
         // Reset animation trigger to prevent flicker
         setAnimationTrigger(false);
 
-        // Reset dynamic tutor text when interaction changes
         setDynamicTutorText(null);
 
-        // Reset input states when interaction changes (Phase 2B)
-        hookResetMethods.resetAllStates();
+        resetMethods.resetAllStates();
 
         // Reset video loop state for new interactions
         if (videoRef.current && interaction?.tutorAnimation && shouldAnimationLoop(interaction.tutorAnimation)) {
@@ -646,7 +586,6 @@ const InteractiveLesson = () => {
             onHighlightComplete: handleHighlightComplete,
         };
 
-        // Let coordinator customize props with lesson-specific logic (Phase 2B)
         const props = lessonCoordinator.getComponentProps(interaction, baseProps, lessonHooks);
 
         return <Component {...props} />;
