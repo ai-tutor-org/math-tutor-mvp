@@ -15,6 +15,7 @@ const HighlightedText = ({
     // Initialize state based on current time immediately
     const [currentSentenceIndex, setCurrentSentenceIndex] = useState(-1);
     const [spokenSentences, setSpokenSentences] = useState(new Set());
+    const [audioEnded, setAudioEnded] = useState(false);
 
     // Parse text into sentences for rendering
     const sentences = useMemo(() => {
@@ -39,11 +40,18 @@ const HighlightedText = ({
 
     // Find which sentence should be highlighted based on current time
     useEffect(() => {
-        if (!timingData || !timingData.sentences || currentTime === 0) {
+        if (!timingData || !timingData.sentences) {
             setCurrentSentenceIndex(-1);
             setSpokenSentences(new Set());
+            setAudioEnded(false);
             return;
         }
+
+        // Check if audio has ended (currentTime is beyond all sentence timings)
+       const maxEndTime = Math.max(...timingData.sentences.map(s => s.end));
+       if (currentTime > maxEndTime && currentTime > 0) {
+            setAudioEnded(true);
+       }
 
         // Find the sentence that should be highlighted at current time
         const newSentenceIndex = timingData.sentences.findIndex(sentenceData => {
@@ -61,10 +69,11 @@ const HighlightedText = ({
     }, [currentTime, timingData, currentSentenceIndex]);
 
     // Reset state immediately when text or timing data changes
-    // useEffect(() => {
-    //     setCurrentSentenceIndex(-1);
-    //     setSpokenSentences(new Set());
-    // }, [text, timingData]);
+    useEffect(() => {
+        setCurrentSentenceIndex(-1);
+        setSpokenSentences(new Set());
+        setAudioEnded(false);
+    }, [text, timingData]);
 
 
     // Render the text with sentence highlighting
@@ -94,7 +103,7 @@ const HighlightedText = ({
 
             return (
                 <span
-                    key={index}
+                    key={`${audioEnded}-${index}`}
                     className={className}
                 >
                     {sentence}
