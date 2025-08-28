@@ -1,0 +1,36 @@
+/* AudioControls Component Styles */
+
+.lesson-audio-controls {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.audio-controls-button {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.audio-controls-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.audio-controls-button.muted {
+    color: #999;
+}
+
+.audio-controls-button.muted:hover {
+    color: #bbb;
+}
+
+.audio-controls-button.active {
+    color: #fff;
+}
+
+.audio-controls-button.disabled {
+    color: #999;
+    cursor: not-allowed;
+}

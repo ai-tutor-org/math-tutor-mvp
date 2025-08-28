@@ -3,3 +3,4 @@ export { default as PrimaryButton } from './PrimaryButton';
 export { default as MeasurementInput } from './MeasurementInput';
 export { default as NameInput } from './NameInput';
 export { default as Navigation } from './Navigation';
+export { default as MultipleChoiceQuestion } from './MultipleChoiceQuestion';

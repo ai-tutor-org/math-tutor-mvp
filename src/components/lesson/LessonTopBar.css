@@ -1,0 +1,75 @@
+/* LessonTopBar Component Styles */
+
+.lesson-app-bar {
+    background-color: #000 !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #2B2B2B;
+}
+
+.lesson-toolbar {
+    justify-content: space-between;
+    min-height: 60px !important;
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+/* Header typography styles */
+.lesson-info-caption {
+    color: #999 !important;
+    font-size: 0.7rem !important;
+    line-height: 1 !important;
+    font-family: 'Fustat', 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+}
+
+.lesson-info-title {
+    color: #fff !important;
+    font-size: 1.1rem !important;
+    line-height: 1.2 !important;
+    text-transform: capitalize !important;
+    font-family: 'Fustat', 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+}
+
+/* Navigation buttons container */
+.lesson-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Button styles */
+.lesson-top-bar-button {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.lesson-top-bar-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.lesson-top-bar-back-button {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-transform: none;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+}
+
+.lesson-top-bar-back-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dev mode indicator */
+.dev-mode-indicator {
+    color: #4CAF50;
+    margin-left: 8px;
+    font-weight: 600;
+}

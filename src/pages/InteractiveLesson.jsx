@@ -4,43 +4,45 @@ import { AnimatePresence } from 'framer-motion';
 
 // Material-UI imports
 import {
-    AppBar,
-    Toolbar,
     Typography,
     Box,
-    IconButton,
-    Button,
     Paper
 } from '@mui/material';
-import {
-    Home as HomeIcon,
-    ArrowBack as ArrowBackIcon,
-    VolumeOff as VolumeOffIcon,
-    VolumeUp as VolumeUpIcon,
-    Pause as PauseIcon,
-    PlayArrow as PlayArrowIcon
-} from '@mui/icons-material';
 
-import { lessons, presentations } from '../content'; // Import centralized data
+// ===================================================================
+// CONTENT & DATA IMPORTS
+// ===================================================================
+import { lessons, presentations } from '../content';
 
+// ===================================================================
+// COMPONENT IMPORTS
+// ===================================================================
 import TTSManager from '../components/layout/TTSManager';
-import DeveloperMenu from '../components/dev/DeveloperMenu';
+import { AudioControls, TutorAvatar, LessonTopBar } from '../components/lesson';
+import MobileRestrictionOverlay from '../components/layout/MobileRestrictionOverlay';
+import InteractiveUI from '../components/lesson/InteractiveUI';
+
+// ===================================================================
+// CORE ARCHITECTURE IMPORTS (Phase 1)
+// ===================================================================
+import { LessonCoordinator } from '../core/LessonCoordinator';
+import { LessonErrorBoundary } from '../core/LessonErrorBoundary';
+import { LessonDebugger } from '../core/LessonDebugger';
+
+// ===================================================================
+// HOOKS & UTILITIES
+// ===================================================================
 import { useIsDevMode, useDevModeNavigate } from '../utils/devMode';
 import { useMobileDetection } from '../hooks/useMobileDetection';
-import MobileRestrictionOverlay from '../components/layout/MobileRestrictionOverlay';
 import { useClickSound } from '../hooks/useClickSound';
 import useAnswerSound from '../hooks/useAnswerSound';
 
-// Custom hooks
+// Custom lesson hooks
 import usePerimeterInput from '../hooks/usePerimeterInput';
 import useShapeDesignInput from '../hooks/useShapeDesignInput';
 import useMeasurementInput from '../hooks/useMeasurementInput';
 
-// Import common components
-import MeasurementInput from '../components/common/MeasurementInput';
-import PrimaryButton from '../components/common/PrimaryButton';
-
-// Import component registry and utilities
+// Component registry and utilities
 import { componentMap } from '../utils/componentRegistry';
 import { shouldAnimationLoop } from '../utils/animationHelpers';
 
@@ -54,7 +56,7 @@ const InteractiveLesson = () => {
 
     // Developer mode detection
     const isDevMode = useIsDevMode();
-    
+
     // Mobile detection
     const isMobile = useMobileDetection();
 
@@ -71,7 +73,7 @@ const InteractiveLesson = () => {
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
     const [hasUserInteracted, setHasUserInteracted] = useState(false); // Track user interaction for conditional transitions
     const [isTTSPaused, setIsTTSPaused] = useState(false);
-    
+
     // Mute State with localStorage persistence
     const [isMuted, setIsMuted] = useState(() => {
         const stored = localStorage.getItem('tts-muted');
@@ -80,7 +82,7 @@ const InteractiveLesson = () => {
 
     // TTS Ref for direct control
     const ttsRef = React.useRef();
-    
+
     // Video Ref for animation control
     const videoRef = React.useRef();
 
@@ -98,12 +100,12 @@ const InteractiveLesson = () => {
     // TTS Pause/Resume handler
     const handleTTSPauseResume = useCallback(() => {
         playClickSound();
-        
+
         // Only allow pause/resume while speaking or already paused
         if (!isSpeaking && !isTTSPaused) {
             return;
         }
-        
+
         if (ttsRef.current) {
             if (isTTSPaused) {
                 ttsRef.current.resumeTTS();
@@ -114,7 +116,7 @@ const InteractiveLesson = () => {
             }
         }
     }, [isTTSPaused, isSpeaking, playClickSound]);
-    
+
     // Mute/Unmute handler
     const handleMuteToggle = useCallback(() => {
         playClickSound();
@@ -207,7 +209,7 @@ const InteractiveLesson = () => {
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
-        
+
         // Stop the current TTS manager instance
         if (ttsRef.current && ttsRef.current.stopTTS) {
             ttsRef.current.stopTTS();
@@ -221,7 +223,7 @@ const InteractiveLesson = () => {
         setAnimationTrigger(false);
         setHasUserInteracted(false);
         setActiveFeedbackInteraction(null);
-        
+
         // Reset input states using hooks
         measurementHook.resetMeasurementState();
         perimeterHook.resetPerimeterState();
@@ -244,7 +246,7 @@ const InteractiveLesson = () => {
     // Handle user interaction for conditional transitions
     const handleUserInteraction = useCallback(() => {
         setHasUserInteracted(true);
-        
+
         // If this is a conditional transition, handle the wait time and button appearance
         if (interaction?.transitionType === 'conditional' && interaction?.condition === 'hasInteracted') {
             const waitTime = interaction?.waitTime || 3000; // Default 3 seconds
@@ -273,7 +275,7 @@ const InteractiveLesson = () => {
             if (feedbackInteraction) {
                 setDynamicTutorText(feedbackInteraction.tutorText);
                 setActiveFeedbackInteraction(feedbackInteraction);
-                
+
                 if (feedbackInteraction.type === 'multiple-choice-question') {
                     // For retry questions, don't show next button - let user answer again
                     return;
@@ -318,6 +320,31 @@ const InteractiveLesson = () => {
         setShowNextButton(true);
     };
 
+    // ===================================================================
+    // CORE ARCHITECTURE INITIALIZATION (Phase 1)
+    // ===================================================================
+
+    // Initialize lesson coordinator (Phase 1B) - MOVED HERE BEFORE USAGE
+    const lessonCoordinator = useMemo(() => {
+        const coordinator = new LessonCoordinator(lessonId);
+        return coordinator;
+    }, [lessonId]);
+
+    // Create coordinator context (same data as before, just bundled) - MOVED HERE
+    const coordinatorContext = useMemo(() => ({
+        getFeedbackText,
+        getFeedbackInteraction,
+        setDynamicTutorText,
+        setActiveFeedbackInteraction,
+        setShowNextButton,
+        handleAnswer,
+        handleHighlightComplete,
+        playClickSound
+    }), [getFeedbackText, getFeedbackInteraction, setDynamicTutorText, 
+         setActiveFeedbackInteraction, setShowNextButton, handleAnswer, 
+         handleHighlightComplete, playClickSound]);
+
+    // Now we can safely define callbacks that use lessonCoordinator
     const handlePerimeterCheck = useCallback(() => {
         // Validate answer immediately to determine which sound to play
         const userAnswer = parseInt(perimeterHook.perimeterInput);
@@ -331,52 +358,43 @@ const InteractiveLesson = () => {
             playIncorrectSound();
         }
         
-        // Continue with existing perimeter check logic
-        perimeterHook.handlePerimeterCheck(
-            correctAnswer,
-            interaction?.contentProps?.feedbackIds,
-            getFeedbackText,
-            getFeedbackInteraction,
-            setDynamicTutorText,
-            setActiveFeedbackInteraction,
-            setShowNextButton
-        );
-    }, [perimeterHook, interaction, getFeedbackText, getFeedbackInteraction, playCorrectSound, playIncorrectSound]);
+        lessonCoordinator.dispatch('onPerimeterCheck', {
+            hook: perimeterHook,
+            interaction,
+            context: coordinatorContext
+        });
+    }, [lessonCoordinator, perimeterHook, interaction, coordinatorContext, playClickSound]);
 
     // Shape sorting game intervention callbacks
     const handleShapeHint = useCallback((shapeType) => {
-        const hintText = getFeedbackText(`${shapeType}-hint`);
-        if (hintText) {
-            setDynamicTutorText(hintText);
-        }
-    }, [getFeedbackText]);
+        lessonCoordinator.dispatch('onShapeHint', {
+            shapeType,
+            context: coordinatorContext
+        });
+    }, [lessonCoordinator, coordinatorContext]);
 
     const handleShapeAutoHelp = useCallback((shapeType) => {
-        const autoHelpText = getFeedbackText(`${shapeType}-auto-help`);
-        if (autoHelpText) {
-            setDynamicTutorText(autoHelpText);
-        }
-    }, [getFeedbackText]);
+        lessonCoordinator.dispatch('onShapeAutoHelp', {
+            shapeType,
+            context: coordinatorContext
+        });
+    }, [lessonCoordinator, coordinatorContext]);
 
     const handleShapeCorrection = useCallback((shapeType) => {
-        const correctionText = getFeedbackText(`${shapeType}-correction`);
-        if (correctionText) {
-            setDynamicTutorText(correctionText);
-        }
-    }, [getFeedbackText]);
+        lessonCoordinator.dispatch('onShapeCorrection', {
+            shapeType,
+            context: coordinatorContext
+        });
+    }, [lessonCoordinator, coordinatorContext]);
 
     const handleShapeDesignCheck = useCallback(() => {
         playClickSound();
-        shapeDesignHook.handleShapeDesignCheck(
-            interaction?.contentProps?.targetPerimeter,
-            interaction?.contentProps?.feedbackIds,
-            getFeedbackText,
-            getFeedbackInteraction,
-            setDynamicTutorText,
-            setActiveFeedbackInteraction,
-            setShowNextButton
-        );
-    }, [shapeDesignHook, interaction, getFeedbackText, getFeedbackInteraction, playClickSound]);
+        lessonCoordinator.dispatch('onShapeDesignCheck', {
+            hook: shapeDesignHook,
+            interaction,
+            context: coordinatorContext
+        });
+    }, [lessonCoordinator, shapeDesignHook, interaction, coordinatorContext, playClickSound]);
 
     const handleMeasurementCheck = useCallback(() => {
         // Validate answer immediately to determine which sound to play
@@ -392,13 +410,12 @@ const InteractiveLesson = () => {
             playIncorrectSound();
         }
         
-        // Continue with existing measurement check logic
-        measurementHook.handleMeasurementCheck(
-            correctAnswer,
+        lessonCoordinator.dispatch('onMeasurementCheck', {
+            hook: measurementHook,
             interaction,
-            handleAnswer
-        );
-    }, [measurementHook, interaction, handleAnswer, playCorrectSound, playIncorrectSound]);
+            context: coordinatorContext
+        });
+    }, [lessonCoordinator, measurementHook, interaction, coordinatorContext, playClickSound]);
 
     const handleAnimationComplete = useCallback(() => {
         // Special handling for demo animation completion
@@ -437,11 +454,28 @@ const InteractiveLesson = () => {
         }
     };
 
+    // Initialize lesson debugger - development only (Phase 1C)
+    const lessonDebugger = useMemo(() => 
+        new LessonDebugger(lessonId, lessonCoordinator)
+    , [lessonId, lessonCoordinator]);
+
+    // Track previous interaction for debug logging
+    const previousInteractionRef = React.useRef(null);
+
+    // Set context on coordinator
+    useEffect(() => {
+        lessonCoordinator.setContext(coordinatorContext);
+    }, [lessonCoordinator, coordinatorContext]);
+
     // Effect to handle layout changes and initial setup
     useEffect(() => {
+        // Debug logging for interaction changes
+        lessonDebugger.logInteractionChange(interaction, previousInteractionRef.current);
+        previousInteractionRef.current = interaction;
+
         // All interactions should start with button hidden and wait for TTS to finish
         setShowNextButton(false);
-        
+
         // Reset animation trigger to prevent flicker
         setAnimationTrigger(false);
 
@@ -457,7 +491,7 @@ const InteractiveLesson = () => {
         if (videoRef.current && interaction?.tutorAnimation && shouldAnimationLoop(interaction.tutorAnimation)) {
             videoRef.current.loop = true;
         }
-    }, [interaction]);
+    }, [interaction, lessonDebugger]);
 
     // TTS Callbacks
     const handleTTSEnd = useCallback(() => {
@@ -472,16 +506,16 @@ const InteractiveLesson = () => {
 
         // Check if this might be a post-animation TTS completion during interaction-based flow
         if (interaction?.transitionType === 'interaction-based' && window.notifyPostAnimationTTSComplete) {
-            
+
             // Try to notify the component - it will check if it's actually waiting
             window.notifyPostAnimationTTSComplete();
-            
+
             // Clear any feedback state
             if (activeFeedbackInteraction) {
                 setActiveFeedbackInteraction(null);
                 setDynamicTutorText(null);
             }
-            
+
             return; // Don't advance - let the main interaction control flow
         }
 
@@ -489,9 +523,7 @@ const InteractiveLesson = () => {
         const currentInteraction = activeFeedbackInteraction || interaction;
 
         // This should ONLY trigger for animations that start immediately after speech.
-        const shouldAutoAnimate = interaction?.type.startsWith('footsteps-') ||
-            interaction?.type === 'meter-measurement' ||
-            (interaction?.type === 'shape-sorting-game' && interaction?.id === 'shape-demo-modeling');
+        const shouldAutoAnimate = lessonCoordinator.shouldAutoAnimate(interaction);
 
         // Special handling for demo animation - don't trigger here, let component handle internally
         if (interaction?.id === 'shape-demo-modeling') {
@@ -582,14 +614,14 @@ const InteractiveLesson = () => {
 
         // Generate stable key for same component to prevent unnecessary re-mounting
         const componentName = Component.name || Component.displayName || 'Component';
-        
+
         // Special case: ShapeSorterGame needs unique keys per interaction for phase changes
         // All other components benefit from stable keys to prevent flickering
-        const componentKey = componentName === 'ShapeSorterGame' 
+        const componentKey = componentName === 'ShapeSorterGame'
             ? (() => {
                 // Special handling for recap sequences to prevent unnecessary remounting
                 // All recap interactions use the same phase but different highlighting props
-                if (presentationId === 'shape-sorting-factory' && 
+                if (presentationId === 'shape-sorting-factory' &&
                     interaction.id.startsWith('shape-recap')) {
                     return `${componentName}-${currentPresIndex}-recap`;
                 }
@@ -598,38 +630,23 @@ const InteractiveLesson = () => {
             })()
             : `${componentName}-${currentPresIndex}`;
 
-        let props = {
+        // Build base props
+        const baseProps = {
             key: componentKey,
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
             onInteraction: handleUserInteraction,
             // Pass the onAnswer handler to any component that might need it
             onAnswer: handleAnswer,
-            // Pass highlighting props for perimeter input interactions
-            showSideHighlighting: perimeterHook.showSideHighlighting,
             onHighlightComplete: handleHighlightComplete,
-            // Pass perimeter callback for shape design components
-            onPerimeterCalculated: shapeDesignHook.setCurrentPerimeter,
         };
 
-        // Special handling for shape-sorting-game component
-        if (interaction.type === 'shape-sorting-game') {
-            props.contentProps = {
-                ...interaction.contentProps,
-                phaseConfig: interaction.phaseConfig
-            };
-            // Pass animation completion callback for demo interaction
-            if (interaction.id === 'shape-demo-modeling') {
-                props.onAnimationComplete = handleAnimationComplete;
-            }
-            // Pass intervention callbacks for practice phases
-            props.onShapeHint = handleShapeHint;
-            props.onShapeAutoHelp = handleShapeAutoHelp;
-            props.onShapeCorrection = handleShapeCorrection;
-        } else {
-            // For other components, spread contentProps directly
-            props = { ...props, ...interaction.contentProps };
-        }
+        // Let coordinator customize props with lesson-specific logic
+        const props = lessonCoordinator.getComponentProps(interaction, baseProps, {
+            perimeterHook,
+            measurementHook,
+            shapeDesignHook
+        });
 
         return <Component {...props} />;
     }
@@ -649,116 +666,38 @@ const InteractiveLesson = () => {
             />
 
             {/* Top Menu Bar */}
-            <AppBar position="static" className="lesson-app-bar">
-                <Toolbar className="lesson-toolbar">
-                    {/* Left Side - Lesson Info */}
-                    <Box>
-                        <Typography variant="caption" className="lesson-info-caption">
-                            LESSON {lessonId === 'perimeter' ? '1' : '1'}
-                            {isDevMode && (
-                                <span style={{ color: '#4CAF50', marginLeft: '8px', fontWeight: 600 }}>
-                                    • DEV MODE
-                                </span>
-                            )}
-                        </Typography>
-                        <Typography variant="h6" className="lesson-info-title">
-                            {lesson?.title || 'Perimeter'}
-                        </Typography>
-                    </Box>
+            <LessonTopBar
+                lessonTitle={lesson?.title || 'Perimeter'}
+                lessonId={lessonId}
+                isDevMode={isDevMode}
+                currentPresIndex={currentPresIndex}
+                currentInteractionIndex={currentInteractionIndex}
+                onInteractionSelect={handleDevInteractionSelect}
+                onResetLesson={handleDevResetLesson}
+                onHomeClick={() => navigate('/')}
+                onBackClick={() => navigate(-1)}
+            />
 
-                    {/* Right Side - Navigation */}
-                    <Box className="lesson-nav-buttons">
-                        {/* Developer Menu */}
-                        {isDevMode && (
-                            <DeveloperMenu
-                                lessonId={lessonId}
-                                currentPresIndex={currentPresIndex}
-                                currentInteractionIndex={currentInteractionIndex}
-                                onInteractionSelect={handleDevInteractionSelect}
-                                onResetLesson={handleDevResetLesson}
-                            />
-                        )}
-                        <IconButton
-                            sx={{
-                                color: '#fff',
-                                bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                borderRadius: '8px',
-                                padding: '8px',
-                                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
-                            }}
-                            onClick={() => navigate('/')}
-                        >
-                            <HomeIcon />
-                        </IconButton>
-                        <Button
-                            startIcon={<ArrowBackIcon />}
-                            sx={{
-                                color: '#fff',
-                                bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                borderRadius: '8px',
-                                padding: '8px 12px',
-                                textTransform: 'none',
-                                fontSize: '0.9rem',
-                                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
-                            }}
-                            onClick={() => navigate(-1)}
-                        >
-                            Go Back
-                        </Button>
-                    </Box>
-                </Toolbar>
-            </AppBar>
-
-            {/* Main Content Area */}
-            <Box className="lesson-content-area">
+            {/* Main Content Area - Wrapped in Error Boundary */}
+            <LessonErrorBoundary onReturnHome={() => navigate('/')}>
+                <Box className="lesson-content-area">
                 {/* Left Panel - Tutor (26%) */}
                 <Box className="lesson-left-panel">
                     {/* Audio Controls */}
-                    <Box className="lesson-audio-controls">
-                        <IconButton sx={{
-                            color: isMuted ? '#999' : '#fff',
-                            '&:hover': { 
-                                color: isMuted ? '#bbb' : '#fff',
-                                bgcolor: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }} onClick={handleMuteToggle}>
-                            {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
-                        </IconButton>
-                        <IconButton sx={{
-                            color: (isSpeaking || isTTSPaused) ? '#fff' : '#999',
-                            cursor: (isSpeaking || isTTSPaused) ? 'pointer' : 'not-allowed',
-                            '&:hover': { color: (isSpeaking || isTTSPaused) ? '#fff' : '#999' }
-                        }} onClick={(isSpeaking || isTTSPaused) ? handleTTSPauseResume : (e) => e.preventDefault()}>
-                            {isTTSPaused ? <PlayArrowIcon /> : <PauseIcon />}
-                        </IconButton>
-                    </Box>
+                    <AudioControls
+                        isMuted={isMuted}
+                        isTTSPaused={isTTSPaused}
+                        isSpeaking={isSpeaking}
+                        onMuteToggle={handleMuteToggle}
+                        onTTSPauseResume={handleTTSPauseResume}
+                    />
 
                     {/* Tutor Avatar */}
-                    <Box className="lesson-mb-3">
-                        {interaction?.tutorAnimation ? (
-                            <video
-                                ref={videoRef}
-                                src={`/animations/${interaction.tutorAnimation}.webm`}
-                                autoPlay
-                                loop={shouldAnimationLoop(interaction.tutorAnimation)}
-                                muted
-                                style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    objectFit: 'cover'
-                                }}
-                            />
-                        ) : (
-                            <img
-                                src="/images/tutor.svg"
-                                alt="AI Tutor"
-                                style={{
-                                    width: '100px',
-                                    height: '100px'
-                                }}
-                            />
-                        )}
-                    </Box>
+                    <TutorAvatar
+                        animation={interaction?.tutorAnimation}
+                        isWaving={isWaving}
+                        videoRef={videoRef}
+                    />
 
                     {/* Tutor Speech */}
                     <Box className="lesson-mb-3">
@@ -780,158 +719,23 @@ const InteractiveLesson = () => {
                         </Typography>
                     </Box>
 
-                    {/* Perimeter Input Interface */}
-                    {interaction?.type === 'perimeter-input' && !isSpeaking && !showNextButton && (
-                        <Box sx={{ mb: 3, width: '100%' }}>
-                            {/* Show solution equation if needed */}
-                            {perimeterHook.showPerimeterSolution && (
-                                <Box sx={{ mb: 2, textAlign: 'left' }}>
-                                    <Typography variant="body2" sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>
-                                        {interaction?.contentProps?.shape?.type === 'rectangle' &&
-                                            `${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} + ${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} = ${interaction.contentProps.correctAnswer}`
-                                        }
-                                        {interaction?.contentProps?.shape?.type === 'square' &&
-                                            `${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} = ${interaction.contentProps.correctAnswer}`
-                                        }
-                                        {interaction?.contentProps?.shape?.type === 'triangle' && interaction?.contentProps?.shape?.sides &&
-                                            `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
-                                        }
-                                        {interaction?.contentProps?.shape?.type === 'pentagon' && interaction?.contentProps?.shape?.sides &&
-                                            `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
-                                        }
-                                    </Typography>
-                                </Box>
-                            )}
-
-                            <MeasurementInput
-                                value={perimeterHook.perimeterInput}
-                                onInputChange={perimeterHook.setPerimeterInput}
-                                onCheck={handlePerimeterCheck}
-                                disabled={perimeterHook.showPerimeterSolution}
-                                placeholder="Enter perimeter"
-                                unit={interaction?.contentProps?.shape?.unit || 'units'}
-                            />
-                        </Box>
-                    )}
-
-                    {/* Shape Design Validation Interface */}
-                    {interaction?.type === 'perimeter-design' && !isSpeaking && !showNextButton && (
-                        <Box sx={{ mb: 3, width: '100%' }}>
-                            {/* Show current vs target perimeter */}
-                            <Box sx={{ mb: 2, textAlign: 'left' }}>
-                                <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
-                                    Target: {interaction?.contentProps?.targetPerimeter} units
-                                </Typography>
-                            </Box>
-                            
-                            {/* Check button */}
-                            <PrimaryButton onClick={handleShapeDesignCheck}>
-                                Check My Shape
-                            </PrimaryButton>
-                        </Box>
-                    )}
-
-                    {/* Measurement Input Interface */}
-                    {interaction?.type === 'shape-measurement' && !isSpeaking && !showNextButton && (
-                        <MeasurementInput
-                            value={measurementHook.measurementInput}
-                            onInputChange={measurementHook.setMeasurementInput}
-                            onCheck={handleMeasurementCheck}
-                            placeholder="Enter length"
-                            unit="cm"
-                        />
-                    )}
-
-
-
-                    {/* Multiple Choice Question Interface - Feedback interactions */}
-                    {activeFeedbackInteraction?.type === 'multiple-choice-question' && !isSpeaking && !showNextButton && (
-                        <Box sx={{ mb: 3, width: '100%' }}>
-                            <Box className="lesson-mb-3">
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                    {activeFeedbackInteraction?.contentProps?.choices?.map((choice, index) => (
-                                        <Button
-                                            key={index}
-                                            variant="outlined"
-                                            onClick={() => handleAnswer({ 
-                                                text: choice.text, 
-                                                isCorrect: choice.isCorrect,
-                                                feedbackId: choice.feedbackId
-                                            })}
-                                            sx={{
-                                                padding: '12px 16px',
-                                                borderRadius: '12px',
-                                                border: '1px solid #545E7D',
-                                                background: '#484D5C',
-                                                fontWeight: 500,
-                                                color: '#fff',
-                                                textTransform: 'none',
-                                                fontSize: '0.95rem',
-                                                textAlign: 'left',
-                                                justifyContent: 'flex-start',
-                                                fontFamily: "'Fustat', 'Inter', sans-serif",
-                                                '&:hover': {
-                                                    background: '#545E7D',
-                                                    borderColor: '#545E7D'
-                                                }
-                                            }}
-                                        >
-                                            {choice.text}
-                                        </Button>
-                                    ))}
-                                </Box>
-                            </Box>
-                        </Box>
-                    )}
-
-                    {/* Multiple Choice Question Interface - General case */}
-                    {interaction?.type === 'multiple-choice-question' && !activeFeedbackInteraction && !isSpeaking && !showNextButton && (
-                        <Box sx={{ mb: 3, width: '100%' }}>
-                            <Box className="lesson-mb-3">
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                    {interaction?.contentProps?.choices?.map((choice, index) => (
-                                        <Button
-                                            key={index}
-                                            variant="outlined"
-                                            onClick={() => handleAnswer({ 
-                                                text: choice.text, 
-                                                isCorrect: choice.isCorrect,
-                                                feedbackId: choice.feedbackId
-                                            })}
-                                            sx={{
-                                                padding: '12px 16px',
-                                                borderRadius: '12px',
-                                                border: '1px solid #545E7D',
-                                                background: '#484D5C',
-                                                fontWeight: 500,
-                                                color: '#fff',
-                                                textTransform: 'none',
-                                                fontSize: '0.95rem',
-                                                textAlign: 'left',
-                                                justifyContent: 'flex-start',
-                                                fontFamily: "'Fustat', 'Inter', sans-serif",
-                                                '&:hover': {
-                                                    background: '#545E7D',
-                                                    borderColor: '#545E7D'
-                                                }
-                                            }}
-                                        >
-                                            {choice.text}
-                                        </Button>
-                                    ))}
-                                </Box>
-                            </Box>
-                        </Box>
-                    )}
-
-                    {/* Action Button */}
-                    {showNextButton && (
-                        <PrimaryButton onClick={handleDoneButton}>
-                            {(activeFeedbackInteraction || interaction)?.type === 'welcome' ? "Let's Go!" : 
-                             (interaction?.transitionType === 'conditional' && interaction?.buttonText ? interaction.buttonText : 
-                             ((activeFeedbackInteraction || interaction)?.nextButtonText || "Continue"))}
-                        </PrimaryButton>
-                    )}
+                    {/* Interactive UI Components */}
+                    <InteractiveUI
+                        interaction={interaction}
+                        activeFeedbackInteraction={activeFeedbackInteraction}
+                        isSpeaking={isSpeaking}
+                        showNextButton={showNextButton}
+                        perimeterHook={perimeterHook}
+                        measurementHook={measurementHook}
+                        shapeDesignHook={shapeDesignHook}
+                        handlers={{
+                            onPerimeterCheck: handlePerimeterCheck,
+                            onShapeDesignCheck: handleShapeDesignCheck,
+                            onMeasurementCheck: handleMeasurementCheck,
+                            onAnswer: handleAnswer,
+                            onDoneButton: handleDoneButton
+                        }}
+                    />
                 </Box>
 
                 {/* Right Panel - Container (74%) */}
@@ -956,6 +760,7 @@ const InteractiveLesson = () => {
                     </Paper>
                 </Box>
             </Box>
+            </LessonErrorBoundary>
                 </Box>
             </div>
             {isMobile && <MobileRestrictionOverlay />}
@@ -963,4 +768,4 @@ const InteractiveLesson = () => {
     );
 };
 
-export default InteractiveLesson; 
+export default InteractiveLesson;
