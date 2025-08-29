@@ -574,7 +574,6 @@ const InteractiveLesson = () => {
                 ...activeFeedbackInteraction.contentProps,
                 onAnimationComplete: handleAnimationComplete,
                 startAnimation: animationTrigger,
-                onAnswer: handleAnswer,
                 showSideHighlighting: perimeterHook.showSideHighlighting,
                 onHighlightComplete: handleHighlightComplete,
             };
@@ -610,8 +609,6 @@ const InteractiveLesson = () => {
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
             onInteraction: handleUserInteraction,
-            // Pass the onAnswer handler to any component that might need it
-            onAnswer: handleAnswer,
             // Pass highlighting props for perimeter input interactions
             showSideHighlighting: perimeterHook.showSideHighlighting,
             onHighlightComplete: handleHighlightComplete,

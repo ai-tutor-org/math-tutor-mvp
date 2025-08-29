@@ -1,20 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaQuestion } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import './ConflictingMeasurements.css';
 
-const ConflictingMeasurements = ({ 
-    showQuestion = false, 
-    question = "", 
-    choices = [], 
-    onAnswer = () => {} 
-}) => {
-    const [selectedChoice, setSelectedChoice] = useState(null);
-
-    const handleChoiceClick = (choice, index) => {
-        setSelectedChoice(index);
-        onAnswer(choice);
-    };
+const ConflictingMeasurements = () => {
 
     return (
         <motion.div
@@ -38,22 +27,6 @@ const ConflictingMeasurements = ({
                 </div>
             </div>
 
-            {showQuestion && (
-                <div className="question-section">
-                    <h3 className="question-text">{question}</h3>
-                    <div className="choices-container">
-                        {choices.map((choice, index) => (
-                            <button
-                                key={index}
-                                className={`choice-button ${selectedChoice === index ? 'selected' : ''}`}
-                                onClick={() => handleChoiceClick(choice, index)}
-                            >
-                                {choice.text}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
         </motion.div>
     );
 };
