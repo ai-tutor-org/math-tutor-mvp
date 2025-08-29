@@ -217,30 +217,6 @@ const InteractiveLesson = () => {
         }
     }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
 
-    const navigateToInteraction = useCallback((interactionId) => {
-        console.log(`Looking for interaction: ${interactionId}`);
-        // Find the presentation containing this interaction
-        for (const [presId, pres] of Object.entries(presentations)) {
-            console.log(`Checking presentation: ${presId}`);
-            const interactionIndex = pres.interactions.findIndex(int => int.id === interactionId);
-            console.log(`Found interaction at index: ${interactionIndex}`);
-            if (interactionIndex !== -1) {
-
-                // For normal presentations in the lesson sequence
-                const lessonSeqIndex = lesson.sequence.findIndex(seq => seq.presentationId === presId);
-                if (lessonSeqIndex !== -1) {
-                    console.log(`Found in lesson sequence at: ${lessonSeqIndex}`);
-                    setCurrentPresIndex(lessonSeqIndex);
-                    setCurrentInteractionIndex(interactionIndex);
-                    setDynamicTutorText(null);
-                    setShowNextButton(false); // Reset button immediately
-                    setIsSpeaking(true);
-                    return;
-                }
-            }
-        }
-        console.warn(`Interaction ${interactionId} not found`);
-    }, [lesson]);
 
 
     // Developer mode handlers
@@ -458,9 +434,6 @@ const InteractiveLesson = () => {
         playClickSound();
         if (interaction?.nextButtonText === "Done") {
             navigate('/');
-        } else if (interaction?.navigateToInteraction) {
-            // Handle special navigation to specific interaction
-            navigateToInteraction(interaction.navigateToInteraction);
         } else if (interaction?.navigateToPresentation) {
             // Handle special navigation (like from 5C to standard-units-intro)
             const targetPresIndex = lesson.sequence.findIndex(seq => seq.presentationId === interaction.navigateToPresentation);
@@ -539,12 +512,7 @@ const InteractiveLesson = () => {
         }
 
         if (currentInteraction?.transitionType === 'auto') {
-            // Check if there's a specific navigation target
-            if (currentInteraction?.navigateToInteraction) {
-                setTimeout(() => navigateToInteraction(currentInteraction.navigateToInteraction), 500);
-            } else {
-                setTimeout(advanceToNext, 500);
-            }
+            setTimeout(advanceToNext, 500);
         } else if (interaction?.transitionType === 'interaction-based') {
             // Wait for component to signal completion - don't auto-advance
             console.log('🎯 Waiting for interaction-based completion');
@@ -558,7 +526,7 @@ const InteractiveLesson = () => {
             // For all other manual transitions, just show the button.
             setShowNextButton(true);
         }
-    }, [interaction, activeFeedbackInteraction, advanceToNext, navigateToInteraction]);
+    }, [interaction, activeFeedbackInteraction, advanceToNext]);
 
     const handleTTSStart = useCallback(() => {
         setIsSpeaking(true);
