@@ -17,7 +17,7 @@ export const introductionPresentations = {
                 tutorText: "I'm Mathy, your personal tutor. 😊 I'm so excited to explore the world of shapes and sizes with you. \n\nReady to start our first adventure?",
                 tutorAnimation: 'waving',
                 transitionType: 'manual',
-                showWelcomeButton: true,
+                nextButtonText: "Let's Go!"
             },
             {
                 id: 'room-question',
@@ -34,7 +34,7 @@ export const introductionPresentations = {
                 contentProps: {
                     totalSteps: 10,
                     footIconColor: '#4A90E2',
-                    buttonText: "Take a Step"
+                    nextButtonText: "Take a Step"
                 },
                 transitionType: 'manual',
             },
@@ -47,7 +47,7 @@ export const introductionPresentations = {
                     totalSteps: 8,
                     footIconColor: '#e24a4a',
                     previousResultText: "You: 10 Steps",
-                    buttonText: "Friend's Turn",
+                    nextButtonText: "Friend's Turn",
                     persistentStepsData: Array.from({ length: 10 }, (_, i) => {
                         const svgWidth = 500;
                         const innerRoomLeft = (47.8 / 578) * svgWidth; // ~41px

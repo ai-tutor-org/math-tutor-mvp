@@ -429,27 +429,6 @@ const InteractiveLesson = () => {
         }
     }, [interaction, advanceToNext]);
 
-    // Handle Done button to go home
-    const handleDoneButton = () => {
-        playClickSound();
-        if (interaction?.nextButtonText === "Done") {
-            navigate('/');
-        } else if (interaction?.navigateToPresentation) {
-            // Handle special navigation (like from 5C to standard-units-intro)
-            const targetPresIndex = lesson.sequence.findIndex(seq => seq.presentationId === interaction.navigateToPresentation);
-            if (targetPresIndex !== -1) {
-                setCurrentPresIndex(targetPresIndex);
-                setCurrentInteractionIndex(0);
-                setDynamicTutorText(null);
-            } else {
-                console.warn(`Presentation ${interaction.navigateToPresentation} not found in lesson sequence`);
-                advanceToNext();
-            }
-        } else {
-            advanceToNext();
-        }
-    };
-
     // Effect to handle layout changes and initial setup
     useEffect(() => {
         // All interactions should start with button hidden and wait for TTS to finish
@@ -952,10 +931,11 @@ const InteractiveLesson = () => {
 
                     {/* Action Button */}
                     {showNextButton && (
-                        <PrimaryButton onClick={handleDoneButton}>
-                            {(activeFeedbackInteraction || interaction)?.type === 'welcome' ? "Let's Go!" : 
-                             (interaction?.transitionType === 'conditional' && interaction?.buttonText ? interaction.buttonText : 
-                             ((activeFeedbackInteraction || interaction)?.nextButtonText || "Continue"))}
+                        <PrimaryButton onClick={() => {
+                            playClickSound();
+                            advanceToNext();
+                        }}>
+                            {(activeFeedbackInteraction || interaction)?.nextButtonText || "Continue"}
                         </PrimaryButton>
                     )}
                 </Box>
