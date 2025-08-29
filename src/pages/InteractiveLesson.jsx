@@ -95,7 +95,6 @@ const InteractiveLesson = () => {
 
     // UI State
     const [isSpeaking, setIsSpeaking] = useState(false);
-    const [isWaving, setIsWaving] = useState(false);
     const [animationTrigger, setAnimationTrigger] = useState(false);
     const [showNextButton, setShowNextButton] = useState(false);
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
@@ -261,7 +260,6 @@ const InteractiveLesson = () => {
 
         // Clear all interaction state immediately
         setIsSpeaking(false);
-        setIsWaving(false);
         setShowNextButton(false);
         setDynamicTutorText(null);
         setAnimationTrigger(false);
@@ -509,7 +507,6 @@ const InteractiveLesson = () => {
     // TTS Callbacks
     const handleTTSEnd = useCallback(() => {
         setIsSpeaking(false);
-        setIsWaving(false);
         setIsTTSPaused(false);
 
         // Stop looping animations when TTS ends (but allow one-time animations to complete)
@@ -570,9 +567,6 @@ const InteractiveLesson = () => {
 
     const handleTTSStart = useCallback(() => {
         setIsSpeaking(true);
-        if (interaction?.type === 'welcome') {
-            setIsWaving(true);
-        }
     }, [interaction]);
 
     // Listen for custom advancement events from components like ShapeSorterGame
