@@ -1,5 +1,5 @@
 import React from 'react';
-import { StandardUnits, RulerMeasurement, MeterStick } from '../../components/presentations/01-introduction';
+import { StandardUnits, RulerMeasurement, MeterStick, RoomIllustration } from '../../components/presentations/01-introduction';
 
 export const introductionPresentations = {
     'standard-units-pre-intro': {
@@ -22,6 +22,7 @@ export const introductionPresentations = {
             {
                 id: 'room-question',
                 type: 'room-question',
+                ContentComponent: RoomIllustration,
                 tutorText: "Let's start with a simple question. Imagine this is your room. How would you figure out how long it is from one wall to the other?",
                 tutorAnimation: 'thinking-curious-question',
                 transitionType: 'auto',
@@ -29,6 +30,7 @@ export const introductionPresentations = {
             {
                 id: 'footsteps-demo',
                 type: 'footsteps-animation',
+                ContentComponent: RoomIllustration,
                 tutorText: "A common way is to use footsteps! Let's try it. Help me walk from one side to the other by clicking the button for each step.",
                 tutorAnimation: 'explaining',
                 contentProps: {
@@ -41,6 +43,7 @@ export const introductionPresentations = {
             {
                 id: 'footsteps-friend',
                 type: 'footsteps-animation-friend',
+                ContentComponent: RoomIllustration,
                 tutorText: "Okay, so the room is 10 steps long. \n\nSimple enough! But wait... here comes your friend, who has bigger feet. He doesn't believe that the room is 10 steps long. He will use his own steps to measure the room.\n\n Help him measure the room too - click the button for each of his steps.",
                 tutorAnimation: 'explaining',
                 contentProps: {
@@ -71,6 +74,7 @@ export const introductionPresentations = {
             {
                 id: 'conflicting-problem',
                 type: 'conflicting-measurements',
+                ContentComponent: RoomIllustration,
                 tutorText: "Hold on. One person says the room is 10 steps long, and another says it's 8 steps long. \n\nBut the room didn't change! Who is right? This is confusing, isn't it?",
                 tutorAnimation: 'thinking-curious-question',
                 contentProps: {
@@ -87,6 +91,7 @@ export const introductionPresentations = {
             {
                 id: 'measurement-reason-question',
                 type: 'multiple-choice-question',
+                ContentComponent: RoomIllustration,
                 tutorText: "What do you think is the reason?",
                 tutorAnimation: 'thinking-curious-question',
                 contentProps: {
@@ -116,6 +121,7 @@ export const introductionPresentations = {
             'measurement-reason-retry': {
                 id: 'measurement-reason-retry',
                 type: 'multiple-choice-question',
+                ContentComponent: RoomIllustration,
                 tutorText: "No, the size of the room is the same. Choose again.",
                 tutorAnimation: 'thinking-curious-question',
                 contentProps: {
@@ -138,6 +144,7 @@ export const introductionPresentations = {
             'measurement-reason-explanation': {
                 id: 'measurement-reason-explanation',
                 type: 'tutor-monologue',
+                ContentComponent: RoomIllustration,
                 tutorText: "Exactly, the size of your feet and your friend's feet are different. This is why we can't use our feet to measure. Everyone would get different numbers.",
                 tutorAnimation: 'explaining',
                 contentProps: {
