@@ -99,7 +99,6 @@ const InteractiveLesson = () => {
     const [showNextButton, setShowNextButton] = useState(false);
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
-    const [hasUserInteracted, setHasUserInteracted] = useState(false); // Track user interaction for conditional transitions
     const [isTTSPaused, setIsTTSPaused] = useState(false);
     
     // Mute State with localStorage persistence
@@ -263,7 +262,6 @@ const InteractiveLesson = () => {
         setShowNextButton(false);
         setDynamicTutorText(null);
         setAnimationTrigger(false);
-        setHasUserInteracted(false);
         setActiveFeedbackInteraction(null);
         
         // Reset input states using hooks
@@ -282,13 +280,10 @@ const InteractiveLesson = () => {
                 setDynamicTutorText(null);
         setShowNextButton(false);
         setAnimationTrigger(false);
-        setHasUserInteracted(false);
     }, []);
 
     // Handle user interaction for conditional transitions
     const handleUserInteraction = useCallback(() => {
-        setHasUserInteracted(true);
-        
         // If this is a conditional transition, handle the wait time and button appearance
         if (interaction?.transitionType === 'conditional' && interaction?.condition === 'hasInteracted') {
             const waitTime = interaction?.waitTime || 3000; // Default 3 seconds
