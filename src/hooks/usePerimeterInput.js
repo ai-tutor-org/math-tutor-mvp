@@ -4,14 +4,12 @@ const usePerimeterInput = () => {
     const [perimeterInput, setPerimeterInput] = useState('');
     const [perimeterAttempts, setPerimeterAttempts] = useState(0);
     const [showPerimeterSolution, setShowPerimeterSolution] = useState(false);
-    const [showSideHighlighting, setShowSideHighlighting] = useState(false);
     const [currentEquationStep, setCurrentEquationStep] = useState(0);
 
     const resetPerimeterState = useCallback(() => {
         setPerimeterInput('');
         setPerimeterAttempts(0);
         setShowPerimeterSolution(false);
-        setShowSideHighlighting(false);
         setCurrentEquationStep(0);
     }, []);
 
@@ -54,7 +52,6 @@ const usePerimeterInput = () => {
                     setActiveFeedbackInteraction(feedbackInteraction);
                 }
                 setShowPerimeterSolution(true);
-                setShowSideHighlighting(true);
                 setCurrentEquationStep(0);
                 setPerimeterInput(correctAnswer.toString());
                 setPerimeterAttempts(0); // Reset for next interaction
@@ -67,7 +64,6 @@ const usePerimeterInput = () => {
         setPerimeterInput,
         perimeterAttempts,
         showPerimeterSolution,
-        showSideHighlighting,
         currentEquationStep,
         resetPerimeterState,
         handlePerimeterCheck

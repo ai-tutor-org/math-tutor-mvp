@@ -328,9 +328,6 @@ const InteractiveLesson = () => {
         }
     };
 
-    const handleHighlightComplete = () => {
-        setShowNextButton(true);
-    };
 
     const handlePerimeterCheck = useCallback(() => {
         // Validate answer immediately to determine which sound to play
@@ -552,8 +549,6 @@ const InteractiveLesson = () => {
                 ...activeFeedbackInteraction.contentProps,
                 onAnimationComplete: handleAnimationComplete,
                 startAnimation: animationTrigger,
-                showSideHighlighting: perimeterHook.showSideHighlighting,
-                onHighlightComplete: handleHighlightComplete,
             };
             return <FeedbackComponent {...feedbackProps} />;
         }
@@ -587,9 +582,6 @@ const InteractiveLesson = () => {
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
             onInteraction: handleUserInteraction,
-            // Pass highlighting props for perimeter input interactions
-            showSideHighlighting: perimeterHook.showSideHighlighting,
-            onHighlightComplete: handleHighlightComplete,
             // Pass perimeter callback for shape design components
             onPerimeterCalculated: shapeDesignHook.setCurrentPerimeter,
         };
