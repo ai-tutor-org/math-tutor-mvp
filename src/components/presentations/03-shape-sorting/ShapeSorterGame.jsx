@@ -15,21 +15,18 @@ import {
 import { useShapeAnimations } from '../../../hooks/useShapeAnimations';
 import './ShapeSorterGame.css';
 
-// Game phases following the 13 interaction sequence
+// Game phases following the actual interaction sequence used in presentation data
 const GAME_PHASES = {
-    INTRO: 'intro',                    // Q1: Problem introduction
-    TOOLS: 'tools',                    // Q2: Tools reveal
-    MODELING: 'modeling',              // Q3: Automated demo (1 square)
-    GUIDED: 'guided',                  // Q4: Guided practice (1 triangle)
-    GUIDED_SUCCESS: 'guided_success',  // Q5: Guided success transition
-    PRACTICE_SETUP: 'practice_setup',  // Q6: Practice setup (3 shapes)
-    PRACTICE: 'practice',              // Q7: Practice with interventions
-    INTERVENTION: 'intervention',      // Q8: Targeted intervention
-    CORRECTION: 'correction',          // Q9: Automated correction
-    CHALLENGE_SETUP: 'challenge_setup', // Q10: Final challenge setup
-    CHALLENGE: 'challenge',            // Q11: Final challenge (8 shapes)
-    COMPLETION: 'completion',          // Q12: Performance-based completion
-    RECAP: 'recap'                     // Q13: Final recap
+    INTRO: 'intro',                    // Problem introduction
+    TOOLS: 'tools',                    // Tools reveal
+    MODELING: 'modeling',              // Automated demo (1 square)
+    GUIDED: 'guided',                  // Guided practice (1 triangle)
+    PRACTICE_SETUP: 'practice_setup',  // Practice setup (3 shapes)
+    PRACTICE: 'practice',              // Practice with interventions
+    CHALLENGE_SETUP: 'challenge_setup', // Final challenge setup
+    CHALLENGE: 'challenge',            // Final challenge (8 shapes)
+    COMPLETION: 'completion',          // Performance-based completion
+    RECAP: 'recap'                     // Final recap
 };
 
 // Deterministic shape state calculator based on current phase
@@ -1232,485 +1229,199 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
         });
     };
 
+    // Helper to render containers (extracted for reuse)
+    const renderContainers = (animateIn = false) => {
+        const containerContent = (
+            <>
+                {Object.values(SHAPE_TYPES).map(shapeType => (
+                    <SortingBin
+                        key={shapeType}
+                        type={shapeType}
+                        count={state.bins[shapeType].count}
+                        isGlowing={state.bins[shapeType].isGlowing}
+                        isDraggedOver={dragHoverState[shapeType] || false}
+                        ref={el => containerRefs.current[shapeType] = el}
+                    />
+                ))}
+            </>
+        );
+
+        if (animateIn) {
+            return (
+                <motion.div 
+                    className="containers-area"
+                    initial={{ y: 50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.8 }}
+                >
+                    {containerContent}
+                </motion.div>
+            );
+        }
+
+        return (
+            <div className="containers-area">
+                {containerContent}
+            </div>
+        );
+    };
+
+    // Phase-specific configuration for rendering
+    const getPhaseRenderConfig = (phase) => {
+        // Special handling for MODELING phase - demo square
+        if (phase === GAME_PHASES.MODELING) {
+            return {
+                showContainers: true,
+                getIsDisabled: () => true, // All shapes disabled during demo
+                getIsHighlighted: (shape) => shape.type === SHAPE_TYPES.SQUARE && shape.isHighlighted
+            };
+        }
+
+        // TOOLS phase - all disabled, no highlights
+        if (phase === GAME_PHASES.TOOLS) {
+            return {
+                showContainers: true,
+                animateContainers: true, // Only TOOLS animates containers in
+                getIsDisabled: () => true,
+                getIsHighlighted: () => false
+            };
+        }
+
+        // INTRO phase - no containers
+        if (phase === GAME_PHASES.INTRO) {
+            return {
+                showContainers: false,
+                getIsDisabled: (shape) => state.disabledShapes.includes(shape.id),
+                getIsHighlighted: (shape) => shape.isHighlighted
+            };
+        }
+
+
+        // COMPLETION phase - only containers, no shapes
+        if (phase === GAME_PHASES.COMPLETION) {
+            return {
+                showContainers: true,
+                showShapes: false, // No shapes in completion phase
+                getIsDisabled: () => true,
+                getIsHighlighted: () => false
+            };
+        }
+
+        // Default for all other phases (GUIDED, PRACTICE, PRACTICE_SETUP, CHALLENGE, CHALLENGE_SETUP)
+        return {
+            showContainers: true,
+            getIsDisabled: (shape) => state.disabledShapes.includes(shape.id),
+            getIsHighlighted: (shape) => shape.isHighlighted
+        };
+    };
+
     // Render current phase content
     const renderPhaseContent = () => {
         
-        switch (state.currentPhase) {
-            case GAME_PHASES.INTRO:
-                return (
-                    <div className="phase-intro">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={state.disabledShapes.includes(shape.id)}
-                                    isHighlighted={shape.isHighlighted}
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                );
+        // Special case for RECAP phase - completely different layout
+        if (state.currentPhase === GAME_PHASES.RECAP) {
+            // Static shapes for recap - one of each type in 2x2 grid
+            const recapShapes = [
+                {
+                    id: 'recap-triangle',
+                    type: SHAPE_TYPES.TRIANGLE,
+                    color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
+                    size: 200, // Much bigger size to fill container
+                    position: { x: 0, y: 0 },
+                    thickness: 'normal',
+                    variant: 'equilateral'
+                },
+                {
+                    id: 'recap-circle',
+                    type: SHAPE_TYPES.CIRCLE,
+                    color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
+                    size: 200, // Much bigger size to fill container
+                    position: { x: 0, y: 0 },
+                    thickness: 'normal'
+                },
+                {
+                    id: 'recap-rectangle',
+                    type: SHAPE_TYPES.RECTANGLE,
+                    color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
+                    size: 200, // Much bigger size to fill container
+                    position: { x: 0, y: 0 },
+                    thickness: 'normal'
+                },
+                {
+                    id: 'recap-square',
+                    type: SHAPE_TYPES.SQUARE,
+                    color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
+                    size: 200, // Much bigger size to fill container
+                    position: { x: 0, y: 0 },
+                    thickness: 'normal'
+                }
+            ];
 
-            case GAME_PHASES.TOOLS:
-                return (
-                    <div className="phase-tools">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
+            return (
+                <div className="phase-recap">
+                    <div className="recap-shapes-grid">
+                        {recapShapes.map((shape) => (
+                            <div key={shape.id} className="recap-shape-container">
                                 <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={true} // All shapes disabled in TOOLS phase
-                                    isHighlighted={false}
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                            {/* Containers positioned at bottom */}
-                            {state.showContainers && (
-                                <motion.div 
-                                    className="containers-area"
-                                    initial={{ y: 50, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ duration: 0.8 }}
-                                >
-                                    {Object.values(SHAPE_TYPES).map(shapeType => (
-                                        <SortingBin
-                                            key={shapeType}
-                                            type={shapeType}
-                                            count={state.bins[shapeType].count}
-                                            isGlowing={state.bins[shapeType].isGlowing}
-                                            isDraggedOver={dragHoverState[shapeType] || false}
-                                            ref={el => containerRefs.current[shapeType] = el}
-                                        />
-                                ))}
-                            </motion.div>
-                        )}
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.MODELING:
-                return (
-                    <div className="phase-modeling">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => {
-                                // In MODELING phase, only highlight the demo square, disable all interaction
-                                const isDemoSquare = shape.type === SHAPE_TYPES.SQUARE && shape.isHighlighted;
-                                return (
-                                    <GameShape
-                                        key={shape.id}
-                                        shape={shape}
-                                        isDisabled={true} // All shapes disabled during demo - no user interaction
-                                        isHighlighted={isDemoSquare} // Only demo square highlighted
-                                        onDragStart={handleShapeDragStart}
-                                        onDrag={handleShapeDrag}
-                                        onDragEnd={handleShapeDragEnd}
-                                        onAnimationComplete={handleShapeAnimationComplete}
-                                        dragConstraints={false}
-                                    />
-                                );
-                            })}
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={state.bins[shapeType].isGlowing}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.GUIDED:
-                return (
-                    <div className="phase-guided">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={state.disabledShapes.includes(shape.id)}
-                                    isHighlighted={shape.isHighlighted}
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={state.bins[shapeType].isGlowing}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.GUIDED_SUCCESS:
-                return (
-                    <div className="phase-guided-success">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
                                     shape={shape}
                                     isDisabled={true}
-                                    isHighlighted={false}
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
+                                    isHighlighted={contentProps?.highlightedShape === shape.type}
                                     dragConstraints={false}
+                                    className="recap-size"
                                 />
-                            ))}
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={false}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
                             </div>
-                        </div>
+                        ))}
                     </div>
-                );
-
-            case GAME_PHASES.PRACTICE_SETUP:
-                return (
-                    <div className="phase-practice-setup">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={state.disabledShapes.includes(shape.id)}
-                                    isHighlighted={shape.isHighlighted}
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={state.bins[shapeType].isGlowing}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.PRACTICE:
-                return (
-                    <div className="phase-practice">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={state.disabledShapes.includes(shape.id)}
-                                    isHighlighted={shape.isHighlighted}
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={state.bins[shapeType].isGlowing}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.INTERVENTION:
-                return (
-                    <div className="phase-intervention">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={state.disabledShapes.includes(shape.id)}
-                                    isHighlighted={true} // Highlight shapes during intervention
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={state.bins[shapeType].isGlowing}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.CORRECTION:
-                return (
-                    <div className="phase-correction">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={true} // Disabled during automated correction
-                                    isHighlighted={false}
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={false}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.CHALLENGE_SETUP:
-                return (
-                    <div className="phase-challenge-setup">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={state.disabledShapes.includes(shape.id)}
-                                    isHighlighted={shape.isHighlighted}
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={state.bins[shapeType].isGlowing}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.CHALLENGE:
-                return (
-                    <div className="phase-challenge">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Shapes positioned freely */}
-                            {state.activeShapes.map(shape => (
-                                <GameShape
-                                    key={shape.id}
-                                    shape={shape}
-                                    isDisabled={state.disabledShapes.includes(shape.id)}
-                                    isHighlighted={shape.isHighlighted}
-                                    onDragStart={handleShapeDragStart}
-                                    onDrag={handleShapeDrag}
-                                    onDragEnd={handleShapeDragEnd}
-                                    onAnimationComplete={handleShapeAnimationComplete}
-                                    dragConstraints={false}
-                                />
-                            ))}
-                            {/* Containers positioned at bottom */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={state.bins[shapeType].isGlowing}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.COMPLETION:
-                return (
-                    <div className="phase-completion">
-                        <div className="play-area" ref={playAreaRef}>
-                            {/* Containers positioned at bottom - no shapes shown */}
-                            <div className="containers-area">
-                                {Object.values(SHAPE_TYPES).map(shapeType => (
-                                    <SortingBin
-                                        key={shapeType}
-                                        type={shapeType}
-                                        count={state.bins[shapeType].count}
-                                        isGlowing={false}
-                                        isDraggedOver={dragHoverState[shapeType] || false}
-                                        ref={el => containerRefs.current[shapeType] = el}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case GAME_PHASES.RECAP:
-                // Static shapes for recap - one of each type in 2x2 grid
-                const recapShapes = [
-                    {
-                        id: 'recap-triangle',
-                        type: SHAPE_TYPES.TRIANGLE,
-                        color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
-                        size: 200, // Much bigger size to fill container
-                        position: { x: 0, y: 0 },
-                        thickness: 'normal',
-                        variant: 'equilateral'
-                    },
-                    {
-                        id: 'recap-circle',
-                        type: SHAPE_TYPES.CIRCLE,
-                        color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
-                        size: 200, // Much bigger size to fill container
-                        position: { x: 0, y: 0 },
-                        thickness: 'normal'
-                    },
-                    {
-                        id: 'recap-rectangle',
-                        type: SHAPE_TYPES.RECTANGLE,
-                        color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
-                        size: 200, // Much bigger size to fill container
-                        position: { x: 0, y: 0 },
-                        thickness: 'normal'
-                    },
-                    {
-                        id: 'recap-square',
-                        type: SHAPE_TYPES.SQUARE,
-                        color: '#8A9BA8', // Vibrant bluish-grey (same as game shapes)
-                        size: 200, // Much bigger size to fill container
-                        position: { x: 0, y: 0 },
-                        thickness: 'normal'
-                    }
-                ];
-
-                return (
-                    <div className="phase-recap">
-                        <div className="recap-shapes-grid">
-                            {recapShapes.map((shape) => (
-                                <div key={shape.id} className="recap-shape-container">
-                                    <GameShape
-                                        shape={shape}
-                                        isDisabled={true}
-                                        isHighlighted={contentProps?.highlightedShape === shape.type}
-                                        dragConstraints={false}
-                                        className="recap-size"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-
-            default:
-                return (
-                    <div className="phase-default">
-                        <div className="implementation-status">
-                            <h4>Current State:</h4>
-                            <ul>
-                                <li>Phase: {state.currentPhase}</li>
-                                <li>Shapes loaded: {state.shapes.length}</li>
-                                <li>Containers visible: {state.showContainers ? 'Yes' : 'No'}</li>
-                                <li>Active shapes: {state.activeShapes.length}</li>
-                            </ul>
-                        </div>
-                    </div>
-                );
+                </div>
+            );
         }
+
+        // Get configuration for current phase
+        const config = getPhaseRenderConfig(state.currentPhase);
+        const showShapes = config.showShapes !== false;
+
+        // Default case - handle as unknown phase
+        if (!config && state.currentPhase) {
+            return (
+                <div className="phase-default">
+                    <div className="implementation-status">
+                        <h4>Current State:</h4>
+                        <ul>
+                            <li>Phase: {state.currentPhase}</li>
+                            <li>Shapes loaded: {state.shapes.length}</li>
+                            <li>Containers visible: {state.showContainers ? 'Yes' : 'No'}</li>
+                            <li>Active shapes: {state.activeShapes.length}</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
+        // Unified rendering for all standard phases
+        const phaseClassName = `phase-${state.currentPhase.toLowerCase().replace('_', '-')}`;
+        
+        return (
+            <div className={phaseClassName}>
+                <div className="play-area" ref={playAreaRef}>
+                    {/* Shapes positioned freely */}
+                    {showShapes && state.activeShapes.map(shape => (
+                        <GameShape
+                            key={shape.id}
+                            shape={shape}
+                            isDisabled={config.getIsDisabled(shape)}
+                            isHighlighted={config.getIsHighlighted(shape)}
+                            onDragStart={handleShapeDragStart}
+                            onDrag={handleShapeDrag}
+                            onDragEnd={handleShapeDragEnd}
+                            onAnimationComplete={handleShapeAnimationComplete}
+                            dragConstraints={false}
+                        />
+                    ))}
+                    {/* Containers positioned at bottom */}
+                    {config.showContainers && renderContainers(config.animateContainers)}
+                </div>
+            </div>
+        );
     };
 
     return (

@@ -13,7 +13,7 @@ export const introductionPresentations = {
                 transitionType: 'auto',
             },
             {
-                id: 'welcome',
+                id: 'introduction',
                 type: 'welcome',
                 ContentComponent: () => null,
                 tutorText: "I'm Mathy, your personal tutor. 😊 I'm so excited to explore the world of shapes and sizes with you. \n\nReady to start our first adventure?",
