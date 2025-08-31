@@ -11,20 +11,20 @@ export const summaryPresentations = {
                 tutorAnimation: 'on-completion-confetti-happy',
                 ContentComponent: () => {
                     return React.createElement('div', {
-                        style: { 
-                            width: '100%', 
-                            height: '100%', 
-                            display: 'flex', 
+                        style: {
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center'
                         }
                     }, React.createElement('iframe', {
                         src: "https://forms.gle/UqVNWtoUw4eac3Yy9",
-                        width: "100%", 
+                        width: "100%",
                         height: "600",
-                        frameBorder: "0", 
-                        marginHeight: "0", 
+                        frameBorder: "0",
+                        marginHeight: "0",
                         marginWidth: "0",
                         style: {
                             border: '1px solid #ccc',

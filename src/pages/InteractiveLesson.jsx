@@ -38,32 +38,12 @@ import usePerimeterInput from '../hooks/usePerimeterInput';
 import useShapeDesignInput from '../hooks/useShapeDesignInput';
 import useMeasurementInput from '../hooks/useMeasurementInput';
 
-// Import all possible content components
-import ShapeSorterGame from '../components/presentations/03-shape-sorting/ShapeSorterGame';
-import MissionReadiness from '../components/presentations/04-farmer-missions/MissionReadiness';
-import FarmerIntro from '../components/presentations/04-farmer-missions/FarmerIntro';
-import FoxThreat from '../components/presentations/04-farmer-missions/FoxThreat';
-import FarmMap from '../components/presentations/04-farmer-missions/FarmMap';
-import PerimeterDefinition from '../components/presentations/04-farmer-missions/PerimeterDefinition';
-import RectangleSolution from '../components/presentations/04-farmer-missions/RectangleSolution';
-import ShapeDesigner from '../components/presentations/05-shape-designer/ShapeDesigner';
+// Import common components
 import MeasurementInput from '../components/common/MeasurementInput';
 import PrimaryButton from '../components/common/PrimaryButton';
 import HighlightedText from '../components/common/HighlightedText';
 
 import './InteractiveLesson.css';
-
-const componentMap = {
-    'shape-sorting-game': ShapeSorterGame,
-    'mission-readiness': MissionReadiness,
-    'farmer-intro': FarmerIntro,
-    'fox-threat': FoxThreat,
-    'farm-map': FarmMap,
-    'perimeter-definition': PerimeterDefinition,
-    'perimeter-input': FarmMap,
-    'rectangle-solution': RectangleSolution,
-    'shape-designer': ShapeDesigner
-};
 
 const InteractiveLesson = () => {
     const navigate = useDevModeNavigate();
@@ -72,7 +52,7 @@ const InteractiveLesson = () => {
 
     // Developer mode detection
     const isDevMode = useIsDevMode();
-    
+
     // Mobile detection
     const isMobile = useMobileDetection();
 
@@ -87,11 +67,11 @@ const InteractiveLesson = () => {
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
     const [isTTSPaused, setIsTTSPaused] = useState(false);
-    
+
     // Highlighting State
     const [currentAudioTime, setCurrentAudioTime] = useState(0);
     const [currentTimingData, setCurrentTimingData] = useState(null);
-    
+
     // Mute State with localStorage persistence
     const [isMuted, setIsMuted] = useState(() => {
         const stored = localStorage.getItem('tts-muted');
@@ -100,13 +80,13 @@ const InteractiveLesson = () => {
 
     // TTS Ref for direct control
     const ttsRef = React.useRef();
-    
+
     // Video Ref for animation control
     const videoRef = React.useRef();
 
     // Click sound hook
     const playClickSound = useClickSound();
-    
+
     // Answer sound hooks
     const { playCorrectSound, playIncorrectSound } = useAnswerSound();
 
@@ -118,12 +98,12 @@ const InteractiveLesson = () => {
     // TTS Pause/Resume handler
     const handleTTSPauseResume = useCallback(() => {
         playClickSound();
-        
+
         // Only allow pause/resume while speaking or already paused
         if (!isSpeaking && !isTTSPaused) {
             return;
         }
-        
+
         if (ttsRef.current) {
             if (isTTSPaused) {
                 ttsRef.current.resumeTTS();
@@ -134,12 +114,12 @@ const InteractiveLesson = () => {
             }
         }
     }, [isTTSPaused, isSpeaking, playClickSound]);
-    
+
     // Timing update handler for highlighting
     const handleTimeUpdate = useCallback((time) => {
         setCurrentAudioTime(time);
     }, []);
-    
+
     // Mute/Unmute handler
     const handleMuteToggle = useCallback(() => {
         playClickSound();
@@ -154,7 +134,7 @@ const InteractiveLesson = () => {
     const shouldAnimationLoop = (animationName) => {
         const oneTimeAnimations = [
             'waving',
-            'happy-applauding', 
+            'happy-applauding',
             'on-completion-confetti-happy'
         ];
         return !oneTimeAnimations.includes(animationName);
@@ -221,7 +201,7 @@ const InteractiveLesson = () => {
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
-        
+
         // Stop the current TTS manager instance
         if (ttsRef.current && ttsRef.current.stopTTS) {
             ttsRef.current.stopTTS();
@@ -233,7 +213,7 @@ const InteractiveLesson = () => {
         setDynamicTutorText(null);
         setAnimationTrigger(false);
         setActiveFeedbackInteraction(null);
-        
+
         // Reset input states using hooks
         measurementHook.resetMeasurementState();
         perimeterHook.resetPerimeterState();
@@ -247,7 +227,7 @@ const InteractiveLesson = () => {
     const handleDevResetLesson = useCallback(() => {
         setCurrentPresIndex(0);
         setCurrentInteractionIndex(0);
-                setDynamicTutorText(null);
+        setDynamicTutorText(null);
         setShowNextButton(false);
         setAnimationTrigger(false);
     }, []);
@@ -277,7 +257,7 @@ const InteractiveLesson = () => {
             if (feedbackInteraction) {
                 setDynamicTutorText(feedbackInteraction.tutorText);
                 setActiveFeedbackInteraction(feedbackInteraction);
-                
+
                 if (feedbackInteraction.type === 'multiple-choice-question') {
                     // For retry questions, don't show next button - let user answer again
                     return;
@@ -324,14 +304,14 @@ const InteractiveLesson = () => {
         const userAnswer = parseInt(perimeterHook.perimeterInput);
         const correctAnswer = interaction?.contentProps?.correctAnswer;
         const isCorrect = userAnswer === correctAnswer;
-        
+
         // Play appropriate sound immediately
         if (isCorrect) {
             playCorrectSound();
         } else {
             playIncorrectSound();
         }
-        
+
         // Continue with existing perimeter check logic
         perimeterHook.handlePerimeterCheck(
             correctAnswer,
@@ -384,15 +364,15 @@ const InteractiveLesson = () => {
         const userAnswer = parseFloat(measurementHook.measurementInput);
         const correctAnswer = interaction?.contentProps?.correctAnswer;
         const isCorrect = userAnswer === correctAnswer;
-        
-        
+
+
         // Play appropriate sound immediately
         if (isCorrect) {
             playCorrectSound();
         } else {
             playIncorrectSound();
         }
-        
+
         // Continue with existing measurement check logic
         measurementHook.handleMeasurementCheck(
             correctAnswer,
@@ -419,7 +399,7 @@ const InteractiveLesson = () => {
     useEffect(() => {
         // All interactions should start with button hidden and wait for TTS to finish
         setShowNextButton(false);
-        
+
         // Reset animation trigger to prevent flicker
         setAnimationTrigger(false);
 
@@ -449,16 +429,16 @@ const InteractiveLesson = () => {
 
         // Check if this might be a post-animation TTS completion during interaction-based flow
         if (interaction?.transitionType === 'interaction-based' && window.notifyPostAnimationTTSComplete) {
-            
+
             // Try to notify the component - it will check if it's actually waiting
             window.notifyPostAnimationTTSComplete();
-            
+
             // Clear any feedback state
             if (activeFeedbackInteraction) {
                 setActiveFeedbackInteraction(null);
                 setDynamicTutorText(null);
             }
-            
+
             return; // Don't advance - let the main interaction control flow
         }
 
@@ -520,7 +500,7 @@ const InteractiveLesson = () => {
 
     // Update timing data when tutor text changes
     useEffect(() => {
-        
+
         const loadTimingData = async () => {
             if (ttsRef.current && tutorText) {
                 const timingData = await ttsRef.current.getTimingData(tutorText);
@@ -531,7 +511,7 @@ const InteractiveLesson = () => {
                 setCurrentTimingData(null);
             }
         };
-        
+
         loadTimingData();
         // Reset current time when text changes
         setCurrentAudioTime(0);
@@ -563,22 +543,20 @@ const InteractiveLesson = () => {
             return <FeedbackComponent {...feedbackProps} />;
         }
 
-        // Otherwise, render the normal interaction component
-        // Prioritize the ContentComponent defined directly in the interaction data
-        const Component = interaction.ContentComponent || componentMap[interaction.type];
+        const Component = interaction.ContentComponent || null;
 
         if (!Component) return null;
 
         // Generate stable key for same component to prevent unnecessary re-mounting
         const componentName = Component.name || Component.displayName || 'Component';
-        
+
         // Special case: ShapeSorterGame needs unique keys per interaction for phase changes
         // All other components benefit from stable keys to prevent flickering
-        const componentKey = componentName === 'ShapeSorterGame' 
+        const componentKey = componentName === 'ShapeSorterGame'
             ? (() => {
                 // Special handling for recap sequences to prevent unnecessary remounting
                 // All recap interactions use the same phase but different highlighting props
-                if (presentationId === 'shape-sorting-factory' && 
+                if (presentationId === 'shape-sorting-factory' &&
                     interaction.id.startsWith('shape-recap')) {
                     return `${componentName}-${currentPresIndex}-recap`;
                 }
@@ -598,22 +576,14 @@ const InteractiveLesson = () => {
 
         // Special handling for shape-sorting-game component
         if (interaction.type === 'shape-sorting-game') {
-            props.contentProps = {
-                ...interaction.contentProps,
-                phaseConfig: interaction.phaseConfig
-            };
-            // Pass animation completion callback for demo interaction
-            if (interaction.id === 'shape-demo-modeling') {
-                props.onAnimationComplete = handleAnimationComplete;
-            }
+            props.contentProps = interaction.contentProps;
             // Pass intervention callbacks for practice phases
             props.onShapeHint = handleShapeHint;
             props.onShapeAutoHelp = handleShapeAutoHelp;
             props.onShapeCorrection = handleShapeCorrection;
-        } else {
-            // For other components, spread contentProps directly
-            props = { ...props, ...interaction.contentProps };
         }
+
+        props = { ...props, ...interaction.contentProps };
 
         return <Component {...props} />;
     }
@@ -622,356 +592,356 @@ const InteractiveLesson = () => {
         <div>
             <div className="lesson-content">
                 <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#000' }}>
-            <TTSManager
-                ref={ttsRef}
-                text={tutorText}
-                onStart={handleTTSStart}
-                onEnd={handleTTSEnd}
-                onTimeUpdate={handleTimeUpdate}
-                isDevMode={isDevMode}
-                isMobile={isMobile}
-                isMuted={isMuted}
-            />
+                    <TTSManager
+                        ref={ttsRef}
+                        text={tutorText}
+                        onStart={handleTTSStart}
+                        onEnd={handleTTSEnd}
+                        onTimeUpdate={handleTimeUpdate}
+                        isDevMode={isDevMode}
+                        isMobile={isMobile}
+                        isMuted={isMuted}
+                    />
 
-            {/* Top Menu Bar */}
-            <AppBar position="static" sx={{
-                bgcolor: '#000',
-                boxShadow: 'none',
-                borderBottom: '1px solid #2B2B2B'
-            }}>
-                <Toolbar sx={{
-                    justifyContent: 'space-between',
-                    minHeight: '60px !important',
-                    px: '32px',
-                    py: '16px'
-                }}>
-                    {/* Left Side - Lesson Info */}
-                    <Box>
-                        <Typography variant="caption" sx={{ color: '#999', fontSize: '0.7rem', lineHeight: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
-                            LESSON {lessonId === 'perimeter' ? '1' : '1'}
-                            {isDevMode && (
-                                <span style={{ color: '#4CAF50', marginLeft: '8px', fontWeight: 600 }}>
-                                    • DEV MODE
-                                </span>
-                            )}
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#fff', fontSize: '1.1rem', lineHeight: 1.2, textTransform: 'capitalize', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
-                            {lesson?.title || 'Perimeter'}
-                        </Typography>
-                    </Box>
-
-                    {/* Right Side - Navigation */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        {/* Developer Menu */}
-                        {isDevMode && (
-                            <DeveloperMenu
-                                lessonId={lessonId}
-                                currentPresIndex={currentPresIndex}
-                                currentInteractionIndex={currentInteractionIndex}
-                                onInteractionSelect={handleDevInteractionSelect}
-                                onResetLesson={handleDevResetLesson}
-                            />
-                        )}
-                        <IconButton
-                            sx={{
-                                color: '#fff',
-                                bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                borderRadius: '8px',
-                                padding: '8px',
-                                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
-                            }}
-                            onClick={() => navigate('/')}
-                        >
-                            <HomeIcon />
-                        </IconButton>
-                        <Button
-                            startIcon={<ArrowBackIcon />}
-                            sx={{
-                                color: '#fff',
-                                bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                borderRadius: '8px',
-                                padding: '8px 12px',
-                                textTransform: 'none',
-                                fontSize: '0.9rem',
-                                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
-                            }}
-                            onClick={() => navigate(-1)}
-                        >
-                            Go Back
-                        </Button>
-                    </Box>
-                </Toolbar>
-            </AppBar>
-
-            {/* Main Content Area */}
-            <Box sx={{ flex: 1, display: 'flex', bgcolor: '#000' }}>
-                {/* Left Panel - Tutor (26%) */}
-                <Box sx={{
-                    width: '26%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    p: 3,
-                    alignItems: 'flex-start',
-                    textAlign: 'left'
-                }}>
-                    {/* Audio Controls */}
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        width: '100%',
-                        gap: 1,
-                        mb: 2
+                    {/* Top Menu Bar */}
+                    <AppBar position="static" sx={{
+                        bgcolor: '#000',
+                        boxShadow: 'none',
+                        borderBottom: '1px solid #2B2B2B'
                     }}>
-                        <IconButton sx={{
-                            color: isMuted ? '#999' : '#fff',
-                            '&:hover': { 
-                                color: isMuted ? '#bbb' : '#fff',
-                                bgcolor: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }} onClick={handleMuteToggle}>
-                            {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
-                        </IconButton>
-                        <IconButton sx={{
-                            color: (isSpeaking || isTTSPaused) ? '#fff' : '#999',
-                            cursor: (isSpeaking || isTTSPaused) ? 'pointer' : 'not-allowed',
-                            '&:hover': { color: (isSpeaking || isTTSPaused) ? '#fff' : '#999' }
-                        }} onClick={(isSpeaking || isTTSPaused) ? handleTTSPauseResume : (e) => e.preventDefault()}>
-                            {isTTSPaused ? <PlayArrowIcon /> : <PauseIcon />}
-                        </IconButton>
-                    </Box>
-
-                    {/* Tutor Avatar */}
-                    <Box sx={{ mb: 3 }}>
-                        {interaction?.tutorAnimation ? (
-                            <video
-                                ref={videoRef}
-                                src={`/animations/${interaction.tutorAnimation}.webm`}
-                                autoPlay
-                                loop={shouldAnimationLoop(interaction.tutorAnimation)}
-                                muted
-                                style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    objectFit: 'cover'
-                                }}
-                            />
-                        ) : (
-                            <img
-                                src="/images/tutor.svg"
-                                alt="AI Tutor"
-                                style={{
-                                    width: '100px',
-                                    height: '100px'
-                                }}
-                            />
-                        )}
-                    </Box>
-
-                    {/* Tutor Speech */}
-                    <Box sx={{ mb: 3 }}>
-                        <HighlightedText
-                            text={tutorText}
-                            currentTime={currentAudioTime}
-                            timingData={currentTimingData}
-                            variant="body2"
-                            sx={{
-                                color: '#fff',
-                                lineHeight: 1.6,
-                                fontSize: '1rem',
-                                textAlign: 'left',
-                                maxWidth: '100%',
-                                wordBreak: 'break-word',
-                                whiteSpace: 'pre-line',
-                                fontFamily: "'Fustat', 'Inter', sans-serif",
-                                fontWeight: 500
-                            }}
-                        />
-                    </Box>
-
-                    {/* Perimeter Input Interface */}
-                    {interaction?.type === 'perimeter-input' && !isSpeaking && !showNextButton && (
-                        <Box sx={{ mb: 3, width: '100%' }}>
-                            {/* Show solution equation if needed */}
-                            {perimeterHook.showPerimeterSolution && (
-                                <Box sx={{ mb: 2, textAlign: 'left' }}>
-                                    <Typography variant="body2" sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>
-                                        {interaction?.contentProps?.shape?.type === 'rectangle' &&
-                                            `${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} + ${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} = ${interaction.contentProps.correctAnswer}`
-                                        }
-                                        {interaction?.contentProps?.shape?.type === 'square' &&
-                                            `${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} = ${interaction.contentProps.correctAnswer}`
-                                        }
-                                        {interaction?.contentProps?.shape?.type === 'triangle' && interaction?.contentProps?.shape?.sides &&
-                                            `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
-                                        }
-                                        {interaction?.contentProps?.shape?.type === 'pentagon' && interaction?.contentProps?.shape?.sides &&
-                                            `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
-                                        }
-                                    </Typography>
-                                </Box>
-                            )}
-
-                            <MeasurementInput
-                                value={perimeterHook.perimeterInput}
-                                onInputChange={perimeterHook.setPerimeterInput}
-                                onCheck={handlePerimeterCheck}
-                                disabled={perimeterHook.showPerimeterSolution}
-                                placeholder="Enter perimeter"
-                                unit={interaction?.contentProps?.shape?.unit || 'units'}
-                            />
-                        </Box>
-                    )}
-
-                    {/* Shape Design Validation Interface */}
-                    {interaction?.type === 'perimeter-design' && !isSpeaking && !showNextButton && (
-                        <Box sx={{ mb: 3, width: '100%' }}>
-                            {/* Show current vs target perimeter */}
-                            <Box sx={{ mb: 2, textAlign: 'left' }}>
-                                <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
-                                    Target: {interaction?.contentProps?.targetPerimeter} units
+                        <Toolbar sx={{
+                            justifyContent: 'space-between',
+                            minHeight: '60px !important',
+                            px: '32px',
+                            py: '16px'
+                        }}>
+                            {/* Left Side - Lesson Info */}
+                            <Box>
+                                <Typography variant="caption" sx={{ color: '#999', fontSize: '0.7rem', lineHeight: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
+                                    LESSON {lessonId === 'perimeter' ? '1' : '1'}
+                                    {isDevMode && (
+                                        <span style={{ color: '#4CAF50', marginLeft: '8px', fontWeight: 600 }}>
+                                            • DEV MODE
+                                        </span>
+                                    )}
+                                </Typography>
+                                <Typography variant="h6" sx={{ color: '#fff', fontSize: '1.1rem', lineHeight: 1.2, textTransform: 'capitalize', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
+                                    {lesson?.title || 'Perimeter'}
                                 </Typography>
                             </Box>
-                            
-                            {/* Check button */}
-                            <PrimaryButton onClick={handleShapeDesignCheck}>
-                                Check My Shape
-                            </PrimaryButton>
-                        </Box>
-                    )}
 
-                    {/* Measurement Input Interface */}
-                    {interaction?.type === 'shape-measurement' && !isSpeaking && !showNextButton && (
-                        <MeasurementInput
-                            value={measurementHook.measurementInput}
-                            onInputChange={measurementHook.setMeasurementInput}
-                            onCheck={handleMeasurementCheck}
-                            placeholder="Enter length"
-                            unit="cm"
-                        />
-                    )}
-
-
-
-                    {/* Multiple Choice Question Interface - Feedback interactions */}
-                    {activeFeedbackInteraction?.type === 'multiple-choice-question' && !isSpeaking && !showNextButton && (
-                        <Box sx={{ mb: 3, width: '100%' }}>
-                            <Box sx={{ mb: 3 }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                    {activeFeedbackInteraction?.contentProps?.choices?.map((choice, index) => (
-                                        <Button
-                                            key={index}
-                                            variant="outlined"
-                                            onClick={() => handleAnswer({ 
-                                                text: choice.text, 
-                                                isCorrect: choice.isCorrect,
-                                                feedbackId: choice.feedbackId
-                                            })}
-                                            sx={{
-                                                padding: '12px 16px',
-                                                borderRadius: '12px',
-                                                border: '1px solid #545E7D',
-                                                background: '#484D5C',
-                                                fontWeight: 500,
-                                                color: '#fff',
-                                                textTransform: 'none',
-                                                fontSize: '0.95rem',
-                                                textAlign: 'left',
-                                                justifyContent: 'flex-start',
-                                                fontFamily: "'Fustat', 'Inter', sans-serif",
-                                                '&:hover': {
-                                                    background: '#545E7D',
-                                                    borderColor: '#545E7D'
-                                                }
-                                            }}
-                                        >
-                                            {choice.text}
-                                        </Button>
-                                    ))}
-                                </Box>
+                            {/* Right Side - Navigation */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                {/* Developer Menu */}
+                                {isDevMode && (
+                                    <DeveloperMenu
+                                        lessonId={lessonId}
+                                        currentPresIndex={currentPresIndex}
+                                        currentInteractionIndex={currentInteractionIndex}
+                                        onInteractionSelect={handleDevInteractionSelect}
+                                        onResetLesson={handleDevResetLesson}
+                                    />
+                                )}
+                                <IconButton
+                                    sx={{
+                                        color: '#fff',
+                                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                        borderRadius: '8px',
+                                        padding: '8px',
+                                        '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
+                                    }}
+                                    onClick={() => navigate('/')}
+                                >
+                                    <HomeIcon />
+                                </IconButton>
+                                <Button
+                                    startIcon={<ArrowBackIcon />}
+                                    sx={{
+                                        color: '#fff',
+                                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                        borderRadius: '8px',
+                                        padding: '8px 12px',
+                                        textTransform: 'none',
+                                        fontSize: '0.9rem',
+                                        '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
+                                    }}
+                                    onClick={() => navigate(-1)}
+                                >
+                                    Go Back
+                                </Button>
                             </Box>
-                        </Box>
-                    )}
+                        </Toolbar>
+                    </AppBar>
 
-                    {/* Multiple Choice Question Interface - General case */}
-                    {interaction?.type === 'multiple-choice-question' && !activeFeedbackInteraction && !isSpeaking && !showNextButton && (
-                        <Box sx={{ mb: 3, width: '100%' }}>
-                            <Box sx={{ mb: 3 }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                    {interaction?.contentProps?.choices?.map((choice, index) => (
-                                        <Button
-                                            key={index}
-                                            variant="outlined"
-                                            onClick={() => handleAnswer({ 
-                                                text: choice.text, 
-                                                isCorrect: choice.isCorrect,
-                                                feedbackId: choice.feedbackId
-                                            })}
-                                            sx={{
-                                                padding: '12px 16px',
-                                                borderRadius: '12px',
-                                                border: '1px solid #545E7D',
-                                                background: '#484D5C',
-                                                fontWeight: 500,
-                                                color: '#fff',
-                                                textTransform: 'none',
-                                                fontSize: '0.95rem',
-                                                textAlign: 'left',
-                                                justifyContent: 'flex-start',
-                                                fontFamily: "'Fustat', 'Inter', sans-serif",
-                                                '&:hover': {
-                                                    background: '#545E7D',
-                                                    borderColor: '#545E7D'
-                                                }
-                                            }}
-                                        >
-                                            {choice.text}
-                                        </Button>
-                                    ))}
-                                </Box>
-                            </Box>
-                        </Box>
-                    )}
-
-                    {/* Action Button */}
-                    {showNextButton && (
-                        <PrimaryButton onClick={() => {
-                            playClickSound();
-                            advanceToNext();
+                    {/* Main Content Area */}
+                    <Box sx={{ flex: 1, display: 'flex', bgcolor: '#000' }}>
+                        {/* Left Panel - Tutor (26%) */}
+                        <Box sx={{
+                            width: '26%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            p: 3,
+                            alignItems: 'flex-start',
+                            textAlign: 'left'
                         }}>
-                            {(activeFeedbackInteraction || interaction)?.nextButtonText || "Continue"}
-                        </PrimaryButton>
-                    )}
-                </Box>
+                            {/* Audio Controls */}
+                            <Box sx={{
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                width: '100%',
+                                gap: 1,
+                                mb: 2
+                            }}>
+                                <IconButton sx={{
+                                    color: isMuted ? '#999' : '#fff',
+                                    '&:hover': {
+                                        color: isMuted ? '#bbb' : '#fff',
+                                        bgcolor: 'rgba(255, 255, 255, 0.1)'
+                                    }
+                                }} onClick={handleMuteToggle}>
+                                    {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+                                </IconButton>
+                                <IconButton sx={{
+                                    color: (isSpeaking || isTTSPaused) ? '#fff' : '#999',
+                                    cursor: (isSpeaking || isTTSPaused) ? 'pointer' : 'not-allowed',
+                                    '&:hover': { color: (isSpeaking || isTTSPaused) ? '#fff' : '#999' }
+                                }} onClick={(isSpeaking || isTTSPaused) ? handleTTSPauseResume : (e) => e.preventDefault()}>
+                                    {isTTSPaused ? <PlayArrowIcon /> : <PauseIcon />}
+                                </IconButton>
+                            </Box>
 
-                {/* Right Panel - Container (74%) */}
-                <Box sx={{
-                    width: '74%',
-                    bgcolor: '#000',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 3
-                }}>
-                    {/* Content Playground */}
-                    <Paper
-                        sx={{
-                            width: '100%',
-                            height: '100%',
-                            bgcolor: '#1B1B1B',
-                            borderRadius: '16px',
+                            {/* Tutor Avatar */}
+                            <Box sx={{ mb: 3 }}>
+                                {interaction?.tutorAnimation ? (
+                                    <video
+                                        ref={videoRef}
+                                        src={`/animations/${interaction.tutorAnimation}.webm`}
+                                        autoPlay
+                                        loop={shouldAnimationLoop(interaction.tutorAnimation)}
+                                        muted
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'cover'
+                                        }}
+                                    />
+                                ) : (
+                                    <img
+                                        src="/images/tutor.svg"
+                                        alt="AI Tutor"
+                                        style={{
+                                            width: '100px',
+                                            height: '100px'
+                                        }}
+                                    />
+                                )}
+                            </Box>
+
+                            {/* Tutor Speech */}
+                            <Box sx={{ mb: 3 }}>
+                                <HighlightedText
+                                    text={tutorText}
+                                    currentTime={currentAudioTime}
+                                    timingData={currentTimingData}
+                                    variant="body2"
+                                    sx={{
+                                        color: '#fff',
+                                        lineHeight: 1.6,
+                                        fontSize: '1rem',
+                                        textAlign: 'left',
+                                        maxWidth: '100%',
+                                        wordBreak: 'break-word',
+                                        whiteSpace: 'pre-line',
+                                        fontFamily: "'Fustat', 'Inter', sans-serif",
+                                        fontWeight: 500
+                                    }}
+                                />
+                            </Box>
+
+                            {/* Perimeter Input Interface */}
+                            {interaction?.type === 'perimeter-input' && !isSpeaking && !showNextButton && (
+                                <Box sx={{ mb: 3, width: '100%' }}>
+                                    {/* Show solution equation if needed */}
+                                    {perimeterHook.showPerimeterSolution && (
+                                        <Box sx={{ mb: 2, textAlign: 'left' }}>
+                                            <Typography variant="body2" sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>
+                                                {interaction?.contentProps?.shape?.type === 'rectangle' &&
+                                                    `${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} + ${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} = ${interaction.contentProps.correctAnswer}`
+                                                }
+                                                {interaction?.contentProps?.shape?.type === 'square' &&
+                                                    `${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} = ${interaction.contentProps.correctAnswer}`
+                                                }
+                                                {interaction?.contentProps?.shape?.type === 'triangle' && interaction?.contentProps?.shape?.sides &&
+                                                    `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
+                                                }
+                                                {interaction?.contentProps?.shape?.type === 'pentagon' && interaction?.contentProps?.shape?.sides &&
+                                                    `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
+                                                }
+                                            </Typography>
+                                        </Box>
+                                    )}
+
+                                    <MeasurementInput
+                                        value={perimeterHook.perimeterInput}
+                                        onInputChange={perimeterHook.setPerimeterInput}
+                                        onCheck={handlePerimeterCheck}
+                                        disabled={perimeterHook.showPerimeterSolution}
+                                        placeholder="Enter perimeter"
+                                        unit={interaction?.contentProps?.shape?.unit || 'units'}
+                                    />
+                                </Box>
+                            )}
+
+                            {/* Shape Design Validation Interface */}
+                            {interaction?.type === 'perimeter-design' && !isSpeaking && !showNextButton && (
+                                <Box sx={{ mb: 3, width: '100%' }}>
+                                    {/* Show current vs target perimeter */}
+                                    <Box sx={{ mb: 2, textAlign: 'left' }}>
+                                        <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
+                                            Target: {interaction?.contentProps?.targetPerimeter} units
+                                        </Typography>
+                                    </Box>
+
+                                    {/* Check button */}
+                                    <PrimaryButton onClick={handleShapeDesignCheck}>
+                                        Check My Shape
+                                    </PrimaryButton>
+                                </Box>
+                            )}
+
+                            {/* Measurement Input Interface */}
+                            {interaction?.type === 'shape-measurement' && !isSpeaking && !showNextButton && (
+                                <MeasurementInput
+                                    value={measurementHook.measurementInput}
+                                    onInputChange={measurementHook.setMeasurementInput}
+                                    onCheck={handleMeasurementCheck}
+                                    placeholder="Enter length"
+                                    unit="cm"
+                                />
+                            )}
+
+
+
+                            {/* Multiple Choice Question Interface - Feedback interactions */}
+                            {activeFeedbackInteraction?.type === 'multiple-choice-question' && !isSpeaking && !showNextButton && (
+                                <Box sx={{ mb: 3, width: '100%' }}>
+                                    <Box sx={{ mb: 3 }}>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                            {activeFeedbackInteraction?.contentProps?.choices?.map((choice, index) => (
+                                                <Button
+                                                    key={index}
+                                                    variant="outlined"
+                                                    onClick={() => handleAnswer({
+                                                        text: choice.text,
+                                                        isCorrect: choice.isCorrect,
+                                                        feedbackId: choice.feedbackId
+                                                    })}
+                                                    sx={{
+                                                        padding: '12px 16px',
+                                                        borderRadius: '12px',
+                                                        border: '1px solid #545E7D',
+                                                        background: '#484D5C',
+                                                        fontWeight: 500,
+                                                        color: '#fff',
+                                                        textTransform: 'none',
+                                                        fontSize: '0.95rem',
+                                                        textAlign: 'left',
+                                                        justifyContent: 'flex-start',
+                                                        fontFamily: "'Fustat', 'Inter', sans-serif",
+                                                        '&:hover': {
+                                                            background: '#545E7D',
+                                                            borderColor: '#545E7D'
+                                                        }
+                                                    }}
+                                                >
+                                                    {choice.text}
+                                                </Button>
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            )}
+
+                            {/* Multiple Choice Question Interface - General case */}
+                            {interaction?.type === 'multiple-choice-question' && !activeFeedbackInteraction && !isSpeaking && !showNextButton && (
+                                <Box sx={{ mb: 3, width: '100%' }}>
+                                    <Box sx={{ mb: 3 }}>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                            {interaction?.contentProps?.choices?.map((choice, index) => (
+                                                <Button
+                                                    key={index}
+                                                    variant="outlined"
+                                                    onClick={() => handleAnswer({
+                                                        text: choice.text,
+                                                        isCorrect: choice.isCorrect,
+                                                        feedbackId: choice.feedbackId
+                                                    })}
+                                                    sx={{
+                                                        padding: '12px 16px',
+                                                        borderRadius: '12px',
+                                                        border: '1px solid #545E7D',
+                                                        background: '#484D5C',
+                                                        fontWeight: 500,
+                                                        color: '#fff',
+                                                        textTransform: 'none',
+                                                        fontSize: '0.95rem',
+                                                        textAlign: 'left',
+                                                        justifyContent: 'flex-start',
+                                                        fontFamily: "'Fustat', 'Inter', sans-serif",
+                                                        '&:hover': {
+                                                            background: '#545E7D',
+                                                            borderColor: '#545E7D'
+                                                        }
+                                                    }}
+                                                >
+                                                    {choice.text}
+                                                </Button>
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            )}
+
+                            {/* Action Button */}
+                            {showNextButton && (
+                                <PrimaryButton onClick={() => {
+                                    playClickSound();
+                                    advanceToNext();
+                                }}>
+                                    {(activeFeedbackInteraction || interaction)?.nextButtonText || "Continue"}
+                                </PrimaryButton>
+                            )}
+                        </Box>
+
+                        {/* Right Panel - Container (74%) */}
+                        <Box sx={{
+                            width: '74%',
+                            bgcolor: '#000',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            overflow: 'hidden'
-                        }}
-                        elevation={0}
-                    >
-                        <AnimatePresence mode="wait">
-                            {renderContent()}
-                        </AnimatePresence>
-                    </Paper>
-                </Box>
-            </Box>
+                            p: 3
+                        }}>
+                            {/* Content Playground */}
+                            <Paper
+                                sx={{
+                                    width: '100%',
+                                    height: '100%',
+                                    bgcolor: '#1B1B1B',
+                                    borderRadius: '16px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    overflow: 'hidden'
+                                }}
+                                elevation={0}
+                            >
+                                <AnimatePresence mode="wait">
+                                    {renderContent()}
+                                </AnimatePresence>
+                            </Paper>
+                        </Box>
+                    </Box>
                 </Box>
             </div>
             {isMobile && <MobileRestrictionOverlay />}

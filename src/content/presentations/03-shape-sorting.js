@@ -1,152 +1,189 @@
+import ShapeSorterGame from '../../components/presentations/03-shape-sorting/ShapeSorterGame';
+
 export const shapeSortingPresentations = {
     'shape-sorting-factory': {
         interactions: [
             {
                 id: 'shape-factory-intro',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Now that you've mastered measuring with standard units, let's apply what you've learned! \n\nWelcome to the Shape Factory - where we sort shapes by type. I'll guide you through this step by step.",
                 tutorAnimation: 'explaining',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Show Me!",
-                phaseConfig: { initialPhase: 'intro' }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'intro' }
+                }
             },
             {
                 id: 'shape-tools-reveal',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Perfect! Let me show you your sorting tools - these special containers will help organize our shapes.",
                 tutorAnimation: 'explaining',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Watch Demo!",
-                phaseConfig: { initialPhase: 'tools' }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'tools' }
+                }
             },
             {
                 id: 'shape-demo-modeling',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Watch carefully! I'll demonstrate by sorting one square into its matching container. See how the square goes to the squares container?",
                 tutorAnimation: 'explaining',
                 transitionType: 'interaction',
                 showNextButton: true,
                 nextButtonText: "Try It",
-                phaseConfig: { initialPhase: 'modeling' }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'modeling' }
+                }
             },
             {
                 id: 'shape-guided-practice',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Now it's your turn! Try sorting this triangle into the correct container. Drag it to where you think it belongs.",
                 tutorAnimation: 'normal-talking',
                 transitionType: 'interaction-based',
-                phaseConfig: { initialPhase: 'guided', targetShapes: 1 }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'guided', targetShapes: 1 }
+                }
             },
             {
                 id: 'shape-practice-setup',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Ready for more? This time you'll sort 3 different shapes. Remember - triangles with triangles, circles with circles, and so on. I'll help if you need it!",
                 tutorAnimation: 'explaining',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Start Practice",
-                phaseConfig: { initialPhase: 'practice_setup', targetShapes: 3 }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'practice_setup', targetShapes: 3 }
+                }
             },
             {
                 id: 'shape-practice-main',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Go ahead and sort these 3 shapes! Take your time and think about which container each shape belongs in.",
                 tutorAnimation: 'normal-talking',
                 transitionType: 'interaction-based',
-                phaseConfig: { initialPhase: 'practice', targetShapes: 3, maxInterventions: 2 }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'practice', targetShapes: 3, maxInterventions: 2 }
+                }
             },
             {
                 id: 'shape-challenge-setup',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Great progress! Now for the final challenge - you'll sort 8 shapes with very little help. This will show how well you understand shape sorting!",
                 tutorAnimation: 'explaining',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Begin Challenge",
-                phaseConfig: { initialPhase: 'challenge_setup', targetShapes: 8 }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'challenge_setup', targetShapes: 8 }
+                }
             },
             {
                 id: 'shape-final-challenge',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Here we go! Sort all 8 shapes into their correct containers. You've got this!",
                 tutorAnimation: 'normal-talking',
                 transitionType: 'interaction-based',
-                phaseConfig: { initialPhase: 'challenge', targetShapes: 8, maxInterventions: 1 }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'challenge', targetShapes: 8, maxInterventions: 1 }
+                }
             },
             {
                 id: 'shape-completion',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Outstanding work! You've successfully completed the Shape Factory challenge. You've shown you can identify and sort shapes correctly!",
                 tutorAnimation: 'happy-applauding',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "What's Next?",
-                phaseConfig: { initialPhase: 'completion' }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'completion' }
+                }
             },
             {
                 id: 'shape-recap-intro',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Let's recap what you learned: shapes can be sorted by their type.",
                 tutorAnimation: 'explaining',
                 transitionType: 'auto',
-                phaseConfig: { initialPhase: 'recap' }
+                contentProps: {
+                    phaseConfig: { initialPhase: 'recap' }
+                }
             },
             {
                 id: 'shape-recap-triangle',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Triangles have three sides and three corners. They go in the triangles group.",
                 tutorAnimation: 'explaining',
                 transitionType: 'auto',
-                phaseConfig: { initialPhase: 'recap' },
                 contentProps: {
+                    phaseConfig: { initialPhase: 'recap' },
                     highlightedShape: 'triangle'
                 }
             },
             {
                 id: 'shape-recap-circle',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Circles are round with no corners or straight sides. They belong in the circles group.",
                 tutorAnimation: 'explaining',
                 transitionType: 'auto',
-                phaseConfig: { initialPhase: 'recap' },
                 contentProps: {
+                    phaseConfig: { initialPhase: 'recap' },
                     highlightedShape: 'circle'
                 }
             },
             {
                 id: 'shape-recap-rectangle',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Rectangles have four sides with opposite sides equal. They go in the rectangles group.",
                 tutorAnimation: 'explaining',
                 transitionType: 'auto',
-                phaseConfig: { initialPhase: 'recap' },
                 contentProps: {
+                    phaseConfig: { initialPhase: 'recap' },
                     highlightedShape: 'rectangle'
                 }
             },
             {
                 id: 'shape-recap-square',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Squares have four equal sides. They belong in the squares group.",
                 tutorAnimation: 'explaining',
                 transitionType: 'auto',
-                phaseConfig: { initialPhase: 'recap' },
                 contentProps: {
+                    phaseConfig: { initialPhase: 'recap' },
                     highlightedShape: 'square'
                 }
             },
             {
                 id: 'shape-recap-final',
                 type: 'shape-sorting-game',
+                ContentComponent: ShapeSorterGame,
                 tutorText: "Great work! You've learned to identify and sort all these different shapes. This skill will help you in many areas of math!",
                 tutorAnimation: 'happy-applauding',
                 transitionType: 'manual',
                 showNextButton: true,
                 nextButtonText: "Continue Lesson",
-                phaseConfig: { initialPhase: 'recap' },
                 contentProps: {
+                    phaseConfig: { initialPhase: 'recap' },
                     highlightedShape: 'all'
                 }
             }
