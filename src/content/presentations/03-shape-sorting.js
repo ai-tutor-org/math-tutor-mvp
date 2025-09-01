@@ -1,7 +1,7 @@
 import ShapeSorterGame from '../../components/presentations/03-shape-sorting/ShapeSorterGame';
 
 export const shapeSortingPresentations = {
-    'shape-sorting-factory': {
+    'shape-sorting-intro': {
         interactions: [
             {
                 id: 'shape-factory-intro',
@@ -41,7 +41,11 @@ export const shapeSortingPresentations = {
                 contentProps: {
                     phaseConfig: { initialPhase: 'modeling' }
                 }
-            },
+            }
+        ]
+    },
+    'shape-sorting-guided': {
+        interactions: [
             {
                 id: 'shape-guided-practice',
                 type: 'shape-sorting-game',
@@ -50,9 +54,38 @@ export const shapeSortingPresentations = {
                 tutorAnimation: 'normal-talking',
                 transitionType: 'interaction-based',
                 contentProps: {
-                    phaseConfig: { initialPhase: 'guided', targetShapes: 1 }
+                    phaseConfig: { initialPhase: 'guided', targetShapes: 1 },
+                    feedbackIds: {
+                        'triangle-hint': 'triangle-hint',
+                        'triangle-auto-help': 'triangle-auto-help',
+                        'triangle-correction': 'triangle-correction'
+                    }
                 }
+            }
+        ],
+        feedbackRegistry: {
+            'triangle-hint': {
+                id: 'triangle-hint',
+                type: 'tutor-monologue',
+                tutorText: "Remember, a triangle has three sides. Look for the container labeled 'Triangles'.",
+                transitionType: 'auto'
             },
+            'triangle-auto-help': {
+                id: 'triangle-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "Let me help you with that triangle. Watch as I place it in the correct container.",
+                transitionType: 'auto'
+            },
+            'triangle-correction': {
+                id: 'triangle-correction',
+                type: 'tutor-monologue',
+                tutorText: "Great! Let's continue with the next shape.",
+                transitionType: 'auto'
+            }
+        }
+    },
+    'shape-sorting-practice': {
+        interactions: [
             {
                 id: 'shape-practice-setup',
                 type: 'shape-sorting-game',
@@ -74,9 +107,80 @@ export const shapeSortingPresentations = {
                 tutorAnimation: 'normal-talking',
                 transitionType: 'interaction-based',
                 contentProps: {
-                    phaseConfig: { initialPhase: 'practice', targetShapes: 3, maxInterventions: 2 }
+                    phaseConfig: { initialPhase: 'practice', targetShapes: 3, maxInterventions: 2 },
+                    feedbackIds: {
+                        'triangle-hint': 'triangle-hint',
+                        'triangle-auto-help': 'triangle-auto-help',
+                        'triangle-correction': 'triangle-correction',
+                        'circle-hint': 'circle-hint',
+                        'circle-auto-help': 'circle-auto-help',
+                        'circle-correction': 'circle-correction',
+                        'square-hint': 'square-hint',
+                        'square-auto-help': 'square-auto-help',
+                        'square-correction': 'square-correction'
+                    }
                 }
+            }
+        ],
+        feedbackRegistry: {
+            'triangle-hint': {
+                id: 'triangle-hint',
+                type: 'tutor-monologue',
+                tutorText: "Remember, a triangle has three sides. Look for the container labeled 'Triangles'.",
+                transitionType: 'auto'
             },
+            'triangle-auto-help': {
+                id: 'triangle-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "Let me help you with that triangle. Watch as I place it in the correct container.",
+                transitionType: 'auto'
+            },
+            'triangle-correction': {
+                id: 'triangle-correction',
+                type: 'tutor-monologue',
+                tutorText: "Great! Let's continue with the next shape.",
+                transitionType: 'auto'
+            },
+            'circle-hint': {
+                id: 'circle-hint',
+                type: 'tutor-monologue',
+                tutorText: "A circle is round with no corners. Find the 'Circles' container.",
+                transitionType: 'auto'
+            },
+            'circle-auto-help': {
+                id: 'circle-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "No worries! Let me show you where this circle belongs.",
+                transitionType: 'auto'
+            },
+            'circle-correction': {
+                id: 'circle-correction',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! You're getting the hang of this.",
+                transitionType: 'auto'
+            },
+            'square-hint': {
+                id: 'square-hint',
+                type: 'tutor-monologue',
+                tutorText: "A square has four equal sides. Find the 'Squares' container.",
+                transitionType: 'auto'
+            },
+            'square-auto-help': {
+                id: 'square-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "Don't worry! Watch me put this square where it belongs.",
+                transitionType: 'auto'
+            },
+            'square-correction': {
+                id: 'square-correction',
+                type: 'tutor-monologue',
+                tutorText: "Wonderful! You sorted that perfectly.",
+                transitionType: 'auto'
+            }
+        }
+    },
+    'shape-sorting-challenge': {
+        interactions: [
             {
                 id: 'shape-challenge-setup',
                 type: 'shape-sorting-game',
@@ -98,9 +202,101 @@ export const shapeSortingPresentations = {
                 tutorAnimation: 'normal-talking',
                 transitionType: 'interaction-based',
                 contentProps: {
-                    phaseConfig: { initialPhase: 'challenge', targetShapes: 8, maxInterventions: 1 }
+                    phaseConfig: { initialPhase: 'challenge', targetShapes: 8, maxInterventions: 1 },
+                    feedbackIds: {
+                        'triangle-hint': 'triangle-hint',
+                        'triangle-auto-help': 'triangle-auto-help',
+                        'triangle-correction': 'triangle-correction',
+                        'circle-hint': 'circle-hint',
+                        'circle-auto-help': 'circle-auto-help',
+                        'circle-correction': 'circle-correction',
+                        'rectangle-hint': 'rectangle-hint',
+                        'rectangle-auto-help': 'rectangle-auto-help',
+                        'rectangle-correction': 'rectangle-correction',
+                        'square-hint': 'square-hint',
+                        'square-auto-help': 'square-auto-help',
+                        'square-correction': 'square-correction'
+                    }
                 }
+            }
+        ],
+        feedbackRegistry: {
+            'triangle-hint': {
+                id: 'triangle-hint',
+                type: 'tutor-monologue',
+                tutorText: "Remember, a triangle has three sides. Look for the container labeled 'Triangles'.",
+                transitionType: 'auto'
             },
+            'triangle-auto-help': {
+                id: 'triangle-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "Let me help you with that triangle. Watch as I place it in the correct container.",
+                transitionType: 'auto'
+            },
+            'triangle-correction': {
+                id: 'triangle-correction',
+                type: 'tutor-monologue',
+                tutorText: "Great! Let's continue with the next shape.",
+                transitionType: 'auto'
+            },
+            'circle-hint': {
+                id: 'circle-hint',
+                type: 'tutor-monologue',
+                tutorText: "A circle is round with no corners. Find the 'Circles' container.",
+                transitionType: 'auto'
+            },
+            'circle-auto-help': {
+                id: 'circle-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "No worries! Let me show you where this circle belongs.",
+                transitionType: 'auto'
+            },
+            'circle-correction': {
+                id: 'circle-correction',
+                type: 'tutor-monologue',
+                tutorText: "Perfect! You're getting the hang of this.",
+                transitionType: 'auto'
+            },
+            'rectangle-hint': {
+                id: 'rectangle-hint',
+                type: 'tutor-monologue',
+                tutorText: "This rectangle has four sides with opposite sides equal. Look for the 'Rectangles' container.",
+                transitionType: 'auto'
+            },
+            'rectangle-auto-help': {
+                id: 'rectangle-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "Here, let me help you place this rectangle in the right spot.",
+                transitionType: 'auto'
+            },
+            'rectangle-correction': {
+                id: 'rectangle-correction',
+                type: 'tutor-monologue',
+                tutorText: "Excellent work! Keep going.",
+                transitionType: 'auto'
+            },
+            'square-hint': {
+                id: 'square-hint',
+                type: 'tutor-monologue',
+                tutorText: "A square has four equal sides. Find the 'Squares' container.",
+                transitionType: 'auto'
+            },
+            'square-auto-help': {
+                id: 'square-auto-help',
+                type: 'tutor-monologue',
+                tutorText: "Don't worry! Watch me put this square where it belongs.",
+                transitionType: 'auto'
+            },
+            'square-correction': {
+                id: 'square-correction',
+                type: 'tutor-monologue',
+                tutorText: "Wonderful! You sorted that perfectly.",
+                transitionType: 'auto'
+            }
+        }
+    },
+    'shape-sorting-completion': {
+        interactions: [
             {
                 id: 'shape-completion',
                 type: 'shape-sorting-game',
@@ -187,80 +383,6 @@ export const shapeSortingPresentations = {
                     highlightedShape: 'all'
                 }
             }
-        ],
-        feedbackRegistry: {
-            'triangle-hint': {
-                id: 'triangle-hint',
-                type: 'tutor-monologue',
-                tutorText: "Remember, a triangle has three sides. Look for the container labeled 'Triangles'.",
-                transitionType: 'auto'
-            },
-            'triangle-auto-help': {
-                id: 'triangle-auto-help',
-                type: 'tutor-monologue',
-                tutorText: "Let me help you with that triangle. Watch as I place it in the correct container.",
-                transitionType: 'auto'
-            },
-            'triangle-correction': {
-                id: 'triangle-correction',
-                type: 'tutor-monologue',
-                tutorText: "Great! Let's continue with the next shape.",
-                transitionType: 'auto'
-            },
-            'circle-hint': {
-                id: 'circle-hint',
-                type: 'tutor-monologue',
-                tutorText: "A circle is round with no corners. Find the 'Circles' container.",
-                transitionType: 'auto'
-            },
-            'circle-auto-help': {
-                id: 'circle-auto-help',
-                type: 'tutor-monologue',
-                tutorText: "No worries! Let me show you where this circle belongs.",
-                transitionType: 'auto'
-            },
-            'circle-correction': {
-                id: 'circle-correction',
-                type: 'tutor-monologue',
-                tutorText: "Perfect! You're getting the hang of this.",
-                transitionType: 'auto'
-            },
-            'rectangle-hint': {
-                id: 'rectangle-hint',
-                type: 'tutor-monologue',
-                tutorText: "This rectangle has four sides with opposite sides equal. Look for the 'Rectangles' container.",
-                transitionType: 'auto'
-            },
-            'rectangle-auto-help': {
-                id: 'rectangle-auto-help',
-                type: 'tutor-monologue',
-                tutorText: "Here, let me help you place this rectangle in the right spot.",
-                transitionType: 'auto'
-            },
-            'rectangle-correction': {
-                id: 'rectangle-correction',
-                type: 'tutor-monologue',
-                tutorText: "Excellent work! Keep going.",
-                transitionType: 'auto'
-            },
-            'square-hint': {
-                id: 'square-hint',
-                type: 'tutor-monologue',
-                tutorText: "A square has four equal sides. Find the 'Squares' container.",
-                transitionType: 'auto'
-            },
-            'square-auto-help': {
-                id: 'square-auto-help',
-                type: 'tutor-monologue',
-                tutorText: "Don't worry! Watch me put this square where it belongs.",
-                transitionType: 'auto'
-            },
-            'square-correction': {
-                id: 'square-correction',
-                type: 'tutor-monologue',
-                tutorText: "Wonderful! You sorted that perfectly.",
-                transitionType: 'auto'
-            }
-        }
+        ]
     }
 };

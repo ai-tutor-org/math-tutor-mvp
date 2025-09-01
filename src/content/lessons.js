@@ -15,7 +15,23 @@ export const lessons = {
                 transition: { type: 'automatic' }
             },
             {
-                presentationId: 'shape-sorting-factory',
+                presentationId: 'shape-sorting-intro',
+                transition: { type: 'manual', buttonText: "Try Guided Practice" }
+            },
+            {
+                presentationId: 'shape-sorting-guided',
+                transition: { type: 'manual', buttonText: "Ready for Practice" }
+            },
+            {
+                presentationId: 'shape-sorting-practice',
+                transition: { type: 'manual', buttonText: "Take the Challenge" }
+            },
+            {
+                presentationId: 'shape-sorting-challenge',
+                transition: { type: 'manual', buttonText: "See My Progress" }
+            },
+            {
+                presentationId: 'shape-sorting-completion',
                 transition: { type: 'manual', buttonText: "Complete Lesson" }
             },
             {

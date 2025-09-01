@@ -140,7 +140,7 @@ const InteractiveLesson = () => {
         return !oneTimeAnimations.includes(animationName);
     };
 
-    // Data from contentData.js
+    // Data from content data
     const lesson = useMemo(() => lessons[lessonId], [lessonId]);
     const presentationId = useMemo(() => {
         return lesson.sequence[currentPresIndex]?.presentationId;
@@ -150,7 +150,7 @@ const InteractiveLesson = () => {
     }, [presentationId]);
     const interaction = useMemo(() => presentation?.interactions[currentInteractionIndex], [presentation, currentInteractionIndex]);
 
-    // Helper function to get feedback text from contentData
+    // Helper function to get feedback text from content data
     const getFeedbackText = useCallback((feedbackInteractionId) => {
         // First check current presentation's feedbackRegistry
         if (presentation?.feedbackRegistry?.[feedbackInteractionId]) {
@@ -191,7 +191,6 @@ const InteractiveLesson = () => {
             }
         }
     }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
-
 
 
     // Developer mode handlers
@@ -324,27 +323,6 @@ const InteractiveLesson = () => {
         );
     }, [perimeterHook, interaction, getFeedbackText, getFeedbackInteraction, playCorrectSound, playIncorrectSound]);
 
-    // Shape sorting game intervention callbacks
-    const handleShapeHint = useCallback((shapeType) => {
-        const hintText = getFeedbackText(`${shapeType}-hint`);
-        if (hintText) {
-            setDynamicTutorText(hintText);
-        }
-    }, [getFeedbackText]);
-
-    const handleShapeAutoHelp = useCallback((shapeType) => {
-        const autoHelpText = getFeedbackText(`${shapeType}-auto-help`);
-        if (autoHelpText) {
-            setDynamicTutorText(autoHelpText);
-        }
-    }, [getFeedbackText]);
-
-    const handleShapeCorrection = useCallback((shapeType) => {
-        const correctionText = getFeedbackText(`${shapeType}-correction`);
-        if (correctionText) {
-            setDynamicTutorText(correctionText);
-        }
-    }, [getFeedbackText]);
 
     const handleShapeDesignCheck = useCallback(() => {
         playClickSound();
@@ -358,6 +336,13 @@ const InteractiveLesson = () => {
             setShowNextButton
         );
     }, [shapeDesignHook, interaction, getFeedbackText, getFeedbackInteraction, playClickSound]);
+
+    const handleShapeFeedback = useCallback((feedbackId) => {
+        const feedbackText = getFeedbackText(feedbackId);
+        if (feedbackText) {
+            setDynamicTutorText(feedbackText);
+        }
+    }, [getFeedbackText]);
 
     const handleMeasurementCheck = useCallback(() => {
         // Validate answer immediately to determine which sound to play
@@ -495,6 +480,7 @@ const InteractiveLesson = () => {
         };
     }, [advanceToNext]);
 
+
     const tutorText = dynamicTutorText || (interaction?.tutorText.replace('{userName}', userName) ?? '');
 
 
@@ -544,29 +530,13 @@ const InteractiveLesson = () => {
         }
 
         const Component = interaction.ContentComponent || null;
-
         if (!Component) return null;
 
         // Generate stable key for same component to prevent unnecessary re-mounting
         const componentName = Component.name || Component.displayName || 'Component';
-
-        // Special case: ShapeSorterGame needs unique keys per interaction for phase changes
-        // All other components benefit from stable keys to prevent flickering
-        const componentKey = componentName === 'ShapeSorterGame'
-            ? (() => {
-                // Special handling for recap sequences to prevent unnecessary remounting
-                // All recap interactions use the same phase but different highlighting props
-                if (presentationId === 'shape-sorting-factory' &&
-                    interaction.id.startsWith('shape-recap')) {
-                    return `${componentName}-${currentPresIndex}-recap`;
-                }
-                // Default behavior for all other ShapeSorterGame interactions
-                return `${componentName}-${currentPresIndex}-${currentInteractionIndex}`;
-            })()
-            : `${componentName}-${currentPresIndex}`;
+        const componentKey = `${componentName}-${currentPresIndex}`;
 
         let props = {
-            key: componentKey,
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
             onInteraction: handleUserInteraction,
@@ -577,15 +547,12 @@ const InteractiveLesson = () => {
         // Special handling for shape-sorting-game component
         if (interaction.type === 'shape-sorting-game') {
             props.contentProps = interaction.contentProps;
-            // Pass intervention callbacks for practice phases
-            props.onShapeHint = handleShapeHint;
-            props.onShapeAutoHelp = handleShapeAutoHelp;
-            props.onShapeCorrection = handleShapeCorrection;
+            props.onFeedbackTrigger = handleShapeFeedback;
         }
 
         props = { ...props, ...interaction.contentProps };
 
-        return <Component {...props} />;
+        return <Component key={componentKey} {...props} />;
     }
 
     return (
