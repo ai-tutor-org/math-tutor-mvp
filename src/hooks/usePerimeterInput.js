@@ -3,13 +3,11 @@ import { useState, useCallback } from 'react';
 const usePerimeterInput = () => {
     const [perimeterInput, setPerimeterInput] = useState('');
     const [perimeterAttempts, setPerimeterAttempts] = useState(0);
-    const [showPerimeterSolution, setShowPerimeterSolution] = useState(false);
     const [currentEquationStep, setCurrentEquationStep] = useState(0);
 
     const resetPerimeterState = useCallback(() => {
         setPerimeterInput('');
         setPerimeterAttempts(0);
-        setShowPerimeterSolution(false);
         setCurrentEquationStep(0);
     }, []);
 
@@ -51,7 +49,6 @@ const usePerimeterInput = () => {
                     setDynamicTutorText(feedbackInteraction.tutorText);
                     setActiveFeedbackInteraction(feedbackInteraction);
                 }
-                setShowPerimeterSolution(true);
                 setCurrentEquationStep(0);
                 setPerimeterInput(correctAnswer.toString());
                 setPerimeterAttempts(0); // Reset for next interaction
@@ -63,7 +60,6 @@ const usePerimeterInput = () => {
         perimeterInput,
         setPerimeterInput,
         perimeterAttempts,
-        showPerimeterSolution,
         currentEquationStep,
         resetPerimeterState,
         handlePerimeterCheck

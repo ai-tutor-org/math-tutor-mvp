@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, TextField, Typography, Button } from '@mui/material';
 
-const MeasurementInput = ({ 
+const Input = ({
     value,
     onInputChange,
     onCheck,
@@ -19,13 +19,13 @@ const MeasurementInput = ({
 
     return (
         <Box sx={{ mb: 3, width: '100%', maxWidth: '295px' }}>
-            <Box sx={{ 
+            <Box sx={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px'
             }}>
                 {/* Input field container */}
-                <Box sx={{ 
+                <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
                     background: '#fff',
@@ -76,11 +76,11 @@ const MeasurementInput = ({
                             }
                         }}
                     />
-                    <Typography 
-                        variant="body2" 
-                        sx={{ 
-                            color: '#000', 
-                            fontFamily: "'Fustat', 'Inter', sans-serif", 
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: '#000',
+                            fontFamily: "'Fustat', 'Inter', sans-serif",
                             fontWeight: 400,
                             fontSize: '16px',
                             marginLeft: '8px'
@@ -123,7 +123,7 @@ const MeasurementInput = ({
                     }}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="14" viewBox="0 0 10 14" fill="none">
-                    <path d="M8.75003 7L3.14503 12.67C2.71503 13.11 2.01003 13.11 1.57503 12.67C1.14003 12.23 1.14003 11.52 1.57503 11.08L5.60503 7L1.57503 2.92C1.14003 2.48 1.14003 1.77 1.57503 1.33C2.01003 0.89 2.71503 0.89 3.14503 1.33L8.75003 7Z" fill="white" stroke="white"/>
+                        <path d="M8.75003 7L3.14503 12.67C2.71503 13.11 2.01003 13.11 1.57503 12.67C1.14003 12.23 1.14003 11.52 1.57503 11.08L5.60503 7L1.57503 2.92C1.14003 2.48 1.14003 1.77 1.57503 1.33C2.01003 0.89 2.71503 0.89 3.14503 1.33L8.75003 7Z" fill="white" stroke="white" />
                     </svg>
                 </Button>
             </Box>
@@ -131,4 +131,4 @@ const MeasurementInput = ({
     );
 };
 
-export default MeasurementInput;
+export default Input;

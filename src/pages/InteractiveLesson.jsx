@@ -39,7 +39,7 @@ import useShapeDesignInput from '../hooks/useShapeDesignInput';
 import useMeasurementInput from '../hooks/useMeasurementInput';
 
 // Import common components
-import MeasurementInput from '../components/common/MeasurementInput';
+import Input from '../components/common/Input';
 import PrimaryButton from '../components/common/PrimaryButton';
 import HighlightedText from '../components/common/HighlightedText';
 
@@ -569,7 +569,6 @@ const InteractiveLesson = () => {
                         isMobile={isMobile}
                         isMuted={isMuted}
                     />
-
                     {/* Top Menu Bar */}
                     <AppBar position="static" sx={{
                         bgcolor: '#000',
@@ -639,7 +638,6 @@ const InteractiveLesson = () => {
                             </Box>
                         </Toolbar>
                     </AppBar>
-
                     {/* Main Content Area */}
                     <Box sx={{ flex: 1, display: 'flex', bgcolor: '#000' }}>
                         {/* Left Panel - Tutor (26%) */}
@@ -676,7 +674,6 @@ const InteractiveLesson = () => {
                                     {isTTSPaused ? <PlayArrowIcon /> : <PauseIcon />}
                                 </IconButton>
                             </Box>
-
                             {/* Tutor Avatar */}
                             <Box sx={{ mb: 3 }}>
                                 {interaction?.tutorAnimation ? (
@@ -703,7 +700,6 @@ const InteractiveLesson = () => {
                                     />
                                 )}
                             </Box>
-
                             {/* Tutor Speech */}
                             <Box sx={{ mb: 3 }}>
                                 <HighlightedText
@@ -724,41 +720,16 @@ const InteractiveLesson = () => {
                                     }}
                                 />
                             </Box>
-
                             {/* Perimeter Input Interface */}
                             {interaction?.type === 'perimeter-input' && !isSpeaking && !showNextButton && (
-                                <Box sx={{ mb: 3, width: '100%' }}>
-                                    {/* Show solution equation if needed */}
-                                    {perimeterHook.showPerimeterSolution && (
-                                        <Box sx={{ mb: 2, textAlign: 'left' }}>
-                                            <Typography variant="body2" sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>
-                                                {interaction?.contentProps?.shape?.type === 'rectangle' &&
-                                                    `${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} + ${interaction.contentProps.shape.width} + ${interaction.contentProps.shape.height} = ${interaction.contentProps.correctAnswer}`
-                                                }
-                                                {interaction?.contentProps?.shape?.type === 'square' &&
-                                                    `${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} + ${interaction.contentProps.shape.side} = ${interaction.contentProps.correctAnswer}`
-                                                }
-                                                {interaction?.contentProps?.shape?.type === 'triangle' && interaction?.contentProps?.shape?.sides &&
-                                                    `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
-                                                }
-                                                {interaction?.contentProps?.shape?.type === 'pentagon' && interaction?.contentProps?.shape?.sides &&
-                                                    `${interaction.contentProps.shape.sides.join(' + ')} = ${interaction.contentProps.correctAnswer}`
-                                                }
-                                            </Typography>
-                                        </Box>
-                                    )}
-
-                                    <MeasurementInput
-                                        value={perimeterHook.perimeterInput}
-                                        onInputChange={perimeterHook.setPerimeterInput}
-                                        onCheck={handlePerimeterCheck}
-                                        disabled={perimeterHook.showPerimeterSolution}
-                                        placeholder="Enter perimeter"
-                                        unit={interaction?.contentProps?.shape?.unit || 'units'}
-                                    />
-                                </Box>
+                                <Input
+                                    value={perimeterHook.perimeterInput}
+                                    onInputChange={perimeterHook.setPerimeterInput}
+                                    onCheck={handlePerimeterCheck}
+                                    placeholder="Enter perimeter"
+                                    unit={interaction?.contentProps?.shape?.unit || 'units'}
+                                />
                             )}
-
                             {/* Shape Design Validation Interface */}
                             {interaction?.type === 'perimeter-design' && !isSpeaking && !showNextButton && (
                                 <Box sx={{ mb: 3, width: '100%' }}>
@@ -768,17 +739,15 @@ const InteractiveLesson = () => {
                                             Target: {interaction?.contentProps?.targetPerimeter} units
                                         </Typography>
                                     </Box>
-
                                     {/* Check button */}
                                     <PrimaryButton onClick={handleShapeDesignCheck}>
                                         Check My Shape
                                     </PrimaryButton>
                                 </Box>
                             )}
-
                             {/* Measurement Input Interface */}
                             {interaction?.type === 'shape-measurement' && !isSpeaking && !showNextButton && (
-                                <MeasurementInput
+                                <Input
                                     value={measurementHook.measurementInput}
                                     onInputChange={measurementHook.setMeasurementInput}
                                     onCheck={handleMeasurementCheck}
@@ -786,9 +755,6 @@ const InteractiveLesson = () => {
                                     unit="cm"
                                 />
                             )}
-
-
-
                             {/* Multiple Choice Question Interface - Feedback interactions */}
                             {activeFeedbackInteraction?.type === 'multiple-choice-question' && !isSpeaking && !showNextButton && (
                                 <Box sx={{ mb: 3, width: '100%' }}>
@@ -828,7 +794,6 @@ const InteractiveLesson = () => {
                                     </Box>
                                 </Box>
                             )}
-
                             {/* Multiple Choice Question Interface - General case */}
                             {interaction?.type === 'multiple-choice-question' && !activeFeedbackInteraction && !isSpeaking && !showNextButton && (
                                 <Box sx={{ mb: 3, width: '100%' }}>
@@ -868,7 +833,6 @@ const InteractiveLesson = () => {
                                     </Box>
                                 </Box>
                             )}
-
                             {/* Action Button */}
                             {showNextButton && (
                                 <PrimaryButton onClick={() => {
@@ -879,7 +843,6 @@ const InteractiveLesson = () => {
                                 </PrimaryButton>
                             )}
                         </Box>
-
                         {/* Right Panel - Container (74%) */}
                         <Box sx={{
                             width: '74%',
