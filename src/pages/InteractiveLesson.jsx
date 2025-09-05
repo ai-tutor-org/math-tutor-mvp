@@ -590,6 +590,76 @@ const InteractiveLesson = () => {
         return <Component key={componentKey} {...props} />;
     }
 
+    // Render Top Menu Bar
+    function renderTopMenuBar() {
+        return (
+            <AppBar position="static" sx={{
+                bgcolor: '#000',
+                boxShadow: 'none',
+                borderBottom: '1px solid #2B2B2B'
+            }}>
+                <Toolbar sx={{
+                    justifyContent: 'space-between',
+                    minHeight: '60px !important',
+                    px: '32px',
+                    py: '16px'
+                }}>
+                    <Box>
+                        <Typography variant="caption" sx={{ color: '#999', fontSize: '0.7rem', lineHeight: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
+                            LESSON
+                            {isDevMode && (
+                                <span style={{ color: '#4CAF50', marginLeft: '8px', fontWeight: 600 }}>
+                                    • DEV MODE
+                                </span>
+                            )}
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#fff', fontSize: '1.1rem', lineHeight: 1.2, textTransform: 'capitalize', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
+                            {lesson?.title || 'Interactive Lesson'}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {isDevMode && (
+                            <DeveloperMenu
+                                lessonId={lessonId}
+                                currentPresIndex={currentPresIndex}
+                                currentInteractionIndex={currentInteractionIndex}
+                                onInteractionSelect={handleDevInteractionSelect}
+                                onResetLesson={handleDevResetLesson}
+                            />
+                        )}
+                        <IconButton
+                            sx={{
+                                color: '#fff',
+                                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '8px',
+                                padding: '8px',
+                                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
+                            }}
+                            onClick={() => navigate('/')}
+                        >
+                            <HomeIcon />
+                        </IconButton>
+                        <Button
+                            startIcon={<ArrowBackIcon />}
+                            sx={{
+                                color: '#fff',
+                                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '8px',
+                                padding: '8px 12px',
+                                textTransform: 'none',
+                                fontSize: '0.9rem',
+                                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
+                            }}
+                            onClick={() => navigate(-1)}
+                        >
+                            Go Back
+                        </Button>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+        );
+    }
+
     // Render Left Panel Interaction Component
     function renderInteraction() {
         if (!interaction || isSpeaking || showNextButton) {
@@ -623,74 +693,7 @@ const InteractiveLesson = () => {
                         isMuted={isMuted}
                     />
                     {/* Top Menu Bar */}
-                    <AppBar position="static" sx={{
-                        bgcolor: '#000',
-                        boxShadow: 'none',
-                        borderBottom: '1px solid #2B2B2B'
-                    }}>
-                        <Toolbar sx={{
-                            justifyContent: 'space-between',
-                            minHeight: '60px !important',
-                            px: '32px',
-                            py: '16px'
-                        }}>
-                            {/* Left Side - Lesson Info */}
-                            <Box>
-                                <Typography variant="caption" sx={{ color: '#999', fontSize: '0.7rem', lineHeight: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
-                                    LESSON {lessonId === 'perimeter' ? '1' : '1'}
-                                    {isDevMode && (
-                                        <span style={{ color: '#4CAF50', marginLeft: '8px', fontWeight: 600 }}>
-                                            • DEV MODE
-                                        </span>
-                                    )}
-                                </Typography>
-                                <Typography variant="h6" sx={{ color: '#fff', fontSize: '1.1rem', lineHeight: 1.2, textTransform: 'capitalize', fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
-                                    {lesson?.title || 'Perimeter'}
-                                </Typography>
-                            </Box>
-
-                            {/* Right Side - Navigation */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {/* Developer Menu */}
-                                {isDevMode && (
-                                    <DeveloperMenu
-                                        lessonId={lessonId}
-                                        currentPresIndex={currentPresIndex}
-                                        currentInteractionIndex={currentInteractionIndex}
-                                        onInteractionSelect={handleDevInteractionSelect}
-                                        onResetLesson={handleDevResetLesson}
-                                    />
-                                )}
-                                <IconButton
-                                    sx={{
-                                        color: '#fff',
-                                        bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                        borderRadius: '8px',
-                                        padding: '8px',
-                                        '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
-                                    }}
-                                    onClick={() => navigate('/')}
-                                >
-                                    <HomeIcon />
-                                </IconButton>
-                                <Button
-                                    startIcon={<ArrowBackIcon />}
-                                    sx={{
-                                        color: '#fff',
-                                        bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                        borderRadius: '8px',
-                                        padding: '8px 12px',
-                                        textTransform: 'none',
-                                        fontSize: '0.9rem',
-                                        '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
-                                    }}
-                                    onClick={() => navigate(-1)}
-                                >
-                                    Go Back
-                                </Button>
-                            </Box>
-                        </Toolbar>
-                    </AppBar>
+                    {renderTopMenuBar()}
                     {/* Main Content Area */}
                     <Box sx={{ flex: 1, display: 'flex', bgcolor: '#000' }}>
                         {/* Left Panel - Tutor (26%) */}
