@@ -14,6 +14,7 @@ import {
     PentagonFarmMap,
     PentagonSolution
 } from '../../components/presentations/04-farmer-missions';
+import Input from '../../components/common/Input';
 
 export const farmerMissionPresentations = {
     'farmer-mission-intro': {
@@ -72,6 +73,7 @@ export const farmerMissionPresentations = {
                 id: 'rectangle-challenge',
                 type: 'perimeter-input',
                 ContentComponent: FarmMap,
+                InteractionComponent: Input,
                 tutorText: "To find the perimeter, we need to add up the lengths of all the sides. \n\nLet's give it a try with Farmer Giles' field. What's the total length of the fence he needs?",
                 tutorAnimation: 'explaining',
                 transitionType: 'manual',
@@ -83,6 +85,10 @@ export const farmerMissionPresentations = {
                         hint1: 'rectangle-hint-1',
                         solution: 'rectangle-solution'
                     }
+                },
+                interactionProps: {
+                    placeholder: "Enter perimeter",
+                    unit: "meters"
                 },
             },
             {
@@ -127,6 +133,7 @@ export const farmerMissionPresentations = {
                 id: 'square-challenge-input',
                 type: 'perimeter-input',
                 ContentComponent: SquareFarmMap,
+                InteractionComponent: Input,
                 tutorText: "Now that you've got the hang of it, let's help some other people with their fencing problems. \n\nWhat's the perimeter of this next field?",
                 tutorAnimation: 'normal-talking',
                 transitionType: 'manual',
@@ -138,6 +145,10 @@ export const farmerMissionPresentations = {
                         hint1: 'square-hint-1',
                         solution: 'square-solution'
                     }
+                },
+                interactionProps: {
+                    placeholder: "Enter perimeter",
+                    unit: "meters"
                 },
             }
         ],
@@ -173,6 +184,7 @@ export const farmerMissionPresentations = {
                 id: 'triangle-challenge',
                 type: 'perimeter-input',
                 ContentComponent: TriangleFarmMap,
+                InteractionComponent: Input,
                 tutorText: "You're a real pro at this! \n\nReady for a new challenge?",
                 tutorAnimation: 'thinking-curious-question',
                 transitionType: 'manual',
@@ -184,6 +196,10 @@ export const farmerMissionPresentations = {
                         hint1: 'triangle-hint-1',
                         solution: 'triangle-solution'
                     }
+                },
+                interactionProps: {
+                    placeholder: "Enter perimeter",
+                    unit: "meters"
                 },
             }
         ],
@@ -219,6 +235,7 @@ export const farmerMissionPresentations = {
                 id: 'pentagon-challenge',
                 type: 'perimeter-input',
                 ContentComponent: PentagonFarmMap,
+                InteractionComponent: Input,
                 tutorText: "Great job! Just one more to go!",
                 tutorAnimation: 'normal-talking',
                 transitionType: 'manual',
@@ -230,6 +247,10 @@ export const farmerMissionPresentations = {
                         hint1: 'pentagon-hint-1',
                         solution: 'pentagon-solution'
                     }
+                },
+                interactionProps: {
+                    placeholder: "Enter perimeter",
+                    unit: "meters"
                 },
             },
             {

@@ -1,5 +1,6 @@
 import React from 'react';
-import { StandardUnits, RulerMeasurement, MeterStick, RoomIllustration } from '../../components/presentations/01-introduction';
+import { StandardUnits, RulerMeasurement, MeterStick, RoomIllustration } from '../../components/presentations/01-introduction'
+import MultipleChoice from '../../components/common/MultipleChoice';
 
 export const introductionPresentations = {
     'standard-units-pre-intro': {
@@ -94,6 +95,7 @@ export const introductionPresentations = {
                 id: 'measurement-reason-question',
                 type: 'multiple-choice-question',
                 ContentComponent: RoomIllustration,
+                InteractionComponent: MultipleChoice,
                 tutorText: "What do you think is the reason?",
                 tutorAnimation: 'thinking-curious-question',
                 transitionType: 'manual',
@@ -102,8 +104,9 @@ export const introductionPresentations = {
                     yourSteps: 10,
                     friendSteps: 8,
                     yourFootColor: '#4A90E2',
-                    friendFootColor: '#e24a4a',
-                    question: "What do you think is the reason?",
+                    friendFootColor: '#e24a4a'
+                },
+                interactionProps: {
                     choices: [
                         {
                             text: 'The size of the room changed',
@@ -124,6 +127,7 @@ export const introductionPresentations = {
                 id: 'measurement-reason-retry',
                 type: 'multiple-choice-question',
                 ContentComponent: RoomIllustration,
+                InteractionComponent: MultipleChoice,
                 tutorText: "No, the size of the room is the same. Choose again.",
                 tutorAnimation: 'thinking-curious-question',
                 transitionType: 'manual',
@@ -132,8 +136,9 @@ export const introductionPresentations = {
                     yourSteps: 10,
                     friendSteps: 8,
                     yourFootColor: '#4A90E2',
-                    friendFootColor: '#e24a4a',
-                    question: "What do you think is the reason?",
+                    friendFootColor: '#e24a4a'
+                },
+                interactionProps: {
                     choices: [
                         {
                             text: "The size of my feet and my friend's feet are different",

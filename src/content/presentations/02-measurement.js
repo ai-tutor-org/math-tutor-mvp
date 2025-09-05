@@ -1,5 +1,7 @@
 import React from 'react';
 import { Crayon, ShapeMeasurement } from '../../components/presentations/02-measurement';
+import Input from '../../components/common/Input';
+import { MultipleChoice } from '../../components/common';
 
 export const measurementPresentations = {
     'measurement-practice-activities': {
@@ -8,11 +10,11 @@ export const measurementPresentations = {
                 id: 'crayon-question',
                 type: 'multiple-choice-question',
                 ContentComponent: Crayon,
+                InteractionComponent: MultipleChoice,
                 tutorText: "Time for a quick check! If you wanted to measure a crayon, which unit would you use? Click on the best choice.",
                 tutorAnimation: 'thinking-curious-question',
                 transitionType: 'manual',
-                contentProps: {
-                    question: "If you wanted to measure a crayon, which unit would you use?",
+                interactionProps: {
                     choices: [
                         {
                             text: 'cm',
@@ -41,6 +43,7 @@ export const measurementPresentations = {
                 id: 'measure-notebook',
                 type: 'shape-measurement',
                 ContentComponent: ShapeMeasurement,
+                InteractionComponent: Input,
                 tutorText: "Here's our first object: a notebook. \n\nUse the ruler to measure the length of the highlighted blue edge. \n\nThen, type your answer in the box and click 'Check'.",
                 tutorAnimation: 'explaining',
                 transitionType: 'manual',
@@ -55,11 +58,16 @@ export const measurementPresentations = {
                     correctAnswer: 8,
                     rulerOrientation: 'horizontal',
                 },
+                interactionProps: {
+                    placeholder: "Enter length",
+                    unit: "cm"
+                },
             },
             {
                 id: 'measure-sticky-note',
                 type: 'shape-measurement',
                 ContentComponent: ShapeMeasurement,
+                InteractionComponent: Input,
                 tutorText: "Next, measure this sticky note. It's a perfect square. Measure the highlighted side.",
                 tutorAnimation: 'normal-talking',
                 transitionType: 'manual',
@@ -74,11 +82,16 @@ export const measurementPresentations = {
                     correctAnswer: 5,
                     rulerOrientation: 'horizontal',
                 },
+                interactionProps: {
+                    placeholder: "Enter length",
+                    unit: "cm"
+                },
             },
             {
                 id: 'measure-coaster',
                 type: 'shape-measurement',
                 ContentComponent: ShapeMeasurement,
+                InteractionComponent: Input,
                 tutorText: "Try this box. Measure the highlighted bottom edge.",
                 tutorAnimation: 'normal-talking',
                 transitionType: 'manual',
@@ -93,11 +106,16 @@ export const measurementPresentations = {
                     correctAnswer: 6,
                     rulerOrientation: 'horizontal',
                 },
+                interactionProps: {
+                    placeholder: "Enter length",
+                    unit: "cm"
+                },
             },
             {
                 id: 'measure-house-sign',
                 type: 'shape-measurement',
                 ContentComponent: ShapeMeasurement,
+                InteractionComponent: Input,
                 tutorText: "Finally, measure the side of this photo frame.",
                 tutorAnimation: 'normal-talking',
                 transitionType: 'manual',
@@ -111,6 +129,10 @@ export const measurementPresentations = {
                     },
                     correctAnswer: 7,
                     rulerOrientation: 'vertical',
+                },
+                interactionProps: {
+                    placeholder: "Enter length",
+                    unit: "cm"
                 },
             },
             {

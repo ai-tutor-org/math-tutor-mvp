@@ -39,7 +39,6 @@ import useShapeDesignInput from '../hooks/useShapeDesignInput';
 import useMeasurementInput from '../hooks/useMeasurementInput';
 
 // Import common components
-import Input from '../components/common/Input';
 import PrimaryButton from '../components/common/PrimaryButton';
 import HighlightedText from '../components/common/HighlightedText';
 
@@ -512,6 +511,42 @@ const InteractiveLesson = () => {
         };
     }, []); // Empty dependency array ensures this runs only on mount and unmount
 
+    // Build props for interaction components based on type
+    function buildInteractionProps(currentInteraction) {
+        const baseProps = {
+            ...currentInteraction.interactionProps,
+            disabled: false
+        };
+
+        switch (currentInteraction.type) {
+            case 'perimeter-input':
+                return {
+                    ...baseProps,
+                    value: perimeterHook.perimeterInput,
+                    onInputChange: perimeterHook.setPerimeterInput,
+                    onCheck: handlePerimeterCheck
+                };
+
+            case 'shape-measurement':
+                return {
+                    ...baseProps,
+                    value: measurementHook.measurementInput,
+                    onInputChange: measurementHook.setMeasurementInput,
+                    onCheck: handleMeasurementCheck
+                };
+
+            case 'multiple-choice-question':
+                return {
+                    ...baseProps,
+                    onAnswer: handleAnswer
+                };
+
+            // perimeter-design stays inline for now - will refactor in later iteration
+
+            default:
+                return baseProps;
+        }
+    }
 
     // Render Content Component
     function renderContent() {
@@ -553,6 +588,24 @@ const InteractiveLesson = () => {
         props = { ...props, ...interaction.contentProps };
 
         return <Component key={componentKey} {...props} />;
+    }
+
+    // Render Left Panel Interaction Component
+    function renderInteraction() {
+        if (!interaction || isSpeaking || showNextButton) {
+            return null;
+        }
+
+        // Use feedback interaction if active, otherwise use main interaction
+        const currentInteraction = activeFeedbackInteraction || interaction;
+        const InteractionComp = currentInteraction?.InteractionComponent;
+
+        if (!InteractionComp) return null;
+
+        // Build props based on interaction type
+        const props = buildInteractionProps(currentInteraction);
+
+        return <InteractionComp {...props} />;
     }
 
     return (
@@ -676,29 +729,31 @@ const InteractiveLesson = () => {
                             </Box>
                             {/* Tutor Avatar */}
                             <Box sx={{ mb: 3 }}>
-                                {interaction?.tutorAnimation ? (
-                                    <video
-                                        ref={videoRef}
-                                        src={`/animations/${interaction.tutorAnimation}.webm`}
-                                        autoPlay
-                                        loop={shouldAnimationLoop(interaction.tutorAnimation)}
-                                        muted
-                                        style={{
-                                            width: '100px',
-                                            height: '100px',
-                                            objectFit: 'cover'
-                                        }}
-                                    />
-                                ) : (
-                                    <img
-                                        src="/images/tutor.svg"
-                                        alt="AI Tutor"
-                                        style={{
-                                            width: '100px',
-                                            height: '100px'
-                                        }}
-                                    />
-                                )}
+                                {
+                                    interaction?.tutorAnimation ? (
+                                        <video
+                                            ref={videoRef}
+                                            src={`/animations/${interaction.tutorAnimation}.webm`}
+                                            autoPlay
+                                            loop={shouldAnimationLoop(interaction.tutorAnimation)}
+                                            muted
+                                            style={{
+                                                width: '100px',
+                                                height: '100px',
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    ) : (
+                                        <img
+                                            src="/images/tutor.svg"
+                                            alt="AI Tutor"
+                                            style={{
+                                                width: '100px',
+                                                height: '100px'
+                                            }}
+                                        />
+                                    )
+                                }
                             </Box>
                             {/* Tutor Speech */}
                             <Box sx={{ mb: 3 }}>
@@ -720,117 +775,19 @@ const InteractiveLesson = () => {
                                     }}
                                 />
                             </Box>
-                            {/* Perimeter Input Interface */}
-                            {interaction?.type === 'perimeter-input' && !isSpeaking && !showNextButton && (
-                                <Input
-                                    value={perimeterHook.perimeterInput}
-                                    onInputChange={perimeterHook.setPerimeterInput}
-                                    onCheck={handlePerimeterCheck}
-                                    placeholder="Enter perimeter"
-                                    unit={interaction?.contentProps?.shape?.unit || 'units'}
-                                />
-                            )}
-                            {/* Shape Design Validation Interface */}
+                            {/* Left Panel Interactive Elements */}
+                            {renderInteraction()}
+                            {/* Keep shape design validation inline for now */}
                             {interaction?.type === 'perimeter-design' && !isSpeaking && !showNextButton && (
                                 <Box sx={{ mb: 3, width: '100%' }}>
-                                    {/* Show current vs target perimeter */}
                                     <Box sx={{ mb: 2, textAlign: 'left' }}>
                                         <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
                                             Target: {interaction?.contentProps?.targetPerimeter} units
                                         </Typography>
                                     </Box>
-                                    {/* Check button */}
                                     <PrimaryButton onClick={handleShapeDesignCheck}>
                                         Check My Shape
                                     </PrimaryButton>
-                                </Box>
-                            )}
-                            {/* Measurement Input Interface */}
-                            {interaction?.type === 'shape-measurement' && !isSpeaking && !showNextButton && (
-                                <Input
-                                    value={measurementHook.measurementInput}
-                                    onInputChange={measurementHook.setMeasurementInput}
-                                    onCheck={handleMeasurementCheck}
-                                    placeholder="Enter length"
-                                    unit="cm"
-                                />
-                            )}
-                            {/* Multiple Choice Question Interface - Feedback interactions */}
-                            {activeFeedbackInteraction?.type === 'multiple-choice-question' && !isSpeaking && !showNextButton && (
-                                <Box sx={{ mb: 3, width: '100%' }}>
-                                    <Box sx={{ mb: 3 }}>
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                            {activeFeedbackInteraction?.contentProps?.choices?.map((choice, index) => (
-                                                <Button
-                                                    key={index}
-                                                    variant="outlined"
-                                                    onClick={() => handleAnswer({
-                                                        text: choice.text,
-                                                        isCorrect: choice.isCorrect,
-                                                        feedbackId: choice.feedbackId
-                                                    })}
-                                                    sx={{
-                                                        padding: '12px 16px',
-                                                        borderRadius: '12px',
-                                                        border: '1px solid #545E7D',
-                                                        background: '#484D5C',
-                                                        fontWeight: 500,
-                                                        color: '#fff',
-                                                        textTransform: 'none',
-                                                        fontSize: '0.95rem',
-                                                        textAlign: 'left',
-                                                        justifyContent: 'flex-start',
-                                                        fontFamily: "'Fustat', 'Inter', sans-serif",
-                                                        '&:hover': {
-                                                            background: '#545E7D',
-                                                            borderColor: '#545E7D'
-                                                        }
-                                                    }}
-                                                >
-                                                    {choice.text}
-                                                </Button>
-                                            ))}
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            )}
-                            {/* Multiple Choice Question Interface - General case */}
-                            {interaction?.type === 'multiple-choice-question' && !activeFeedbackInteraction && !isSpeaking && !showNextButton && (
-                                <Box sx={{ mb: 3, width: '100%' }}>
-                                    <Box sx={{ mb: 3 }}>
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                            {interaction?.contentProps?.choices?.map((choice, index) => (
-                                                <Button
-                                                    key={index}
-                                                    variant="outlined"
-                                                    onClick={() => handleAnswer({
-                                                        text: choice.text,
-                                                        isCorrect: choice.isCorrect,
-                                                        feedbackId: choice.feedbackId
-                                                    })}
-                                                    sx={{
-                                                        padding: '12px 16px',
-                                                        borderRadius: '12px',
-                                                        border: '1px solid #545E7D',
-                                                        background: '#484D5C',
-                                                        fontWeight: 500,
-                                                        color: '#fff',
-                                                        textTransform: 'none',
-                                                        fontSize: '0.95rem',
-                                                        textAlign: 'left',
-                                                        justifyContent: 'flex-start',
-                                                        fontFamily: "'Fustat', 'Inter', sans-serif",
-                                                        '&:hover': {
-                                                            background: '#545E7D',
-                                                            borderColor: '#545E7D'
-                                                        }
-                                                    }}
-                                                >
-                                                    {choice.text}
-                                                </Button>
-                                            ))}
-                                        </Box>
-                                    </Box>
                                 </Box>
                             )}
                             {/* Action Button */}
@@ -844,15 +801,16 @@ const InteractiveLesson = () => {
                             )}
                         </Box>
                         {/* Right Panel - Container (74%) */}
-                        <Box sx={{
-                            width: '74%',
-                            bgcolor: '#000',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            p: 3
-                        }}>
-                            {/* Content Playground */}
+                        <Box
+                            sx={{
+                                width: '74%',
+                                bgcolor: '#000',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                p: 3
+                            }}
+                        >
                             <Paper
                                 sx={{
                                     width: '100%',

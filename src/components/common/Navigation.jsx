@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useDevModeNavigate } from '../utils/devMode'
+import { useDevModeNavigate } from '../../utils/devMode'
 
 function Navigation() {
     const navigate = useDevModeNavigate()
