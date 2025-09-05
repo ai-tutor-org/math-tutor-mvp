@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 // Material-UI imports
@@ -192,43 +192,6 @@ const InteractiveLesson = () => {
     }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
 
 
-    // Developer mode handlers
-    const handleDevInteractionSelect = useCallback((interaction) => {
-
-        // Stop any running TTS immediately
-        if (window.speechSynthesis) {
-            window.speechSynthesis.cancel();
-        }
-
-        // Stop the current TTS manager instance
-        if (ttsRef.current && ttsRef.current.stopTTS) {
-            ttsRef.current.stopTTS();
-        }
-
-        // Clear all interaction state immediately
-        setIsSpeaking(false);
-        setShowNextButton(false);
-        setDynamicTutorText(null);
-        setAnimationTrigger(false);
-        setActiveFeedbackInteraction(null);
-
-        // Reset input states using hooks
-        measurementHook.resetMeasurementState();
-        perimeterHook.resetPerimeterState();
-        shapeDesignHook.resetShapeDesignState();
-
-        // Navigate to regular sequence presentation
-        setCurrentPresIndex(interaction.presIndex);
-        setCurrentInteractionIndex(interaction.interactionIndex);
-    }, []);
-
-    const handleDevResetLesson = useCallback(() => {
-        setCurrentPresIndex(0);
-        setCurrentInteractionIndex(0);
-        setDynamicTutorText(null);
-        setShowNextButton(false);
-        setAnimationTrigger(false);
-    }, []);
 
     // Handle user interaction for conditional transitions
     const handleUserInteraction = useCallback(() => {
@@ -552,6 +515,24 @@ const InteractiveLesson = () => {
         }
     }, [perimeterHook.perimeterInput, perimeterHook.setPerimeterInput, handlePerimeterCheck, measurementHook.measurementInput, measurementHook.setMeasurementInput, handleMeasurementCheck, handleAnswer, handleShapeDesignCheck]);
 
+    // Render Left Panel Interaction Component
+    const renderInteraction = useCallback(() => {
+        if (!interaction || isSpeaking || showNextButton) {
+            return null;
+        }
+
+        // Use feedback interaction if active, otherwise use main interaction
+        const currentInteraction = activeFeedbackInteraction || interaction;
+        const InteractionComp = currentInteraction?.InteractionComponent;
+
+        if (!InteractionComp) return null;
+
+        // Build props based on interaction type
+        const props = buildInteractionProps(currentInteraction);
+
+        return <InteractionComp {...props} />;
+    }, [interaction, isSpeaking, showNextButton, activeFeedbackInteraction, buildInteractionProps]);
+
     // Render Content Component
     const renderContent = useCallback(() => {
         if (!interaction) return null;
@@ -627,8 +608,20 @@ const InteractiveLesson = () => {
                                 lessonId={lessonId}
                                 currentPresIndex={currentPresIndex}
                                 currentInteractionIndex={currentInteractionIndex}
-                                onInteractionSelect={handleDevInteractionSelect}
-                                onResetLesson={handleDevResetLesson}
+                                // System control refs
+                                ttsRef={ttsRef}
+                                // State setters for navigation
+                                setCurrentPresIndex={setCurrentPresIndex}
+                                setCurrentInteractionIndex={setCurrentInteractionIndex}
+                                setIsSpeaking={setIsSpeaking}
+                                setShowNextButton={setShowNextButton}
+                                setDynamicTutorText={setDynamicTutorText}
+                                setAnimationTrigger={setAnimationTrigger}
+                                setActiveFeedbackInteraction={setActiveFeedbackInteraction}
+                                // Input hooks for state reset
+                                measurementHook={measurementHook}
+                                perimeterHook={perimeterHook}
+                                shapeDesignHook={shapeDesignHook}
                             />
                         )}
                         <IconButton
@@ -662,25 +655,7 @@ const InteractiveLesson = () => {
                 </Toolbar>
             </AppBar>
         );
-    }, [lesson?.title, isDevMode, lessonId, currentPresIndex, currentInteractionIndex, handleDevInteractionSelect, handleDevResetLesson, navigate]);
-
-    // Render Left Panel Interaction Component
-    const renderInteraction = useCallback(() => {
-        if (!interaction || isSpeaking || showNextButton) {
-            return null;
-        }
-
-        // Use feedback interaction if active, otherwise use main interaction
-        const currentInteraction = activeFeedbackInteraction || interaction;
-        const InteractionComp = currentInteraction?.InteractionComponent;
-
-        if (!InteractionComp) return null;
-
-        // Build props based on interaction type
-        const props = buildInteractionProps(currentInteraction);
-
-        return <InteractionComp {...props} />;
-    }, [interaction, isSpeaking, showNextButton, activeFeedbackInteraction, buildInteractionProps]);
+    }, [lesson?.title, isDevMode, lessonId, currentPresIndex, currentInteractionIndex, ttsRef, setCurrentPresIndex, setCurrentInteractionIndex, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, measurementHook, perimeterHook, shapeDesignHook, navigate]);
 
     return (
         <div>

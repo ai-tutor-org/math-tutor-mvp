@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     IconButton,
     Drawer,
@@ -20,18 +20,63 @@ const DeveloperMenu = ({
     lessonId,
     currentPresIndex,
     currentInteractionIndex,
-    onInteractionSelect,
-    onResetLesson
+    // System control refs
+    ttsRef,
+    // State setters for navigation
+    setCurrentPresIndex,
+    setCurrentInteractionIndex,
+    setIsSpeaking,
+    setShowNextButton,
+    setDynamicTutorText,
+    setAnimationTrigger,
+    setActiveFeedbackInteraction,
+    // Input hooks for state reset
+    measurementHook,
+    perimeterHook,
+    shapeDesignHook
 }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleOpen = () => setIsOpen(true);
     const handleClose = () => setIsOpen(false);
 
-    const handleResetLesson = () => {
-        onResetLesson();
+    // Developer mode handlers moved from InteractiveLesson
+    const handleDevInteractionSelect = useCallback((interaction) => {
+        // Stop any running TTS immediately
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+
+        // Stop the current TTS manager instance
+        if (ttsRef.current && ttsRef.current.stopTTS) {
+            ttsRef.current.stopTTS();
+        }
+
+        // Clear all interaction state immediately
+        setIsSpeaking(false);
+        setShowNextButton(false);
+        setDynamicTutorText(null);
+        setAnimationTrigger(false);
+        setActiveFeedbackInteraction(null);
+
+        // Reset input states using hooks
+        measurementHook.resetMeasurementState();
+        perimeterHook.resetPerimeterState();
+        shapeDesignHook.resetShapeDesignState();
+
+        // Navigate to regular sequence presentation
+        setCurrentPresIndex(interaction.presIndex);
+        setCurrentInteractionIndex(interaction.interactionIndex);
+    }, [ttsRef, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, measurementHook, perimeterHook, shapeDesignHook, setCurrentPresIndex, setCurrentInteractionIndex]);
+
+    const handleDevResetLesson = useCallback(() => {
+        setCurrentPresIndex(0);
+        setCurrentInteractionIndex(0);
+        setDynamicTutorText(null);
+        setShowNextButton(false);
+        setAnimationTrigger(false);
         handleClose();
-    };
+    }, [setCurrentPresIndex, setCurrentInteractionIndex, setDynamicTutorText, setShowNextButton, setAnimationTrigger]);
 
     return (
         <>
@@ -109,7 +154,7 @@ const DeveloperMenu = ({
                 <Box sx={{ p: 2, borderBottom: '1px solid #333' }}>
                     <Button
                         variant="outlined"
-                        onClick={handleResetLesson}
+                        onClick={handleDevResetLesson}
                         fullWidth
                         sx={{
                             color: '#FF9800',
@@ -129,7 +174,7 @@ const DeveloperMenu = ({
                     lessonId={lessonId}
                     currentPresIndex={currentPresIndex}
                     currentInteractionIndex={currentInteractionIndex}
-                    onInteractionSelect={onInteractionSelect}
+                    onInteractionSelect={handleDevInteractionSelect}
                     onClose={handleClose}
                 />
             </Drawer>
