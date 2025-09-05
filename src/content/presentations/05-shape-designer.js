@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShapeDesigner } from '../../components/presentations/05-shape-designer';
+import PerimeterDesign from '../../components/common/PerimeterDesign';
 
 export const shapeDesignerPresentations = {
     'shape-designer-intro': {
@@ -49,11 +50,11 @@ export const shapeDesignerPresentations = {
                 id: 'rectangle-design-size-20',
                 type: 'perimeter-design',
                 ContentComponent: ShapeDesigner,
+                InteractionComponent: PerimeterDesign,
                 tutorText: "Okay, designer, here's your first task. \n\nCan you create a rectangle that has a perimeter of exactly 20 units? When you think you have it, press the check button.",
                 transitionType: 'manual',
                 contentProps: {
                     mode: 'challenge',
-                    targetPerimeter: 20,
                     showTarget: true,
                     showGrid: true,
                     showSideLabels: true,
@@ -67,6 +68,9 @@ export const shapeDesignerPresentations = {
                         solution: 'rectangle-design-solution'
                     }
                 },
+                interactionProps: {
+                    targetPerimeter: 20
+                }
             },
         ],
         feedbackRegistry: {
@@ -147,11 +151,11 @@ export const shapeDesignerPresentations = {
                 id: 'rectangle-design-size-26',
                 type: 'perimeter-design',
                 ContentComponent: ShapeDesigner,
+                InteractionComponent: PerimeterDesign,
                 tutorText: "Okay, let's design another rectangle. \n\nCan you create a rectangle that has a perimeter of exactly 26 units? When you think you have it, press the check button.",
                 transitionType: 'manual',
                 contentProps: {
                     mode: 'challenge',
-                    targetPerimeter: 26,
                     showTarget: true,
                     showGrid: true,
                     showSideLabels: true,
@@ -165,6 +169,9 @@ export const shapeDesignerPresentations = {
                         solution: 'rectangle-design-solution-2'
                     }
                 },
+                interactionProps: {
+                    targetPerimeter: 26
+                }
             },
         ],
         feedbackRegistry: {
@@ -245,11 +252,11 @@ export const shapeDesignerPresentations = {
                 id: 'rectangle-design-size-8',
                 type: 'perimeter-design',
                 ContentComponent: ShapeDesigner,
+                InteractionComponent: PerimeterDesign,
                 tutorText: "Just one more challenge. \n\nCreate a rectangle that has a perimeter of exactly 8 units. When you think you have it, press the check button.",
                 transitionType: 'manual',
                 contentProps: {
                     mode: 'challenge',
-                    targetPerimeter: 8,
                     showTarget: true,
                     showGrid: true,
                     showSideLabels: true,
@@ -263,6 +270,9 @@ export const shapeDesignerPresentations = {
                         solution: 'rectangle-design-solution-3'
                     }
                 },
+                interactionProps: {
+                    targetPerimeter: 8
+                }
             },
         ],
         feedbackRegistry: {

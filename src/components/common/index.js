@@ -5,3 +5,4 @@ export { default as Navigation } from './Navigation';
 export { default as Input } from './Input';
 export { default as HighlightedText } from './HighlightedText';
 export { default as MultipleChoice } from './MultipleChoice';
+export { default as PerimeterDesign } from './PerimeterDesign';

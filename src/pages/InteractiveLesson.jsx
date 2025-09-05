@@ -326,7 +326,7 @@ const InteractiveLesson = () => {
     const handleShapeDesignCheck = useCallback(() => {
         playClickSound();
         shapeDesignHook.handleShapeDesignCheck(
-            interaction?.contentProps?.targetPerimeter,
+            interaction?.interactionProps?.targetPerimeter,
             interaction?.contentProps?.feedbackIds,
             getFeedbackText,
             getFeedbackInteraction,
@@ -512,7 +512,7 @@ const InteractiveLesson = () => {
     }, []); // Empty dependency array ensures this runs only on mount and unmount
 
     // Build props for interaction components based on type
-    function buildInteractionProps(currentInteraction) {
+    const buildInteractionProps = useCallback((currentInteraction) => {
         const baseProps = {
             ...currentInteraction.interactionProps,
             disabled: false
@@ -541,15 +541,19 @@ const InteractiveLesson = () => {
                     onAnswer: handleAnswer
                 };
 
-            // perimeter-design stays inline for now - will refactor in later iteration
+            case 'perimeter-design':
+                return {
+                    ...baseProps,
+                    onCheck: handleShapeDesignCheck
+                };
 
             default:
                 return baseProps;
         }
-    }
+    }, [perimeterHook.perimeterInput, perimeterHook.setPerimeterInput, handlePerimeterCheck, measurementHook.measurementInput, measurementHook.setMeasurementInput, handleMeasurementCheck, handleAnswer, handleShapeDesignCheck]);
 
     // Render Content Component
-    function renderContent() {
+    const renderContent = useCallback(() => {
         if (!interaction) return null;
 
         // Check if there's an active feedback interaction with a ContentComponent
@@ -588,10 +592,10 @@ const InteractiveLesson = () => {
         props = { ...props, ...interaction.contentProps };
 
         return <Component key={componentKey} {...props} />;
-    }
+    }, [interaction, activeFeedbackInteraction, handleAnimationComplete, animationTrigger, handleUserInteraction, shapeDesignHook.setCurrentPerimeter, currentPresIndex, handleShapeFeedback]);
 
     // Render Top Menu Bar
-    function renderTopMenuBar() {
+    const renderTopMenuBar = useCallback(() => {
         return (
             <AppBar position="static" sx={{
                 bgcolor: '#000',
@@ -658,10 +662,10 @@ const InteractiveLesson = () => {
                 </Toolbar>
             </AppBar>
         );
-    }
+    }, [lesson?.title, isDevMode, lessonId, currentPresIndex, currentInteractionIndex, handleDevInteractionSelect, handleDevResetLesson, navigate]);
 
     // Render Left Panel Interaction Component
-    function renderInteraction() {
+    const renderInteraction = useCallback(() => {
         if (!interaction || isSpeaking || showNextButton) {
             return null;
         }
@@ -676,7 +680,7 @@ const InteractiveLesson = () => {
         const props = buildInteractionProps(currentInteraction);
 
         return <InteractionComp {...props} />;
-    }
+    }, [interaction, isSpeaking, showNextButton, activeFeedbackInteraction, buildInteractionProps]);
 
     return (
         <div>
@@ -780,19 +784,6 @@ const InteractiveLesson = () => {
                             </Box>
                             {/* Left Panel Interactive Elements */}
                             {renderInteraction()}
-                            {/* Keep shape design validation inline for now */}
-                            {interaction?.type === 'perimeter-design' && !isSpeaking && !showNextButton && (
-                                <Box sx={{ mb: 3, width: '100%' }}>
-                                    <Box sx={{ mb: 2, textAlign: 'left' }}>
-                                        <Typography variant="body2" sx={{ color: '#fff', fontSize: '0.9rem', mb: 1, fontFamily: "'Fustat', 'Inter', sans-serif", fontWeight: 500 }}>
-                                            Target: {interaction?.contentProps?.targetPerimeter} units
-                                        </Typography>
-                                    </Box>
-                                    <PrimaryButton onClick={handleShapeDesignCheck}>
-                                        Check My Shape
-                                    </PrimaryButton>
-                                </Box>
-                            )}
                             {/* Action Button */}
                             {showNextButton && (
                                 <PrimaryButton onClick={() => {
