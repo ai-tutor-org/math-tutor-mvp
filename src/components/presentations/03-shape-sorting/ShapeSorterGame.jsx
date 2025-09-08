@@ -475,11 +475,10 @@ const gameReducer = (state, action) => {
     }
 };
 
-const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimationComplete, onFeedbackTrigger }) => {
+const ShapeSorterGame = ({ phaseConfig = {}, highlightedShape, startAnimation = false, onAnimationComplete, onFeedbackTrigger }) => {
 
     // Calculate initial state based on props (like other components)
     const initialGameState = useMemo(() => {
-        const { phaseConfig } = contentProps;
         const phase = phaseConfig?.initialPhase || GAME_PHASES.INTRO;
         const freshState = createInitialState();
 
@@ -490,7 +489,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             maxInterventions: phaseConfig?.maxInterventions || freshState.maxInterventions,
             showContainers: ['tools', 'modeling', 'guided', 'practice', 'challenge'].includes(phase)
         };
-    }, [contentProps]);
+    }, [phaseConfig]);
 
     const [state, dispatch] = useReducer(gameReducer, initialGameState);
 
@@ -818,7 +817,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
 
     // Initialize shapes after play area is set AND phase is properly set from contentProps
     useEffect(() => {
-        if (state.pileArea.width > 0 && state.shapes.length === 0 && contentProps.phaseConfig) {
+        if (state.pileArea.width > 0 && state.shapes.length === 0 && phaseConfig) {
 
             // Generate the 12 shapes
             const generatedShapes = generateShapes();
@@ -835,7 +834,6 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             const finalShapes = positionedShapes;
 
             // Initialize shapes with proper target count
-            const { phaseConfig } = contentProps;
             const targetCount = phaseConfig?.targetShapes || state.targetShapes || 12;
 
             dispatch({
@@ -845,11 +843,10 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
             });
 
         }
-    }, [state.pileArea, state.shapes.length, contentProps]);
+    }, [state.pileArea, state.shapes.length, phaseConfig]);
 
     // Handle phase changes from contentProps updates
     useEffect(() => {
-        const { phaseConfig } = contentProps;
         const newPhase = phaseConfig?.initialPhase;
         const newTargetShapes = phaseConfig?.targetShapes;
         const newMaxInterventions = phaseConfig?.maxInterventions;
@@ -885,7 +882,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                 });
             }
         }
-    }, [contentProps, state.currentPhase, state.targetShapes, state.maxInterventions, state.shapes]);
+    }, [phaseConfig, state.currentPhase, state.targetShapes, state.maxInterventions, state.shapes]);
 
     // Removed reactive shape enabling - now handled deterministically in INITIALIZE_SHAPES
 
@@ -1355,7 +1352,7 @@ const ShapeSorterGame = ({ contentProps = {}, startAnimation = false, onAnimatio
                                 <GameShape
                                     shape={shape}
                                     isDisabled={true}
-                                    isHighlighted={contentProps?.highlightedShape === shape.type}
+                                    isHighlighted={highlightedShape === shape.type}
                                     dragConstraints={false}
                                     className="recap-size"
                                 />

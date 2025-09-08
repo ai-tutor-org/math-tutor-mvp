@@ -284,7 +284,7 @@ const InteractiveLesson = () => {
         );
     }, [shapeDesignHook, interaction, getFeedbackText, getFeedbackInteraction, playClickSound]);
 
-    const handleShapeFeedback = useCallback((feedbackId) => {
+    const handleFeedbackTextTrigger = useCallback((feedbackId) => {
         const feedbackText = getFeedbackText(feedbackId);
         if (feedbackText) {
             setDynamicTutorText(feedbackText);
@@ -536,20 +536,15 @@ const InteractiveLesson = () => {
         let props = {
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
+            onFeedbackTrigger: handleFeedbackTextTrigger,
             // Pass perimeter callback for shape design components
             onPerimeterCalculated: shapeDesignHook.setCurrentPerimeter,
         };
 
-        // Special handling for shape-sorting-game component
-        if (interaction.type === 'shape-sorting-game') {
-            props.contentProps = interaction.contentProps;
-            props.onFeedbackTrigger = handleShapeFeedback;
-        }
-
         props = { ...props, ...interaction.contentProps };
 
         return <Component key={componentKey} {...props} />;
-    }, [interaction, activeFeedbackInteraction, handleAnimationComplete, animationTrigger, shapeDesignHook.setCurrentPerimeter, currentPresIndex, handleShapeFeedback]);
+    }, [interaction, activeFeedbackInteraction, handleAnimationComplete, animationTrigger, shapeDesignHook.setCurrentPerimeter, currentPresIndex, handleFeedbackTextTrigger]);
 
     // Render Top Menu Bar
     const renderTopMenuBar = useCallback(() => {
