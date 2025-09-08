@@ -191,19 +191,6 @@ const InteractiveLesson = () => {
         }
     }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
 
-
-
-    // Handle user interaction for conditional transitions
-    const handleUserInteraction = useCallback(() => {
-        // If this is a conditional transition, handle the wait time and button appearance
-        if (interaction?.transitionType === 'conditional' && interaction?.condition === 'hasInteracted') {
-            const waitTime = interaction?.waitTime || 3000; // Default 3 seconds
-            setTimeout(() => {
-                setShowNextButton(true);
-            }, waitTime);
-        }
-    }, [interaction]);
-
     const handleAnswer = (answerData) => {
         // Play appropriate sound based on answer correctness
         if (answerData.isCorrect) {
@@ -227,7 +214,6 @@ const InteractiveLesson = () => {
             }
             return;
         }
-
 
         // Handle shape measurement interactions
         if (interaction?.type === 'shape-measurement') {
@@ -258,7 +244,6 @@ const InteractiveLesson = () => {
             advanceToNext();
         }
     };
-
 
     const handlePerimeterCheck = useCallback(() => {
         // Validate answer immediately to determine which sound to play
@@ -329,13 +314,7 @@ const InteractiveLesson = () => {
     }, [measurementHook, interaction, handleAnswer, playCorrectSound, playIncorrectSound]);
 
     const handleAnimationComplete = useCallback(() => {
-        // Special handling for demo animation completion
-        if (interaction?.id === 'shape-demo-modeling') {
-            setShowNextButton(true); // Show button instead of auto-advance
-            return;
-        }
-
-        if (interaction?.transitionType === 'manual' && interaction.showNextButton) {
+        if (interaction.showNextButton) {
             setShowNextButton(true);
         } else {
             advanceToNext();
@@ -442,9 +421,7 @@ const InteractiveLesson = () => {
         };
     }, [advanceToNext]);
 
-
     const tutorText = dynamicTutorText || (interaction?.tutorText.replace('{userName}', userName) ?? '');
-
 
     // Update timing data when tutor text changes
     useEffect(() => {
@@ -559,7 +536,6 @@ const InteractiveLesson = () => {
         let props = {
             onAnimationComplete: handleAnimationComplete,
             startAnimation: animationTrigger,
-            onInteraction: handleUserInteraction,
             // Pass perimeter callback for shape design components
             onPerimeterCalculated: shapeDesignHook.setCurrentPerimeter,
         };
@@ -573,7 +549,7 @@ const InteractiveLesson = () => {
         props = { ...props, ...interaction.contentProps };
 
         return <Component key={componentKey} {...props} />;
-    }, [interaction, activeFeedbackInteraction, handleAnimationComplete, animationTrigger, handleUserInteraction, shapeDesignHook.setCurrentPerimeter, currentPresIndex, handleShapeFeedback]);
+    }, [interaction, activeFeedbackInteraction, handleAnimationComplete, animationTrigger, shapeDesignHook.setCurrentPerimeter, currentPresIndex, handleShapeFeedback]);
 
     // Render Top Menu Bar
     const renderTopMenuBar = useCallback(() => {

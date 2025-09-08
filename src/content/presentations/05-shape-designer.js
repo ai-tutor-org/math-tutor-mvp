@@ -26,8 +26,8 @@ export const shapeDesignerPresentations = {
                 type: 'shape-designer',
                 ContentComponent: ShapeDesigner,
                 tutorText: "You can click and drag the corners of this rectangle to change its shape. Go ahead and play with it for a moment!",
-                transitionType: 'conditional',
-                condition: 'hasInteracted',
+                transitionType: 'interaction-based',
+                showNextButton: true,
                 nextButtonText: "I'm Ready",
                 waitTime: 3000,
                 contentProps: {

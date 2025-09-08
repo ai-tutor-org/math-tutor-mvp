@@ -24,7 +24,7 @@ const ShapeDesigner = ({
   correctAnswer = null,
   feedbackIds = {},
   encouragementMode = false,
-  onInteraction,
+  onAnimationComplete,
   onPerimeterCalculated,
   onValidationRequest
 }) => {
@@ -71,11 +71,11 @@ const ShapeDesigner = ({
 
   const handleMouseDown = useCallback((e) => {
     if (!enableDragging) return;
-    
+
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
-    
+
     // Get the grid container
     const gridContainer = document.querySelector('.shape-designer__grid-container');
     if (gridContainer) {
@@ -89,11 +89,13 @@ const ShapeDesigner = ({
     // Track first interaction
     if (trackInteraction && !hasInteracted) {
       setHasInteracted(true);
-      if (onInteraction) {
-        onInteraction();
+      if (onAnimationComplete) {
+        setTimeout(() => {
+          onAnimationComplete();
+        }, 3000);
       }
     }
-  }, [enableDragging, trackInteraction, hasInteracted, onInteraction]);
+  }, [enableDragging, trackInteraction, hasInteracted]);
 
   const handleMouseMove = useCallback((e) => {
     if (!isDragging || !enableDragging) return;
@@ -101,7 +103,7 @@ const ShapeDesigner = ({
     // Get the grid container's bounding rect instead of event target
     const gridContainer = document.querySelector('.shape-designer__grid-container');
     if (!gridContainer) return;
-    
+
     const rect = gridContainer.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
@@ -125,12 +127,12 @@ const ShapeDesigner = ({
       // Snap to grid boundaries (max size is GRID_SIZE - 1 since we start at offset 1,1)
       const snappedWidth = Math.max(1, Math.min(GRID_SIZE - 1, Math.round(visualWidth)));
       const snappedHeight = Math.max(1, Math.min(GRID_SIZE - 1, Math.round(visualHeight)));
-      
+
       setRectangleWidth(snappedWidth);
       setRectangleHeight(snappedHeight);
       setVisualWidth(snappedWidth);
       setVisualHeight(snappedHeight);
-      
+
       setIsDragging(false);
       setDragStartPos(null);
     }
@@ -141,7 +143,7 @@ const ShapeDesigner = ({
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      
+
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
@@ -179,14 +181,14 @@ const ShapeDesigner = ({
     // Use visual dimensions during dragging, actual dimensions otherwise
     const currentWidth = isDragging ? visualWidth : rectangleWidth;
     const currentHeight = isDragging ? visualHeight : rectangleHeight;
-    
+
     const rectWidth = currentWidth * CELL_SIZE;
     const rectHeight = currentHeight * CELL_SIZE;
-    
+
     // Offset rectangle to start at grid position (1,1) instead of (0,0)
     const offsetX = CELL_SIZE;
     const offsetY = CELL_SIZE;
-    
+
     return (
       <motion.g
         initial={animateSolution ? { opacity: 0.7 } : false}
@@ -201,7 +203,7 @@ const ShapeDesigner = ({
           height={rectHeight}
           className={`shape-designer__rectangle ${isDragging ? 'shape-designer__rectangle--dragging' : ''}`}
         />
-        
+
         {/* Side labels */}
         {showSideLabels && (
           <>
@@ -214,7 +216,7 @@ const ShapeDesigner = ({
             >
               {isDragging ? Math.round(visualWidth) : rectangleWidth}
             </text>
-            
+
             {/* Right label */}
             <text
               x={offsetX + rectWidth + 8}
@@ -225,7 +227,7 @@ const ShapeDesigner = ({
             >
               {isDragging ? Math.round(visualHeight) : rectangleHeight}
             </text>
-            
+
             {/* Bottom label */}
             <text
               x={offsetX + rectWidth / 2}
@@ -235,7 +237,7 @@ const ShapeDesigner = ({
             >
               {isDragging ? Math.round(visualWidth) : rectangleWidth}
             </text>
-            
+
             {/* Left label */}
             <text
               x={offsetX - 8}
@@ -248,7 +250,7 @@ const ShapeDesigner = ({
             </text>
           </>
         )}
-        
+
         {/* Drag handle */}
         {(enableDragging || mode === 'welcome') && (
           <g transform={`translate(${offsetX + rectWidth}, ${offsetY + rectHeight})`}>
@@ -271,7 +273,7 @@ const ShapeDesigner = ({
             />
           </g>
         )}
-        
+
         {/* Success checkmark */}
         {showCheckmark && (
           <g transform={`translate(${offsetX + rectWidth + 30}, ${offsetY + rectHeight / 2})`} className="shape-designer__checkmark">
@@ -305,17 +307,17 @@ const ShapeDesigner = ({
           )}
         </div>
       )}
-      
+
       {/* Grid and rectangle */}
-      <div 
+      <div
         className="shape-designer__grid-container"
-        style={{ 
-          width: GRID_TOTAL_SIZE, 
-          height: GRID_TOTAL_SIZE 
+        style={{
+          width: GRID_TOTAL_SIZE,
+          height: GRID_TOTAL_SIZE
         }}
       >
-        <svg 
-          width={GRID_TOTAL_SIZE} 
+        <svg
+          width={GRID_TOTAL_SIZE}
           height={GRID_TOTAL_SIZE}
           className="shape-designer__grid-svg"
         >
@@ -323,7 +325,7 @@ const ShapeDesigner = ({
           <Rectangle />
         </svg>
       </div>
-      
+
       {/* Validation button */}
       {enableValidation && (
         <button
@@ -333,7 +335,7 @@ const ShapeDesigner = ({
           Check My Shape
         </button>
       )}
-      
+
       {/* Success message */}
       {showSuccess && (
         <div className="shape-designer__success-message">
