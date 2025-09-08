@@ -14,7 +14,6 @@ const usePerimeterInput = () => {
     const handlePerimeterCheck = useCallback((
         correctAnswer,
         feedbackIds,
-        getFeedbackText,
         getFeedbackInteraction,
         setDynamicTutorText,
         setActiveFeedbackInteraction,
@@ -23,27 +22,23 @@ const usePerimeterInput = () => {
         const userAnswer = parseInt(perimeterInput);
 
         if (userAnswer === correctAnswer) {
-            // Correct answer
-            const feedbackText = getFeedbackText(feedbackIds?.correct);
+            const feedbackText = getFeedbackInteraction(feedbackIds?.correct)?.tutorText;
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
             }
             setShowNextButton(true);
-            setPerimeterAttempts(0); // Reset for next interaction
+            setPerimeterAttempts(0);
         } else {
-            // Incorrect answer
             const newAttempts = perimeterAttempts + 1;
             setPerimeterAttempts(newAttempts);
 
             if (newAttempts === 1) {
-                // First incorrect attempt - show hint
-                const feedbackText = getFeedbackText(feedbackIds?.hint1);
+                const feedbackText = getFeedbackInteraction(feedbackIds?.hint1)?.tutorText;
                 if (feedbackText) {
                     setDynamicTutorText(feedbackText);
                 }
-                setPerimeterInput(''); // Clear input for retry
+                setPerimeterInput('');
             } else if (newAttempts === 2) {
-                // Second incorrect attempt - show solution
                 const feedbackInteraction = getFeedbackInteraction(feedbackIds?.solution);
                 if (feedbackInteraction) {
                     setDynamicTutorText(feedbackInteraction.tutorText);
@@ -51,7 +46,7 @@ const usePerimeterInput = () => {
                 }
                 setCurrentEquationStep(0);
                 setPerimeterInput(correctAnswer.toString());
-                setPerimeterAttempts(0); // Reset for next interaction
+                setPerimeterAttempts(0);
             }
         }
     }, [perimeterInput, perimeterAttempts]);

@@ -12,45 +12,39 @@ const useShapeDesignInput = () => {
     const handleShapeDesignCheck = useCallback((
         targetPerimeter,
         feedbackIds,
-        getFeedbackText,
         getFeedbackInteraction,
         setDynamicTutorText,
         setActiveFeedbackInteraction,
         setShowNextButton
     ) => {
         if (currentPerimeter === targetPerimeter) {
-            // Correct answer
-            const feedbackText = getFeedbackText(feedbackIds?.correct);
+            const feedbackText = getFeedbackInteraction(feedbackIds?.correct)?.tutorText;
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
             }
             setShowNextButton(true);
-            setShapeDesignAttempts(0); // Reset for next interaction
+            setShapeDesignAttempts(0);
         } else {
-            // Incorrect answer
             const newAttempts = shapeDesignAttempts + 1;
             setShapeDesignAttempts(newAttempts);
 
             if (newAttempts === 1) {
-                // First incorrect attempt - show hint
-                const feedbackText = getFeedbackText(feedbackIds?.hint1);
+                const feedbackText = getFeedbackInteraction(feedbackIds?.hint1)?.tutorText;
                 if (feedbackText) {
                     setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
                 }
             } else if (newAttempts === 2) {
-                // Second incorrect attempt - show second hint
-                const feedbackText = getFeedbackText(feedbackIds?.hint2);
+                const feedbackText = getFeedbackInteraction(feedbackIds?.hint2)?.tutorText;
                 if (feedbackText) {
                     setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
                 }
             } else if (newAttempts === 3) {
-                // Third incorrect attempt - show solution
                 const feedbackInteraction = getFeedbackInteraction(feedbackIds?.solution);
                 if (feedbackInteraction) {
                     setDynamicTutorText(feedbackInteraction.tutorText);
                     setActiveFeedbackInteraction(feedbackInteraction);
                 }
-                setShapeDesignAttempts(0); // Reset for next interaction
+                setShapeDesignAttempts(0);
             }
         }
     }, [currentPerimeter, shapeDesignAttempts]);

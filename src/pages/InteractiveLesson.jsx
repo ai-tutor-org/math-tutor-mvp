@@ -23,7 +23,14 @@ import {
     PlayArrow as PlayArrowIcon
 } from '@mui/icons-material';
 
-import { lessons, presentations } from '../content'; // Import centralized data
+// Import lesson data access utilities
+import {
+    getLessonData,
+    getPresentationId,
+    getPresentationData,
+    getInteractionData,
+    getFeedbackInteraction as getFeedbackInteractionUtil
+} from '../utils/lessonDataAccess';
 
 import TTSManager from '../components/layout/TTSManager';
 import DeveloperMenu from '../components/dev/DeveloperMenu';
@@ -139,34 +146,16 @@ const InteractiveLesson = () => {
         return !oneTimeAnimations.includes(animationName);
     };
 
-    // Data from content data
-    const lesson = useMemo(() => lessons[lessonId], [lessonId]);
-    const presentationId = useMemo(() => {
-        return lesson.sequence[currentPresIndex]?.presentationId;
-    }, [lesson, currentPresIndex]);
-    const presentation = useMemo(() => {
-        return presentations[presentationId];
-    }, [presentationId]);
-    const interaction = useMemo(() => presentation?.interactions[currentInteractionIndex], [presentation, currentInteractionIndex]);
-
-    // Helper function to get feedback text from content data
-    const getFeedbackText = useCallback((feedbackInteractionId) => {
-        // First check current presentation's feedbackRegistry
-        if (presentation?.feedbackRegistry?.[feedbackInteractionId]) {
-            return presentation.feedbackRegistry[feedbackInteractionId].tutorText;
-        }
-
-        return null;
-    }, [presentation]);
+    // Data from content data using utility functions
+    const lesson = useMemo(() => getLessonData(lessonId), [lessonId]);
+    const presentationId = useMemo(() => getPresentationId(lessonId, currentPresIndex), [lessonId, currentPresIndex]);
+    const presentation = useMemo(() => getPresentationData(presentationId), [presentationId]);
+    const interaction = useMemo(() => getInteractionData(presentationId, currentInteractionIndex), [presentationId, currentInteractionIndex]);
 
     // Helper function to get full feedback interaction data including ContentComponent
     const getFeedbackInteraction = useCallback((feedbackInteractionId) => {
-        // First check current presentation's feedbackRegistry
-        if (presentation?.feedbackRegistry?.[feedbackInteractionId]) {
-            return presentation.feedbackRegistry[feedbackInteractionId];
-        }
-        return null;
-    }, [presentation]);
+        return getFeedbackInteractionUtil(presentationId, feedbackInteractionId);
+    }, [presentationId]);
 
     const advanceToNext = useCallback(() => {
         setAnimationTrigger(false); // Reset trigger for the next interaction
@@ -205,12 +194,6 @@ const InteractiveLesson = () => {
             if (feedbackInteraction) {
                 setDynamicTutorText(feedbackInteraction.tutorText);
                 setActiveFeedbackInteraction(feedbackInteraction);
-
-                if (feedbackInteraction.type === 'multiple-choice-question') {
-                    // For retry questions, don't show next button - let user answer again
-                    return;
-                }
-                // Let TTS completion handle showing the next button
             }
             return;
         }
@@ -219,13 +202,13 @@ const InteractiveLesson = () => {
         if (interaction?.type === 'shape-measurement') {
             if (answerData.isCorrect) {
                 // Show success feedback for all measurements (including the last one)
-                const feedbackText = getFeedbackText('shape-correct');
+                const feedbackText = getFeedbackInteraction('shape-correct')?.tutorText;
                 if (feedbackText) {
                     setDynamicTutorText(feedbackText);
                 }
                 setShowNextButton(true);
             } else {
-                const incorrectFeedback = getFeedbackText('shape-incorrect');
+                const incorrectFeedback = getFeedbackInteraction('shape-incorrect')?.tutorText;
                 if (incorrectFeedback) {
                     setDynamicTutorText(incorrectFeedback);
                 }
@@ -234,7 +217,7 @@ const InteractiveLesson = () => {
         } else if (answerData.feedbackInteractionId) {
             // For crayon activity: determine correct feedback based on answer result
             const feedbackId = answerData.isCorrect ? 'crayon-correct' : 'crayon-incorrect';
-            const feedbackText = getFeedbackText(feedbackId);
+            const feedbackText = getFeedbackInteraction(feedbackId)?.tutorText;
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
                 setShowNextButton(true); // Show continue button after feedback
@@ -244,6 +227,13 @@ const InteractiveLesson = () => {
             advanceToNext();
         }
     };
+
+    const handleFeedbackTextTrigger = useCallback((feedbackId) => {
+        const feedbackText = getFeedbackInteraction(feedbackId)?.tutorText;
+        if (feedbackText) {
+            setDynamicTutorText(feedbackText);
+        }
+    }, [getFeedbackInteraction]);
 
     const handlePerimeterCheck = useCallback(() => {
         // Validate answer immediately to determine which sound to play
@@ -262,34 +252,24 @@ const InteractiveLesson = () => {
         perimeterHook.handlePerimeterCheck(
             correctAnswer,
             interaction?.contentProps?.feedbackIds,
-            getFeedbackText,
             getFeedbackInteraction,
             setDynamicTutorText,
             setActiveFeedbackInteraction,
             setShowNextButton
         );
-    }, [perimeterHook, interaction, getFeedbackText, getFeedbackInteraction, playCorrectSound, playIncorrectSound]);
-
+    }, [perimeterHook, interaction, getFeedbackInteraction, playCorrectSound, playIncorrectSound]);
 
     const handleShapeDesignCheck = useCallback(() => {
         playClickSound();
         shapeDesignHook.handleShapeDesignCheck(
             interaction?.interactionProps?.targetPerimeter,
             interaction?.contentProps?.feedbackIds,
-            getFeedbackText,
             getFeedbackInteraction,
             setDynamicTutorText,
             setActiveFeedbackInteraction,
             setShowNextButton
         );
-    }, [shapeDesignHook, interaction, getFeedbackText, getFeedbackInteraction, playClickSound]);
-
-    const handleFeedbackTextTrigger = useCallback((feedbackId) => {
-        const feedbackText = getFeedbackText(feedbackId);
-        if (feedbackText) {
-            setDynamicTutorText(feedbackText);
-        }
-    }, [getFeedbackText]);
+    }, [shapeDesignHook, interaction, getFeedbackInteraction, playClickSound]);
 
     const handleMeasurementCheck = useCallback(() => {
         // Validate answer immediately to determine which sound to play
