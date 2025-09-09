@@ -40,9 +40,18 @@ const useAnswerSound = () => {
         }
     }, [initializeSounds]);
 
+    const playAnswerSound = useCallback((isCorrect) => {
+        if (isCorrect) {
+            playCorrectSound();
+        } else {
+            playIncorrectSound();
+        }
+    }, [playCorrectSound, playIncorrectSound]);
+
     return {
         playCorrectSound,
-        playIncorrectSound
+        playIncorrectSound,
+        playAnswerSound
     };
 };
 

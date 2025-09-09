@@ -57,6 +57,10 @@ export const measurementPresentations = {
                     },
                     correctAnswer: 8,
                     rulerOrientation: 'horizontal',
+                    feedbackIds: {
+                        correct: 'shape-correct',
+                        incorrect: 'shape-incorrect'
+                    }
                 },
                 interactionProps: {
                     placeholder: "Enter length",
@@ -81,6 +85,10 @@ export const measurementPresentations = {
                     },
                     correctAnswer: 5,
                     rulerOrientation: 'horizontal',
+                    feedbackIds: {
+                        correct: 'shape-correct',
+                        incorrect: 'shape-incorrect'
+                    }
                 },
                 interactionProps: {
                     placeholder: "Enter length",
@@ -105,6 +113,10 @@ export const measurementPresentations = {
                     },
                     correctAnswer: 6,
                     rulerOrientation: 'horizontal',
+                    feedbackIds: {
+                        correct: 'shape-correct',
+                        incorrect: 'shape-incorrect'
+                    }
                 },
                 interactionProps: {
                     placeholder: "Enter length",
@@ -129,6 +141,10 @@ export const measurementPresentations = {
                     },
                     correctAnswer: 7,
                     rulerOrientation: 'vertical',
+                    feedbackIds: {
+                        correct: 'shape-correct',
+                        incorrect: 'shape-incorrect'
+                    }
                 },
                 interactionProps: {
                     placeholder: "Enter length",

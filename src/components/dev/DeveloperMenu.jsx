@@ -31,7 +31,7 @@ const DeveloperMenu = ({
     setAnimationTrigger,
     setActiveFeedbackInteraction,
     // Input hooks for state reset
-    measurementHook,
+    measurementHandler,
     perimeterHook,
     shapeDesignHook
 }) => {
@@ -59,15 +59,15 @@ const DeveloperMenu = ({
         setAnimationTrigger(false);
         setActiveFeedbackInteraction(null);
 
-        // Reset input states using hooks
-        measurementHook.resetMeasurementState();
+        // Reset input states using hooks/handlers
+        measurementHandler.resetMeasurementState();
         perimeterHook.resetPerimeterState();
         shapeDesignHook.resetShapeDesignState();
 
         // Navigate to regular sequence presentation
         setCurrentPresIndex(interaction.presIndex);
         setCurrentInteractionIndex(interaction.interactionIndex);
-    }, [ttsRef, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, measurementHook, perimeterHook, shapeDesignHook, setCurrentPresIndex, setCurrentInteractionIndex]);
+    }, [ttsRef, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, measurementHandler, perimeterHook, shapeDesignHook, setCurrentPresIndex, setCurrentInteractionIndex]);
 
     const handleDevResetLesson = useCallback(() => {
         setCurrentPresIndex(0);

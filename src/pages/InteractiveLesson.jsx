@@ -43,7 +43,7 @@ import useAnswerSound from '../hooks/useAnswerSound';
 // Custom hooks
 import usePerimeterInput from '../hooks/usePerimeterInput';
 import useShapeDesignInput from '../hooks/useShapeDesignInput';
-import useMeasurementInput from '../hooks/useMeasurementInput';
+import MeasurementHandler from '../components/presentations/02-measurement/MeasurementHandler';
 
 // Import common components
 import PrimaryButton from '../components/common/PrimaryButton';
@@ -94,10 +94,10 @@ const InteractiveLesson = () => {
     const playClickSound = useClickSound();
 
     // Answer sound hooks
-    const { playCorrectSound, playIncorrectSound } = useAnswerSound();
+    const { playAnswerSound } = useAnswerSound();
 
     // Custom hooks for input management
-    const measurementHook = useMeasurementInput();
+    const measurementHandler = MeasurementHandler();
     const perimeterHook = usePerimeterInput();
     const shapeDesignHook = useShapeDesignInput();
 
@@ -180,58 +180,18 @@ const InteractiveLesson = () => {
         }
     }, [currentInteractionIndex, currentPresIndex, presentation, lesson, navigate]);
 
-    const handleAnswer = (answerData) => {
-        // Play appropriate sound based on answer correctness
-        if (answerData.isCorrect) {
-            playCorrectSound();
-        } else {
-            playIncorrectSound();
-        }
-
-        // Handle multiple choice questions with feedbackId
-        if (interaction?.type === 'multiple-choice-question' && answerData.feedbackId) {
-            const feedbackInteraction = getFeedbackInteraction(answerData.feedbackId);
-            if (feedbackInteraction) {
-                setDynamicTutorText(feedbackInteraction.tutorText);
-                setActiveFeedbackInteraction(feedbackInteraction);
-            }
-            return;
-        }
-
-        // Handle shape measurement interactions
-        if (interaction?.type === 'shape-measurement') {
-            if (answerData.isCorrect) {
-                // Show success feedback for all measurements (including the last one)
-                const feedbackText = getFeedbackInteraction('shape-correct')?.tutorText;
-                if (feedbackText) {
-                    setDynamicTutorText(feedbackText);
-                }
-                setShowNextButton(true);
-            } else {
-                const incorrectFeedback = getFeedbackInteraction('shape-incorrect')?.tutorText;
-                if (incorrectFeedback) {
-                    setDynamicTutorText(incorrectFeedback);
-                }
-            }
-            return;
-        } else if (answerData.feedbackInteractionId) {
-            // For crayon activity: determine correct feedback based on answer result
-            const feedbackId = answerData.isCorrect ? 'crayon-correct' : 'crayon-incorrect';
-            const feedbackText = getFeedbackInteraction(feedbackId)?.tutorText;
-            if (feedbackText) {
-                setDynamicTutorText(feedbackText);
-                setShowNextButton(true); // Show continue button after feedback
-            }
-        } else {
-            // For other question types, advance as before
-            advanceToNext();
-        }
-    };
-
     const handleFeedbackTextTrigger = useCallback((feedbackId) => {
         const feedbackText = getFeedbackInteraction(feedbackId)?.tutorText;
         if (feedbackText) {
             setDynamicTutorText(feedbackText);
+        }
+    }, [getFeedbackInteraction]);
+
+    const handleFeedbackInteractionTrigger = useCallback((feedbackId) => {
+        const feedbackInteraction = getFeedbackInteraction(feedbackId);
+        if (feedbackInteraction) {
+            setActiveFeedbackInteraction(feedbackInteraction);
+            setDynamicTutorText(feedbackInteraction.tutorText);
         }
     }, [getFeedbackInteraction]);
 
@@ -241,12 +201,7 @@ const InteractiveLesson = () => {
         const correctAnswer = interaction?.contentProps?.correctAnswer;
         const isCorrect = userAnswer === correctAnswer;
 
-        // Play appropriate sound immediately
-        if (isCorrect) {
-            playCorrectSound();
-        } else {
-            playIncorrectSound();
-        }
+        playAnswerSound(isCorrect);
 
         // Continue with existing perimeter check logic
         perimeterHook.handlePerimeterCheck(
@@ -257,7 +212,7 @@ const InteractiveLesson = () => {
             setActiveFeedbackInteraction,
             setShowNextButton
         );
-    }, [perimeterHook, interaction, getFeedbackInteraction, playCorrectSound, playIncorrectSound]);
+    }, [perimeterHook, interaction, getFeedbackInteraction]);
 
     const handleShapeDesignCheck = useCallback(() => {
         playClickSound();
@@ -272,26 +227,15 @@ const InteractiveLesson = () => {
     }, [shapeDesignHook, interaction, getFeedbackInteraction, playClickSound]);
 
     const handleMeasurementCheck = useCallback(() => {
-        // Validate answer immediately to determine which sound to play
-        const userAnswer = parseFloat(measurementHook.measurementInput);
-        const correctAnswer = interaction?.contentProps?.correctAnswer;
-        const isCorrect = userAnswer === correctAnswer;
-
-
-        // Play appropriate sound immediately
-        if (isCorrect) {
-            playCorrectSound();
-        } else {
-            playIncorrectSound();
-        }
-
         // Continue with existing measurement check logic
-        measurementHook.handleMeasurementCheck(
-            correctAnswer,
-            interaction,
-            handleAnswer
+        measurementHandler.handleMeasurementCheck(
+            lessonId,
+            currentPresIndex,
+            currentInteractionIndex,
+            setShowNextButton,
+            handleFeedbackTextTrigger
         );
-    }, [measurementHook, interaction, handleAnswer, playCorrectSound, playIncorrectSound]);
+    }, [measurementHandler, presentationId, currentInteractionIndex]);
 
     const handleAnimationComplete = useCallback(() => {
         if (interaction.showNextButton) {
@@ -315,7 +259,7 @@ const InteractiveLesson = () => {
         // Reset input states when interaction changes
         perimeterHook.resetPerimeterState();
         shapeDesignHook.resetShapeDesignState();
-        measurementHook.resetMeasurementState();
+        measurementHandler.resetMeasurementState();
 
         // Reset video loop state for new interactions
         if (videoRef.current && interaction?.tutorAnimation && shouldAnimationLoop(interaction.tutorAnimation)) {
@@ -450,15 +394,15 @@ const InteractiveLesson = () => {
             case 'shape-measurement':
                 return {
                     ...baseProps,
-                    value: measurementHook.measurementInput,
-                    onInputChange: measurementHook.setMeasurementInput,
+                    value: measurementHandler.measurementInput,
+                    onInputChange: measurementHandler.setMeasurementInput,
                     onCheck: handleMeasurementCheck
                 };
 
             case 'multiple-choice-question':
                 return {
                     ...baseProps,
-                    onAnswer: handleAnswer
+                    onAnswer: handleFeedbackInteractionTrigger
                 };
 
             case 'perimeter-design':
@@ -470,7 +414,7 @@ const InteractiveLesson = () => {
             default:
                 return baseProps;
         }
-    }, [perimeterHook.perimeterInput, perimeterHook.setPerimeterInput, handlePerimeterCheck, measurementHook.measurementInput, measurementHook.setMeasurementInput, handleMeasurementCheck, handleAnswer, handleShapeDesignCheck]);
+    }, [perimeterHook.perimeterInput, perimeterHook.setPerimeterInput, handlePerimeterCheck, measurementHandler.measurementInput, measurementHandler.setMeasurementInput, handleMeasurementCheck, handleFeedbackInteractionTrigger, handleShapeDesignCheck]);
 
     // Render Left Panel Interaction Component
     const renderInteraction = useCallback(() => {
@@ -570,7 +514,7 @@ const InteractiveLesson = () => {
                                 setAnimationTrigger={setAnimationTrigger}
                                 setActiveFeedbackInteraction={setActiveFeedbackInteraction}
                                 // Input hooks for state reset
-                                measurementHook={measurementHook}
+                                measurementHandler={measurementHandler}
                                 perimeterHook={perimeterHook}
                                 shapeDesignHook={shapeDesignHook}
                             />
@@ -606,7 +550,7 @@ const InteractiveLesson = () => {
                 </Toolbar>
             </AppBar>
         );
-    }, [lesson?.title, isDevMode, lessonId, currentPresIndex, currentInteractionIndex, ttsRef, setCurrentPresIndex, setCurrentInteractionIndex, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, measurementHook, perimeterHook, shapeDesignHook, navigate]);
+    }, [lesson?.title, isDevMode, lessonId, currentPresIndex, currentInteractionIndex, ttsRef, setCurrentPresIndex, setCurrentInteractionIndex, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, measurementHandler, perimeterHook, shapeDesignHook, navigate]);
 
     return (
         <div>

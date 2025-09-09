@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Button } from '@mui/material';
 
-const MultipleChoice = ({ 
-    choices, 
+const MultipleChoice = ({
+    choices,
     onAnswer,
-    disabled = false 
+    disabled = false
 }) => {
     return (
         <Box sx={{ mb: 3, width: '100%' }}>
@@ -14,7 +14,7 @@ const MultipleChoice = ({
                         <Button
                             key={index}
                             variant="outlined"
-                            onClick={() => onAnswer(choice)}
+                            onClick={() => onAnswer(choice?.feedbackId)}
                             disabled={disabled}
                             sx={{
                                 padding: '12px 16px',
