@@ -5,6 +5,7 @@ import { getFeedbackInteraction, getInteractionData, getPresentationId } from '.
 const ShapeDesignHandler = () => {
     const [currentPerimeter, setCurrentPerimeter] = useState(0);
     const [shapeDesignAttempts, setShapeDesignAttempts] = useState(0);
+    const playClickSound = useClickSound();
 
     const handleShapeDesignCheck = useCallback((
         lessonId,
@@ -18,7 +19,6 @@ const ShapeDesignHandler = () => {
         const interaction = getInteractionData(presentationId, currentInteractionIndex);
         const targetPerimeter = interaction?.contentProps?.correctAnswer;
 
-        const playClickSound = useClickSound();
         playClickSound();
 
         if (currentPerimeter === targetPerimeter) {
@@ -51,7 +51,7 @@ const ShapeDesignHandler = () => {
                 setShapeDesignAttempts(0);
             }
         }
-    }, [currentPerimeter, shapeDesignAttempts]);
+    }, [currentPerimeter, shapeDesignAttempts, playClickSound]);
 
     return {
         setCurrentPerimeter,
