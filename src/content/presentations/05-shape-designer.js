@@ -68,9 +68,6 @@ export const shapeDesignerPresentations = {
                         solution: 'rectangle-design-solution'
                     }
                 },
-                interactionProps: {
-                    targetPerimeter: 20
-                }
             },
         ],
         feedbackRegistry: {
@@ -169,9 +166,6 @@ export const shapeDesignerPresentations = {
                         solution: 'rectangle-design-solution-2'
                     }
                 },
-                interactionProps: {
-                    targetPerimeter: 26
-                }
             },
         ],
         feedbackRegistry: {
@@ -270,9 +264,6 @@ export const shapeDesignerPresentations = {
                         solution: 'rectangle-design-solution-3'
                     }
                 },
-                interactionProps: {
-                    targetPerimeter: 8
-                }
             },
         ],
         feedbackRegistry: {

@@ -41,7 +41,7 @@ import { useClickSound } from '../hooks/useClickSound';
 import useAnswerSound from '../hooks/useAnswerSound';
 
 // Custom hooks
-import useShapeDesignInput from '../hooks/useShapeDesignInput';
+import ShapeDesignHandler from '../components/presentations/05-shape-designer/ShapeDesignHandler';
 import MeasurementHandler from '../components/presentations/02-measurement/MeasurementHandler';
 import PerimeterHandler from '../components/presentations/04-farmer-missions/PerimeterHandler';
 
@@ -100,7 +100,7 @@ const InteractiveLesson = () => {
     // Custom hooks for input management
     const measurementHandler = MeasurementHandler();
     const perimeterHandler = PerimeterHandler();
-    const shapeDesignHook = useShapeDesignInput();
+    const shapeDesignHandler = ShapeDesignHandler();
 
     // TTS Pause/Resume handler
     const handleTTSPauseResume = useCallback(() => {
@@ -191,8 +191,8 @@ const InteractiveLesson = () => {
     const handleFeedbackInteractionTrigger = useCallback((feedbackId) => {
         const feedbackInteraction = getFeedbackInteraction(feedbackId);
         if (feedbackInteraction) {
-            setActiveFeedbackInteraction(feedbackInteraction);
             setDynamicTutorText(feedbackInteraction.tutorText);
+            setActiveFeedbackInteraction(feedbackInteraction);
         }
     }, [getFeedbackInteraction]);
 
@@ -204,21 +204,21 @@ const InteractiveLesson = () => {
             leftInput,
             setLeftInput,
             setShowNextButton,
-            handleFeedbackTextTrigger,
-            handleFeedbackInteractionTrigger
+            setDynamicTutorText,
+            setActiveFeedbackInteraction
         );
-    }, [perimeterHandler, interaction, getFeedbackInteraction]);
+    }, [perimeterHandler, lessonId, currentPresIndex, currentInteractionIndex, leftInput, handleFeedbackTextTrigger]);
 
     const handleShapeDesignCheck = useCallback(() => {
-        shapeDesignHook.handleShapeDesignCheck(
-            interaction?.interactionProps?.targetPerimeter,
-            interaction?.contentProps?.feedbackIds,
-            getFeedbackInteraction,
+        shapeDesignHandler.handleShapeDesignCheck(
+            lessonId,
+            currentPresIndex,
+            currentInteractionIndex,
+            setShowNextButton,
             setDynamicTutorText,
-            setActiveFeedbackInteraction,
-            setShowNextButton
+            setActiveFeedbackInteraction
         );
-    }, [shapeDesignHook, interaction, getFeedbackInteraction]);
+    }, [shapeDesignHandler, lessonId, currentPresIndex, currentInteractionIndex]);
 
     const handleMeasurementCheck = useCallback(() => {
         measurementHandler.handleMeasurementCheck(
@@ -228,7 +228,8 @@ const InteractiveLesson = () => {
             leftInput,
             setLeftInput,
             setShowNextButton,
-            handleFeedbackTextTrigger
+            setDynamicTutorText,
+            setActiveFeedbackInteraction
         );
     }, [measurementHandler, lessonId, currentPresIndex, currentInteractionIndex, leftInput, handleFeedbackTextTrigger]);
 
@@ -251,7 +252,6 @@ const InteractiveLesson = () => {
         // Reset dynamic tutor text when interaction changes
         setDynamicTutorText(null);
 
-        shapeDesignHook.resetShapeDesignState();
         setLeftInput('');
 
         // Reset video loop state for new interactions
@@ -456,13 +456,13 @@ const InteractiveLesson = () => {
             startAnimation: animationTrigger,
             onFeedbackTrigger: handleFeedbackTextTrigger,
             // Pass perimeter callback for shape design components
-            onPerimeterCalculated: shapeDesignHook.setCurrentPerimeter,
+            onPerimeterCalculated: shapeDesignHandler.setCurrentPerimeter,
         };
 
         props = { ...props, ...interaction.contentProps };
 
         return <Component key={componentKey} {...props} />;
-    }, [interaction, activeFeedbackInteraction, handleAnimationComplete, animationTrigger, shapeDesignHook.setCurrentPerimeter, currentPresIndex, handleFeedbackTextTrigger]);
+    }, [interaction, activeFeedbackInteraction, handleAnimationComplete, animationTrigger, shapeDesignHandler.setCurrentPerimeter, currentPresIndex, handleFeedbackTextTrigger]);
 
     // Render Top Menu Bar
     const renderTopMenuBar = useCallback(() => {
@@ -509,7 +509,6 @@ const InteractiveLesson = () => {
                                 setActiveFeedbackInteraction={setActiveFeedbackInteraction}
                                 // Input hooks for state reset
                                 setLeftInput={setLeftInput}
-                                shapeDesignHook={shapeDesignHook}
                             />
                         )}
                         <IconButton
@@ -543,7 +542,7 @@ const InteractiveLesson = () => {
                 </Toolbar>
             </AppBar>
         );
-    }, [lesson?.title, isDevMode, lessonId, currentPresIndex, currentInteractionIndex, ttsRef, setCurrentPresIndex, setCurrentInteractionIndex, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, shapeDesignHook, navigate]);
+    }, [lesson?.title, isDevMode, lessonId, currentPresIndex, currentInteractionIndex, ttsRef, setCurrentPresIndex, setCurrentInteractionIndex, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, navigate]);
 
     return (
         <div>

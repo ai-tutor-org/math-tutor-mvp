@@ -31,8 +31,7 @@ const DeveloperMenu = ({
     setAnimationTrigger,
     setActiveFeedbackInteraction,
     // Input hooks for state reset
-    setLeftInput,
-    shapeDesignHook
+    setLeftInput
 }) => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -60,12 +59,11 @@ const DeveloperMenu = ({
 
         // Reset input states using hooks/handlers
         setLeftInput('');
-        shapeDesignHook.resetShapeDesignState();
 
         // Navigate to regular sequence presentation
         setCurrentPresIndex(interaction.presIndex);
         setCurrentInteractionIndex(interaction.interactionIndex);
-    }, [ttsRef, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, shapeDesignHook, setCurrentPresIndex, setCurrentInteractionIndex]);
+    }, [ttsRef, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, setCurrentPresIndex, setCurrentInteractionIndex]);
 
     const handleDevResetLesson = useCallback(() => {
         setCurrentPresIndex(0);

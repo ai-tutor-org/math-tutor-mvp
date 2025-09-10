@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import useAnswerSound from '../../../hooks/useAnswerSound';
-import { getPresentationId, getInteractionData } from '../../../utils/lessonDataAccess';
+import { getPresentationId, getInteractionData, getFeedbackInteraction } from '../../../utils/lessonDataAccess';
 
 const MeasurementHandler = () => {
     const { playAnswerSound } = useAnswerSound();
@@ -12,7 +12,7 @@ const MeasurementHandler = () => {
         leftInput,
         setLeftInput,
         setShowNextButton,
-        handleFeedbackTextTrigger
+        setDynamicTutorText,
     ) => {
         const presentationId = getPresentationId(lessonId, currentPresIndex);
         const interaction = getInteractionData(presentationId, currentInteractionIndex);
@@ -23,10 +23,17 @@ const MeasurementHandler = () => {
         playAnswerSound(userAnswer === correctAnswer);
 
         if (userAnswer === correctAnswer) {
-            handleFeedbackTextTrigger(interaction?.contentProps?.feedbackIds?.correct);
+            const feedbackText = getFeedbackInteraction(presentationId, interaction?.contentProps?.feedbackIds?.correct)?.tutorText;
+            if (feedbackText) {
+                setDynamicTutorText(feedbackText);
+            }
             setShowNextButton(true);
         } else {
             handleFeedbackTextTrigger(interaction?.contentProps?.feedbackIds?.incorrect);
+            const feedbackText = getFeedbackInteraction(presentationId, interaction?.contentProps?.feedbackIds?.incorrect)?.tutorText;
+            if (feedbackText) {
+                setDynamicTutorText(feedbackText);
+            }
         }
 
         setLeftInput('');

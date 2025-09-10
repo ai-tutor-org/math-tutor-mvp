@@ -1,28 +1,28 @@
 import { useState, useCallback } from 'react';
-import { useClickSound } from './useClickSound';
+import { useClickSound } from '../../../hooks/useClickSound';
+import { getFeedbackInteraction, getInteractionData, getPresentationId } from '../../../utils/lessonDataAccess';
 
-const useShapeDesignInput = () => {
+const ShapeDesignHandler = () => {
     const [currentPerimeter, setCurrentPerimeter] = useState(0);
     const [shapeDesignAttempts, setShapeDesignAttempts] = useState(0);
 
-    const resetShapeDesignState = useCallback(() => {
-        setCurrentPerimeter(0);
-        setShapeDesignAttempts(0);
-    }, []);
-
     const handleShapeDesignCheck = useCallback((
-        targetPerimeter,
-        feedbackIds,
-        getFeedbackInteraction,
+        lessonId,
+        currentPresIndex,
+        currentInteractionIndex,
+        setShowNextButton,
         setDynamicTutorText,
-        setActiveFeedbackInteraction,
-        setShowNextButton
+        setActiveFeedbackInteraction
     ) => {
+        const presentationId = getPresentationId(lessonId, currentPresIndex);
+        const interaction = getInteractionData(presentationId, currentInteractionIndex);
+        const targetPerimeter = interaction?.contentProps?.correctAnswer;
+
         const playClickSound = useClickSound();
         playClickSound();
 
         if (currentPerimeter === targetPerimeter) {
-            const feedbackText = getFeedbackInteraction(feedbackIds?.correct)?.tutorText;
+            const feedbackText = getFeedbackInteraction(presentationId, interaction?.contentProps?.feedbackIds?.correct)?.tutorText;
             if (feedbackText) {
                 setDynamicTutorText(feedbackText);
             }
@@ -33,17 +33,17 @@ const useShapeDesignInput = () => {
             setShapeDesignAttempts(newAttempts);
 
             if (newAttempts === 1) {
-                const feedbackText = getFeedbackInteraction(feedbackIds?.hint1)?.tutorText;
+                const feedbackText = getFeedbackInteraction(presentationId, interaction?.contentProps?.feedbackIds?.hint1)?.tutorText;
                 if (feedbackText) {
                     setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
                 }
             } else if (newAttempts === 2) {
-                const feedbackText = getFeedbackInteraction(feedbackIds?.hint2)?.tutorText;
+                const feedbackText = getFeedbackInteraction(presentationId, interaction?.contentProps?.feedbackIds?.hint2)?.tutorText;
                 if (feedbackText) {
                     setDynamicTutorText(feedbackText.replace('{currentPerimeter}', currentPerimeter));
                 }
             } else if (newAttempts === 3) {
-                const feedbackInteraction = getFeedbackInteraction(feedbackIds?.solution);
+                const feedbackInteraction = getFeedbackInteraction(presentationId, interaction?.contentProps?.feedbackIds?.solution);
                 if (feedbackInteraction) {
                     setDynamicTutorText(feedbackInteraction.tutorText);
                     setActiveFeedbackInteraction(feedbackInteraction);
@@ -54,12 +54,9 @@ const useShapeDesignInput = () => {
     }, [currentPerimeter, shapeDesignAttempts]);
 
     return {
-        currentPerimeter,
         setCurrentPerimeter,
-        shapeDesignAttempts,
-        resetShapeDesignState,
         handleShapeDesignCheck
     };
 };
 
-export default useShapeDesignInput;
+export default ShapeDesignHandler;
