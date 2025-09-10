@@ -31,7 +31,7 @@ const DeveloperMenu = ({
     setAnimationTrigger,
     setActiveFeedbackInteraction,
     // Input hooks for state reset
-    measurementHandler,
+    setLeftInput,
     perimeterHook,
     shapeDesignHook
 }) => {
@@ -60,14 +60,14 @@ const DeveloperMenu = ({
         setActiveFeedbackInteraction(null);
 
         // Reset input states using hooks/handlers
-        measurementHandler.resetMeasurementState();
+        setLeftInput('');
         perimeterHook.resetPerimeterState();
         shapeDesignHook.resetShapeDesignState();
 
         // Navigate to regular sequence presentation
         setCurrentPresIndex(interaction.presIndex);
         setCurrentInteractionIndex(interaction.interactionIndex);
-    }, [ttsRef, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, measurementHandler, perimeterHook, shapeDesignHook, setCurrentPresIndex, setCurrentInteractionIndex]);
+    }, [ttsRef, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, perimeterHook, shapeDesignHook, setCurrentPresIndex, setCurrentInteractionIndex]);
 
     const handleDevResetLesson = useCallback(() => {
         setCurrentPresIndex(0);
@@ -89,7 +89,7 @@ const DeveloperMenu = ({
                     border: '1px solid rgba(76, 175, 80, 0.3)',
                     borderRadius: '8px',
                     padding: '8px',
-                    '&:hover': { 
+                    '&:hover': {
                         bgcolor: 'rgba(76, 175, 80, 0.2)',
                         borderColor: 'rgba(76, 175, 80, 0.5)'
                     }

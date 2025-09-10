@@ -73,6 +73,7 @@ const InteractiveLesson = () => {
     const [dynamicTutorText, setDynamicTutorText] = useState(null); // For answer feedback
     const [activeFeedbackInteraction, setActiveFeedbackInteraction] = useState(null); // For feedback components
     const [isTTSPaused, setIsTTSPaused] = useState(false);
+    const [leftInput, setLeftInput] = useState('');
 
     // Highlighting State
     const [currentAudioTime, setCurrentAudioTime] = useState(0);
@@ -215,7 +216,6 @@ const InteractiveLesson = () => {
     }, [perimeterHook, interaction, getFeedbackInteraction]);
 
     const handleShapeDesignCheck = useCallback(() => {
-        playClickSound();
         shapeDesignHook.handleShapeDesignCheck(
             interaction?.interactionProps?.targetPerimeter,
             interaction?.contentProps?.feedbackIds,
@@ -224,18 +224,19 @@ const InteractiveLesson = () => {
             setActiveFeedbackInteraction,
             setShowNextButton
         );
-    }, [shapeDesignHook, interaction, getFeedbackInteraction, playClickSound]);
+    }, [shapeDesignHook, interaction, getFeedbackInteraction]);
 
     const handleMeasurementCheck = useCallback(() => {
-        // Continue with existing measurement check logic
         measurementHandler.handleMeasurementCheck(
             lessonId,
             currentPresIndex,
             currentInteractionIndex,
+            leftInput,
+            setLeftInput,
             setShowNextButton,
             handleFeedbackTextTrigger
         );
-    }, [measurementHandler, presentationId, currentInteractionIndex]);
+    }, [measurementHandler, lessonId, currentPresIndex, currentInteractionIndex, leftInput, handleFeedbackTextTrigger]);
 
     const handleAnimationComplete = useCallback(() => {
         if (interaction.showNextButton) {
@@ -259,7 +260,7 @@ const InteractiveLesson = () => {
         // Reset input states when interaction changes
         perimeterHook.resetPerimeterState();
         shapeDesignHook.resetShapeDesignState();
-        measurementHandler.resetMeasurementState();
+        setLeftInput('');
 
         // Reset video loop state for new interactions
         if (videoRef.current && interaction?.tutorAnimation && shouldAnimationLoop(interaction.tutorAnimation)) {
@@ -353,10 +354,8 @@ const InteractiveLesson = () => {
         const loadTimingData = async () => {
             if (ttsRef.current && tutorText) {
                 const timingData = await ttsRef.current.getTimingData(tutorText);
-                console.log('InteractiveLesson: Got timing data:', { hasTimingData: !!timingData, wordCount: timingData?.words?.length });
                 setCurrentTimingData(timingData);
             } else {
-                console.log('InteractiveLesson: No TTS ref or tutor text');
                 setCurrentTimingData(null);
             }
         };
@@ -394,15 +393,18 @@ const InteractiveLesson = () => {
             case 'shape-measurement':
                 return {
                     ...baseProps,
-                    value: measurementHandler.measurementInput,
-                    onInputChange: measurementHandler.setMeasurementInput,
+                    value: leftInput,
+                    onInputChange: setLeftInput,
                     onCheck: handleMeasurementCheck
                 };
 
             case 'multiple-choice-question':
                 return {
                     ...baseProps,
-                    onAnswer: handleFeedbackInteractionTrigger
+                    onAnswer: (choice) => {
+                        playAnswerSound(choice?.isCorrect);
+                        handleFeedbackInteractionTrigger(choice?.feedbackId);
+                    },
                 };
 
             case 'perimeter-design':
@@ -414,7 +416,7 @@ const InteractiveLesson = () => {
             default:
                 return baseProps;
         }
-    }, [perimeterHook.perimeterInput, perimeterHook.setPerimeterInput, handlePerimeterCheck, measurementHandler.measurementInput, measurementHandler.setMeasurementInput, handleMeasurementCheck, handleFeedbackInteractionTrigger, handleShapeDesignCheck]);
+    }, [perimeterHook.perimeterInput, perimeterHook.setPerimeterInput, handlePerimeterCheck, leftInput, setLeftInput, handleMeasurementCheck, handleFeedbackInteractionTrigger, handleShapeDesignCheck]);
 
     // Render Left Panel Interaction Component
     const renderInteraction = useCallback(() => {
@@ -514,7 +516,7 @@ const InteractiveLesson = () => {
                                 setAnimationTrigger={setAnimationTrigger}
                                 setActiveFeedbackInteraction={setActiveFeedbackInteraction}
                                 // Input hooks for state reset
-                                measurementHandler={measurementHandler}
+                                setLeftInput={setLeftInput}
                                 perimeterHook={perimeterHook}
                                 shapeDesignHook={shapeDesignHook}
                             />
@@ -550,7 +552,7 @@ const InteractiveLesson = () => {
                 </Toolbar>
             </AppBar>
         );
-    }, [lesson?.title, isDevMode, lessonId, currentPresIndex, currentInteractionIndex, ttsRef, setCurrentPresIndex, setCurrentInteractionIndex, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, measurementHandler, perimeterHook, shapeDesignHook, navigate]);
+    }, [lesson?.title, isDevMode, lessonId, currentPresIndex, currentInteractionIndex, ttsRef, setCurrentPresIndex, setCurrentInteractionIndex, setIsSpeaking, setShowNextButton, setDynamicTutorText, setAnimationTrigger, setActiveFeedbackInteraction, perimeterHook, shapeDesignHook, navigate]);
 
     return (
         <div>

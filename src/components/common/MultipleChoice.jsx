@@ -14,7 +14,7 @@ const MultipleChoice = ({
                         <Button
                             key={index}
                             variant="outlined"
-                            onClick={() => onAnswer(choice?.feedbackId)}
+                            onClick={() => onAnswer(choice)}
                             disabled={disabled}
                             sx={{
                                 padding: '12px 16px',

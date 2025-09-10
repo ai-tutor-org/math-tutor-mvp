@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useClickSound } from './useClickSound';
 
 const useShapeDesignInput = () => {
     const [currentPerimeter, setCurrentPerimeter] = useState(0);
@@ -17,6 +18,9 @@ const useShapeDesignInput = () => {
         setActiveFeedbackInteraction,
         setShowNextButton
     ) => {
+        const playClickSound = useClickSound();
+        playClickSound();
+
         if (currentPerimeter === targetPerimeter) {
             const feedbackText = getFeedbackInteraction(feedbackIds?.correct)?.tutorText;
             if (feedbackText) {
