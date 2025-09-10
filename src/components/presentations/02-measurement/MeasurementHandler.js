@@ -19,11 +19,10 @@ const MeasurementHandler = () => {
 
         const correctAnswer = interaction?.contentProps?.correctAnswer;
         const userAnswer = parseFloat(leftInput);
-        const isCorrect = userAnswer === correctAnswer;
 
-        playAnswerSound(isCorrect);
+        playAnswerSound(userAnswer === correctAnswer);
 
-        if (isCorrect) {
+        if (userAnswer === correctAnswer) {
             handleFeedbackTextTrigger(interaction?.contentProps?.feedbackIds?.correct);
             setShowNextButton(true);
         } else {
